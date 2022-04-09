@@ -98,10 +98,10 @@ def signin(request):
         password = request.POST["password"]
 
         user = authenticate(username=username, password=password)
-        if (user is not None):
+        if ((user is not None) and user.is_active):
             login(request, user)
             fname = user.first_name
-            return render(request, "auth/sgin.html", {"fname": fname})
+            return render(request, "auth/sginsucc.html", {"fname": fname})
 
         else:
             request.method = "GET"
