@@ -1,0 +1,10 @@
+aiosmtpd          
+asgiref           
+atpublic          
+attrs             
+Django==3.2.12
+setuptools==52.0.0
+six==1.16.0
+sqlparse==0.4.2
+typing-extensions==4.1.1
+wheel==0.36.2
