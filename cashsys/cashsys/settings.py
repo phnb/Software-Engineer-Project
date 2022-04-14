@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from .info import *
-
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,6 +25,7 @@ EMAIL_HOST_USER = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 EMAIL_PORT = EMAIL_PORT
 EMAIL_BACKEND = EMAIL_BACKEND
+DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL
 
 
 
@@ -36,6 +37,8 @@ SECRET_KEY = 'django-insecure--ank65n*we309!hs71um+v&ps)n6*$429d=_00#fehr_3=nv=$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ALLOWED_HOSTS = []
 
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authsys.apps.AuthsysConfig',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +135,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/images/'
+
+# POST doesn't need slash
+APPEND_SLASH=False
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
+

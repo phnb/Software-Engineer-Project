@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Reset password? Enter your email</h2>
+
+    <form action="/auth/resetSend/" method="POST">
+        {% csrf_token %}
+        <label>Email</label>
+        <input type="text" id="emil" name="email" placeholder="Input your user email" required>
+        <button type="submit">Send verification email</button>
+    </form>
+</body>
+</html>

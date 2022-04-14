@@ -7,6 +7,7 @@ EMAIL_HOST_PASSWORD = "luxljazwcewsbeeh" # Cautious! Real sending is ok but DON'
 EMAIL_PORT = 25
 EMAIL_FROM = "Monager Team" # 看到的发件人
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Monager Team <1043752141@qq.com>'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 

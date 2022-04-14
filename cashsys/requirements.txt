@@ -1,7 +1,8 @@
 aiosmtpd          
 asgiref           
 atpublic          
-attrs             
+attrs        
+pillow     
 Django==3.2.12
 setuptools==52.0.0
 six==1.16.0

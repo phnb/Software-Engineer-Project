@@ -8,5 +8,22 @@
 </head>
 <body>
     <h2>Sign-in successful, {{fname}}, welcome to Monoger! xD</h2>
+    
+    <p>
+        Your user profile is:
+    </p>
+
+    <p>user name: {{fname}}</p>
+    <p>first name: {{frname}}</p>
+    <p>last name: {{laname}}</p>
+    <p>email: {{email}}</p>
+    <p>avatar:</p>
+    <img class="avatar"  src={{avatarUrl}}> 
+
+    <form method="GET" action="/auth/profile">
+        <button type="submit">Click here to update user profile</button>
+    </form>
+
+
 </body>
 </html>

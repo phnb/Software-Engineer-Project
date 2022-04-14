@@ -1,0 +1,8 @@
+{% autoescape off %}
+Hello {{name}}!
+
+Please confirm your password modification request by checking:
+
+confirm link: http://{{domain}}{% url 'reset_act' uid64d=uid token=token %}
+
+{% endautoescape %}

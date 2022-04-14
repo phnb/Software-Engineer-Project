@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Hi {{uname}}, set your new password here</h2>
+
+    <form action="/auth/resetPw/" method="POST">
+        {% csrf_token %}
+        
+        <label>New password</label>
+        <input type="text" id="pw" name="pw" placeholder="Input your new password" required>
+        <br>
+        
+        <label>Confirm your new password</label>
+        <input type="text" id="pw2" name="pw2" placeholder="Confirm your new password" required>
+        
+        <!-- hidden field of uid, in string -->
+        <input id="uid" name="uid" type="hidden" value={{uid}}>
+        <br>
+        
+        <button>Submit password change</button>
+    </form>
+</body>
+</html>
