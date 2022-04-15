@@ -19,6 +19,7 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import OnBoarding from './pages/onBoarding';
+import Homepage from './pages/homepage';
 
 const splashScreen = () => {
   return (
@@ -39,16 +40,16 @@ const App = () => {
           component={splashScreen}
           options={{headerShown: false}}
         /> */}
-        <Stack.Screen
+        {/* <Stack.Screen
           name="OnBoarding"
           component={OnBoarding}
           options={{headerShown: false}}
-        />
-        {/* <Stack.Screen
-          name="profile"
-          component={splashScreen}
-          options={{headerShown: false}}
         /> */}
+        <Stack.Screen
+          name="Homepage"
+          component={Homepage}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

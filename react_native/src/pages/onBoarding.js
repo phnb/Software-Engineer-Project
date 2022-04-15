@@ -8,6 +8,7 @@ import {
   useColorScheme,
   View,
   Image,
+  Button,
 } from 'react-native';
 import {
   Colors,
@@ -17,7 +18,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const OnBoarding = () => {
+const OnBoarding = ({navigation}) => {
   return (
     <View>
       <View style={group2.rectangle1}>
@@ -41,6 +42,10 @@ const OnBoarding = () => {
       </View>
       <View style={group1.frame}></View>
       <Text style={group1.text}>Get Started</Text>
+      {/* <Button
+        title="Go to Jane's profile"
+        onPress={() => navigation.navigate('Profile', {name: 'Jane'})}
+      /> */}
       <View style={group1.rectangular1}></View>
       <Text style={slogen.text1}>Spend Smarter Save More</Text>
       <Text style={slogen.text2}>Already Have Account? Log in</Text>

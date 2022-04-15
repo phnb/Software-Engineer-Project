@@ -13,7 +13,7 @@ import keyboard
 import wave
 import pyautogui
 
-import const
+import react_native.src.core.voice_const as voice_const
 
 pcm_file = "16k-0.pcm"
 
@@ -57,9 +57,9 @@ def send_start_params(ws):
     req = {
         "type": "START",
         "data": {
-            "appid": const.APPID,  # 网页上的appid
-            "appkey": const.APPKEY,  # 网页上的appid对应的appkey
-            "dev_pid": const.DEV_PID,  # 识别模型
+            "appid": voice_const.APPID,  # 网页上的appid
+            "appkey": voice_const.APPKEY,  # 网页上的appid对应的appkey
+            "dev_pid": voice_const.DEV_PID,  # 识别模型
             "cuid": "python",  # 随便填不影响使用。机器的mac或者其它唯一id，百度计算UV用。
             "sample": 16000,  # 固定参数
             "format": "pcm"  # 固定参数
@@ -212,7 +212,7 @@ def handle_voice_input(res):
 
 if __name__ == "__main__":
     # websocket.enableTrace(True)
-    uri = const.URI + "?sn=" + str(uuid.uuid1())
+    uri = voice_const.URI + "?sn=" + str(uuid.uuid1())
     ws_app = websocket.WebSocketApp(uri,
                                     on_open=on_open,  # 连接建立后的回调
                                     on_message=on_message)  # 接收消息的回调
