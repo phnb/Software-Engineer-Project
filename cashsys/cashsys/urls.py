@@ -24,6 +24,7 @@ urlpatterns = [
     path('', home),
     path('admin/', admin.site.urls),
     path('auth/', include("authsys.urls")),
+    path('app/', include("cashapp.urls")),
 ]
 
 # Bind media url to the media file folder

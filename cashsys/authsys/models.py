@@ -13,5 +13,16 @@ class UserProfile(models.Model):
     is_reset_active = models.BooleanField(default=False)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
+# add field->change form->change modification interfaces in views
 
-# Create your models here.
+
+
+
+
+
+
+
+
+
+
+

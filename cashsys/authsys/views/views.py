@@ -14,7 +14,10 @@ from django.core.mail import EmailMessage, send_mail
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from authsys.models import *
 from authsys.form import *
-
+# login decorator
+from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
 # Create your views here.
 # def get_register(request):
 #     return render(request, "auth/reg.html")
@@ -25,7 +28,7 @@ from authsys.form import *
 
 
 def register(request):
-    print("hahahahah")
+    # print("hahahahah")
     if (request.method == "POST"):
         unm = request.POST["username"]
         fnm = request.POST["firstname"]
@@ -110,7 +113,9 @@ def register(request):
     # elif (request.method == "DELETE"):
 
     # return render(request, "auth/reg.html")
-
+    
+# @api_view(["GET", 'PUT', "POST"])
+# @permission_classes((permissions.AllowAny,))
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
@@ -137,7 +142,7 @@ def signin(request):
         else:
             return render(request, "auth/sgin.html")
 
-
+@login_required
 def signout(request):
     logout(request)
     messages.success(request, "Logged out successfully")
@@ -263,7 +268,7 @@ def reset_pw(request):
     elif request.method == "GET":
         return render(request, "resetpw/resetpw.html")
 
-
+@login_required
 def profile(request):
     if request.method == "POST":
         # print(request.POST)
