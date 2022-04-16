@@ -18,6 +18,10 @@ from authsys.form import *
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
+
+# query stuffs
+from django.db.models import Q
+
 # Create your views here.
 # def get_register(request):
 #     return render(request, "auth/reg.html")
@@ -40,24 +44,30 @@ def register(request):
         # TODO: checks
         if User.objects.filter(username=unm):
             messages.error(request, "username already exists")
+            print("heer")
             return redirect("/auth/")
 
         if User.objects.filter(email=em):
             messages.error(request, "email already exists")
+            print("heerusr")
             return redirect("/auth/")
 
         if len(unm) > 10:
             messages.error(request, "username should be less than 10")
+            print("heerlen")
             return redirect("/auth/")
 
         if pw!=pw2:
             messages.error(request, "pw didn't match")
+            print("heerpw")
             return redirect("/auth/")
 
         if not unm.isalnum():
             messages.error(request, "username must be alpha-numeric")
             print("errrrrrrrr")
             return redirect("/auth/")
+
+        print("heer")
 
         # inner user for credentials, outer user for profiles
         # create base user
@@ -124,7 +134,7 @@ def signin(request):
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active):
-            login(request, usr)
+            login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
             print(request.user.is_authenticated)
             return render(request, "auth/sginsucc.html", {"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
@@ -144,7 +154,7 @@ def signin(request):
 
 @login_required
 def signout(request):
-    logout(request)
+    logout(request, backend='django.contrib.auth.backends.ModelBackend')
     messages.success(request, "Logged out successfully")
     return redirect("/auth/")
 
@@ -203,7 +213,7 @@ def register_activate(request, uid64d, token):
     if (myuser is not None and generate_token.check_token(myuser, token)):
         myuser.is_active = True
         myuser.save()
-        login(request, myuser)
+        login(request, myuser, backend='django.contrib.auth.backends.ModelBackend')
         # maybe redirect() by default generates "GET" request...
         return render(request, "auth/sucver.html")
     else:
@@ -274,6 +284,30 @@ def profile(request):
         # print(request.POST)
         # print(request.FILES)
         usr = User.objects.get(id=request.user.id)
+        unm = request.POST["username"]
+        email = request.POST["email"]
+
+        # profile validity check (upper-lower case sensitive)
+        if User.objects.filter(Q(email=email)&~Q(id=request.user.id)):
+            messages.error(request, "email exists")
+            print("heeremi")
+            return redirect("/auth/profile/")
+
+        if User.objects.filter(Q(username=unm)&~Q(id=request.user.id)):
+            messages.error(request, "username already exists")
+            print("heer")
+            return redirect("/auth/profile/")
+
+        if len(unm) > 10:
+            messages.error(request, "username should be less than 10")
+            print("heerlen")
+            return redirect("/auth/profile/")
+
+        if not unm.isalnum():
+            messages.error(request, "username must be alpha-numeric")
+            print("errrrrrrrr")
+            return redirect("/auth/profile/")
+
         profForm = UserProfileForm(request.POST, instance=usr.user_profile)
         usrForm = UserForm(request.POST, instance=usr)
         # print("hereee!!!")

@@ -1,8 +1,10 @@
 from cashapp.models import *
 
+@receiver(post_save, sender=Record)
 def RecordSaveHandler(sender, instance, created, **kwargs):
     # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
     # add/subtract money in ACCOUNT.balance, PLAN.remaining
+    print("invoked!!!")
     if instance.is_income:
         # update account balance
         instance.account.balance += instance.amount
@@ -26,7 +28,7 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
             plan.save()
 
 
-
+@receiver(post_delete, sender=Record)
 def RecordDeleteHandler(sender, instance, **kwargs):
     # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
     if instance.is_income:
@@ -52,8 +54,8 @@ def RecordDeleteHandler(sender, instance, **kwargs):
             plan.save()
     # print(instance.id)
   
-post_save.connect(RecordSaveHandler, sender=Record)
-post_delete.connect(RecordDeleteHandler, sender=Record)
+# post_save.connect(RecordSaveHandler, sender=Record)
+# post_delete.connect(RecordDeleteHandler, sender=Record)
 
 # def PlanSaveHandler(sender, instance, created, **kwargs):
 #     print(instance.id)

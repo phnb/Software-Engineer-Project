@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     user   = models.OneToOneField('auth.User',on_delete=models.CASCADE, related_name='user_profile')
     username = models.CharField(max_length=100, blank=True, unique=True)
-    first_name = models.CharField(max_length=100, blank=True, unique=True)
-    last_name = models.CharField(max_length=100, blank=True, unique=True)
+    first_name = models.CharField(max_length=100, blank=True)
+    last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(max_length=100, blank=True, unique=True)
     avatar = models.ImageField(default="default_img.png", null=False, blank=False)
     is_reset_active = models.BooleanField(default=False)
