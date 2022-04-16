@@ -23,9 +23,12 @@ import {
 import Homepage from './homepage';
 // import TouchableButton from '../components/button';
 var {width, height, scale} = Dimensions.get('window');
-const LoginView = ({navigation}) => {
+const LoginView = ({navigation, route}) => {
+  const { test } = route.params;
+  console.log(test);
   const [username, OnchangeUsername] = useState('');
   const [pwd, OnchangePwd] = useState('');
+  const [accountId, OnchangeAccountId] = useState(1);
   function submit(username, pwd){
     // navigation.navigate('Homepage');
       fetch('http://10.0.2.2:8000/auth/signin/', {
@@ -43,7 +46,11 @@ const LoginView = ({navigation}) => {
           navigation.navigate('OnBoarding');
         }
         else{
-          navigation.navigate('Homepage');
+          let account_id = data["default_account_id"];
+          console.log(account_id);
+          OnchangeAccountId(account_id)
+          // navigation.setParams(accountId);
+          navigation.navigate('Homepage', {accountId:accountId});
         }
       }
     )

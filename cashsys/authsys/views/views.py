@@ -145,8 +145,9 @@ def signin(request):
 
             # get default account's id
             defacc = usr.user_profile.accounts.get(is_default=True)
+            print({"default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
 
-            return JsonResponse(status=200, data={"default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
+            return JsonResponse(status=200, data={"success":True, "default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
 
         else:
             # request.method = "GET"

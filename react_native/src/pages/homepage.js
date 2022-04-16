@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -25,36 +25,78 @@ import AddExpense from './addExpense';
 
 const Tab = createBottomTabNavigator();
 
-const Homescreen = () => {
+const Homescreen = ({ navigation, route }) => {
+  const { accountId } = route.params;
+  var username = "ddg"
+
   const [expense, OnchangeExpense] = useState(0);
   const [income, OnchangeIncome] = useState(0);
-  // fetch('http://10.0.2.2:8000/app/record/', {
-  //     method: 'get',
-  //     body: JSON.stringify({
-  //       is_many: true,
-  //       record_max_num: 5,
-  //       account_id: 
-  //     }),
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   }).then(response => response.json())
-  //     .then(function(data){
-  //       if (!data["success"]) {
-  //         navigation.navigate('OnBoarding');
-  //       }
-  //       else{
-  //         navigation.navigate('Homepage');
-  //       }
-  //     })
+  const [balance, OnchangeBalance] = useState(0);
+  // const [username, OnchangeUsername] = useState('');
+  const [welcome, OnchangeWelcome] = useState('');
+
+  var date = new Date();
+  useEffect(() => {
+    if (date.getHours() < 12){
+      OnchangeWelcome('Good morning, ');
+    }
+    else if (date.getHours() < 18) {
+      OnchangeWelcome('Good afternoon, ');
+    } else {
+      OnchangeWelcome('Good evening, ');
+    }
+    console.log("start");
+    console.log(welcome);
+  },[date])
+  
+  fetch('http://10.0.2.2:8000/app/record/', {
+      method: 'get',
+      body: JSON.stringify({
+        is_many: true,
+        record_max_num: 4,
+        account_id: accountId
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(function(data){
+        for (let i = 0; i < data.length; i++) {
+          const element = data[i];
+          amount = element["amount"];
+          is_income = element["is_income"];
+          if (is_income) {
+            amount += income;
+            OnchangeIncome(amount);
+          }
+          else{
+            amount += expense;
+            OnchangeExpense(amount);
+          }
+        }
+      })
+  fetch('http://10.0.2.2:8000/app/account/', {
+    method: 'get',
+    body: JSON.stringify({
+      is_many: false,
+      account_id: accountId
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.json())
+    .then(function(data){
+      bal = data["balance"];
+      OnchangeBalance(bal);
+    })
   return (
     <View>
       <View style={group1.rectangle1}>
         <View style={group1.ellipse1} />
         <View style={group1.ellipse2} />
         <View style={group1.ellipse3} />
-        <Text style={group1.text1}>Good afternoon, </Text>
-        <Text style={group1.text2}>Jared Dai</Text>
+        <Text style={group1.text1}> {welcome} </Text>
+        <Text style={group1.text2}> {username} </Text>
       </View>
       <View style={group2.rectangle2} />
       <View style={group2.rectangle1}>
@@ -84,11 +126,11 @@ const Homescreen = () => {
         </View> */}
       </View>
       <Text style={group2.expense}>Expenses</Text>
-      <Text style={group2.expenseNum}>$ 284.00</Text>
+      <Text style={group2.expenseNum}>$ {expense}</Text>
       <Text style={group2.income}>Income</Text>
-      <Text style={group2.incomeNum}>$ 1,840.00</Text>
+      <Text style={group2.incomeNum}>$ {income}</Text>
       <Text style={group2.total}>Total Balance</Text>
-      <Text style={group2.totalBalance}>$ 2,548.00</Text>
+      <Text style={group2.totalBalance}>$ {balance} </Text>
       <Text style={group3.transactions}>Transactions History</Text>
       <Text style={group3.latest}>Latest 4 records</Text>
       <View style={group4.item1}>
@@ -163,6 +205,7 @@ const Homepage = () => {
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
+        initialParams={{accountId:1}}
       />
       <Tab.Screen
         name="Statistic"
