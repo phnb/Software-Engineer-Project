@@ -21,7 +21,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import OnBoarding from './pages/onBoarding';
 import Homepage from './pages/homepage';
 import LoginView from './pages/login';
-import Reg from './pages/registrate';
+import Registration from './pages/registrate';
 
 const SplashScreen = () => {
   return (
@@ -36,7 +36,8 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Homepage'>
+      <Stack.Navigator initialRouteName="Add">
+        {/* <Stack.Navigator initialRouteName='Homepage'> */}
         <Stack.Screen
           name="splashScreen"
           component={SplashScreen}
@@ -58,8 +59,8 @@ const App = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="Reg"
-          component={Reg}
+          name="Registration"
+          component={Registration}
           options={{headerShown: false}}
         />
       </Stack.Navigator>
