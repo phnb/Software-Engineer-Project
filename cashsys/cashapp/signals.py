@@ -6,25 +6,42 @@ from django.db.models.signals import post_save, post_delete
 def RecordSaveHandler(sender, instance, created, **kwargs):
     # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
     # add/subtract money in ACCOUNT.balance, PLAN.remaining
-    print("invoked!!!")
-    if instance.is_income:
+    # print("invoked!!!")
+    # if not created:
+    #     print("reall y twice hhhh")
+    #     try:
+    #         print(kwargs["prev_amount"])
+    #     except: 
+    #         pass
+    # patch-triggering would not make the handler do anything, unless called directly with kwarg
+    if created:
+        incr = instance.amount
+        is_income = instance.is_income
+    else:
+        try:
+            incr = abs(instance.amount - kwargs["prev_amount"])
+            is_income = (instance.amount >= kwargs["prev_amount"])
+        except: 
+            return 0
+
+    if is_income:
         # update account balance
-        instance.account.balance += instance.amount
+        instance.account.balance += incr
         instance.account.save()
 
         # update plan remaining 
         for plan in instance.plans.all():
-            plan.remaining += instance.amount
+            plan.remaining += incr
             plan.save()
 
     else:
         # update account balance
-        instance.account.balance -= instance.amount
+        instance.account.balance -= incr
         instance.account.save()
 
         # update plan remaining 
         for plan in instance.plans.all():
-            plan.remaining -= instance.amount
+            plan.remaining -= incr
             if plan.remaining <= 0:
                 plan.failed = True
             plan.save()

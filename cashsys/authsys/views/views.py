@@ -1,4 +1,3 @@
-import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -126,16 +125,13 @@ def register(request):
 
     # return render(request, "auth/reg.html")
     
-# @api_view(["GET", "POST"])
+# @api_view(["GET", 'PUT', "POST"])
 # @permission_classes((permissions.AllowAny,))
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        # print(request.data)
-        data=request.body
-        data = json.loads(data)
-        username = data["username"]
-        password = data["password"]
+        username = request.POST["username"]
+        password = request.POST["password"]
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active):
@@ -144,9 +140,12 @@ def signin(request):
             # print(request.user.is_authenticated)
 
             # get default account's id
-            defacc = usr.user_profile.accounts.get(is_default=True)
-
-            return JsonResponse(status=200, data={"default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
+            try:
+                defacc = usr.user_profile.accounts.get(is_default=True)
+                return JsonResponse(status=200, data={"success": True, "default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
+            except:
+                # no default account or more than 1 accounts
+                return JsonResponse(status=401, data={"success": False})
 
         else:
             # request.method = "GET"
