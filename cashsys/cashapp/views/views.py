@@ -25,6 +25,9 @@ from django.http.response import JsonResponse
 # query stuffs
 from django.db.models import Q
 
+# signal stuffs
+from cashapp.signals import RecordSaveHandler
+
 @method_decorator(login_required, name='dispatch')
 # @api_view(["GET", "POST", "PATCH", "DELETE"])
 # json provided
@@ -126,13 +129,18 @@ class RecordModify(generics.GenericAPIView):
         # modify existing rec
         user = request.user
         data = request.data
-        rec = self.queryset.get(id=data["record_id"])
+        try:
+            rec = self.queryset.get(id=data["record_id"])
+        except:
+            return JsonResponse(status=400, data={"success": False})
         
         # update changes in database and return
+        prev_amount = rec.amount
         recSeri = RecordSerializer(rec, data=data, partial=True)
         if recSeri.is_valid():
             # TODO: patch update problematic!!!!!!!
-            recSeri.save()
+            rec = recSeri.save()
+            RecordSaveHandler(Record, rec, False, prev_amount=prev_amount)
             return JsonResponse(status=201, data=recSeri.data)
         # "wrong parameters"
         return JsonResponse(status=400, data={"success": False})
@@ -260,8 +268,7 @@ class PlanModify(generics.GenericAPIView):
 
     def get(self, request):
         user = request.user
-        body = request.body
-        data = json.loads(body)
+        data = request.data
         acc_many = data["is_account_many"]
         usr_many = data["is_user_many"]
 
@@ -302,8 +309,7 @@ class PlanModify(generics.GenericAPIView):
     def post(self, request):
         # add new plan
         user = request.user
-        body = request.body
-        data = json.loads(body)
+        data = request.data
         # fields to change directly: name, description, start_time, end_time, budget
         # fields to change indirectly: remaining, failed
         data["remaining"] = data["budget"]
@@ -321,8 +327,7 @@ class PlanModify(generics.GenericAPIView):
     def patch(self, request):
         # modify existing plan
         user = request.user
-        body = request.body
-        data = json.loads(body)
+        data = request.data
         plan = self.queryset.get(id=data["plan_id"])
         # original_buget = plan.budget
         # data["remaining"] = plan.remaining
@@ -351,8 +356,7 @@ class PlanModify(generics.GenericAPIView):
     
     def delete(self, request):
         user = request.user
-        body = request.body
-        data = json.loads(body)
+        data = request.data
         delList = data["del_id_list"]
 
         # filter out the set to be deleted and delete it
