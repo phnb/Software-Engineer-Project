@@ -48,7 +48,10 @@ class RecordModify(generics.GenericAPIView):
 
             # avoid null-finding case
             try:
-                resrec = self.queryset.filter(account__id=accid).order_by("-created_time")[:min(maxrec, len(self.queryset))]
+                # print(self.queryset.filter(account__id=accid))
+                # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
+                # print(min(maxrec, self.queryset.count()))
+                resrec = self.queryset.filter(account__id=accid).order_by("-created_time")[:min(maxrec, self.queryset.count())]
             except:
                 resrec = None
 
@@ -109,8 +112,11 @@ class RecordModify(generics.GenericAPIView):
         # set other normal fields
         recSeri = RecordSerializer(rec, data=data, partial=True)
         if recSeri.is_valid():
+            rec = recSeri.save()
+            # rec.save() # to invoke signal
             print("here")
-            recSeri.save()
+            print(rec)
+            print(recSeri.data)
             return JsonResponse(status=201, data=recSeri.data)
         # "wrong parameters"
         return JsonResponse(status=400, data={"success": False})
@@ -125,6 +131,7 @@ class RecordModify(generics.GenericAPIView):
         # update changes in database and return
         recSeri = RecordSerializer(rec, data=data, partial=True)
         if recSeri.is_valid():
+            # TODO: patch update problematic!!!!!!!
             recSeri.save()
             return JsonResponse(status=201, data=recSeri.data)
         # "wrong parameters"

@@ -1,4 +1,6 @@
-from cashapp.models import *
+from cashapp.models import Record
+from django.dispatch import receiver
+from django.db.models.signals import post_save, post_delete
 
 @receiver(post_save, sender=Record)
 def RecordSaveHandler(sender, instance, created, **kwargs):

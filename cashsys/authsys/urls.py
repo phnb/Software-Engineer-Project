@@ -15,6 +15,6 @@ urlpatterns = [
     path('register/', register),
     path('signin/', signin),
     path('signout/', signout),
-    path('activate/<uid64d>/<token>/', register_activate, name="activation"),
+    path('activate/<uid64d>/<token>/', register_activate, name="activation"), # /auth/activate
     path('resetActivate/<uid64d>/<token>/', reset_activate, name="reset_act"),
 ]

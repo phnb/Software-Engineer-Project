@@ -10,7 +10,8 @@ class Account(models.Model):
     balance = models.FloatField(default=0)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
-    userProfile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    userProfile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="accounts")
+    is_default = models.BooleanField(default=False)
 
 # Plan
 # create plan under a given account on a given user

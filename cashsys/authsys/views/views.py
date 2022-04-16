@@ -13,6 +13,7 @@ from authsys.tokens import generate_token
 from django.core.mail import EmailMessage, send_mail
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from authsys.models import *
+from cashapp.models import *
 from authsys.form import *
 # login decorator
 from django.contrib.auth.decorators import login_required
@@ -136,13 +137,17 @@ def signin(request):
         if ((usr is not None) and usr.is_active):
             login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
-            print(request.user.is_authenticated)
-            return render(request, "auth/sginsucc.html", {"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
+            # print(request.user.is_authenticated)
+
+            # get default account's id
+            defacc = usr.user_profile.accounts.get(is_default=True)
+
+            return JsonResponse(status=200, data={"default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
 
         else:
             # request.method = "GET"
             messages.error(request, "account does not exist, please register first")
-            return render(request, "auth/reg.html")
+            return JsonResponse(status=401, data={"success": False})
             # return redirect("/auth/register")
 
     elif (request.method == "GET"):
@@ -208,16 +213,27 @@ def register_activate(request, uid64d, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExists):
         # print("get error!!")
         return render(request, "activation_failed.html")
-
+        # return JsonResponse(statu=401, data={"success": False})
 
     if (myuser is not None and generate_token.check_token(myuser, token)):
         myuser.is_active = True
         myuser.save()
         login(request, myuser, backend='django.contrib.auth.backends.ModelBackend')
         # maybe redirect() by default generates "GET" request...
+
+        # create default account for the new user (login, should be returned)
+        if (not Account.objects.filter(Q(userProfile__id=myuser.user_profile.id)&Q(is_default=True))):
+            defacc = Account(userProfile=myuser.user_profile)
+            defacc.is_default = True
+            defacc.name = myuser.username + "'s first account"
+            defacc.description = myuser.username + "'s first account, hello world!"
+            defacc.save()
+
         return render(request, "auth/sucver.html")
+        # return JsonResponse(statu=200, data={"is_active": True})
     else:
         return render(request, "activation_failed.html")
+        # return JsonResponse(statu=401, data={"success": False})
 
 
 def reset_activate(request, uid64d, token):
@@ -326,6 +342,7 @@ def profile(request):
             
             messages.success(request, "profile update successful!")
             # redirect to the main page we just updated
+            # return JsonResponse()
             return render(request, "auth/sginsucc.html", {"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
     elif request.method == "GET":
         profForm = UserProfileForm(instance=request.user.user_profile)
