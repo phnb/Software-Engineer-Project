@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -125,13 +126,16 @@ def register(request):
 
     # return render(request, "auth/reg.html")
     
-# @api_view(["GET", 'PUT', "POST"])
+# @api_view(["GET", "POST"])
 # @permission_classes((permissions.AllowAny,))
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        username = request.POST["username"]
-        password = request.POST["password"]
+        # print(request.data)
+        data=request.body
+        data = json.loads(data)
+        username = data["username"]
+        password = data["password"]
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active):

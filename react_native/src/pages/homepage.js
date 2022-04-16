@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -26,6 +26,27 @@ import AddExpense from './addExpense';
 const Tab = createBottomTabNavigator();
 
 const Homescreen = () => {
+  const [expense, OnchangeExpense] = useState(0);
+  const [income, OnchangeIncome] = useState(0);
+  // fetch('http://10.0.2.2:8000/app/record/', {
+  //     method: 'get',
+  //     body: JSON.stringify({
+  //       is_many: true,
+  //       record_max_num: 5,
+  //       account_id: 
+  //     }),
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   }).then(response => response.json())
+  //     .then(function(data){
+  //       if (!data["success"]) {
+  //         navigation.navigate('OnBoarding');
+  //       }
+  //       else{
+  //         navigation.navigate('Homepage');
+  //       }
+  //     })
   return (
     <View>
       <View style={group1.rectangle1}>

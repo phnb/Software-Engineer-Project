@@ -27,20 +27,31 @@ const LoginView = ({navigation}) => {
   const [username, OnchangeUsername] = useState('');
   const [pwd, OnchangePwd] = useState('');
   function submit(username, pwd){
-    navigation.navigate('Homepage');
-  //   fetch('http://10.0.2.2:8000/auth/signin/', {
-  //   method: 'post',
-  //   body: JSON.stringify({
-  //     username: username,
-  //     password: pwd
-  //   }),
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   }
-  // }).then(function(data) {
     // navigation.navigate('Homepage');
-  //   console.log(username);
-  // })
+      fetch('http://10.0.2.2:8000/auth/signin/', {
+      method: 'post',
+      body: JSON.stringify({
+        username: username,
+        password: pwd
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json())
+      .then(function(data){
+        if (!data["success"]) {
+          navigation.navigate('OnBoarding');
+        }
+        else{
+          navigation.navigate('Homepage');
+        }
+      }
+    )
+    // .then(function(data) {
+    //   console.log(data.json);
+    //   // navigation.navigate('Homepage');
+    //   // console.log(username);
+    // })
   }
   return (
     <View style={styles.container}>
