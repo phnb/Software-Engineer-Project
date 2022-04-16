@@ -138,7 +138,7 @@ const Homepage = () => {
           return icon;
         },
       })}>
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
@@ -147,7 +147,7 @@ const Homepage = () => {
         name="Statistic"
         component={Statistic}
         options={{headerShown: false}}
-      /> */}
+      />
       <Tab.Screen
         name="Add Expense"
         component={AddExpense}
