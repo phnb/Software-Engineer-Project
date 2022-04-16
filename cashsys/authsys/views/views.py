@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -124,25 +125,27 @@ def register(request):
 
     # return render(request, "auth/reg.html")
     
-# @api_view(["GET", 'PUT', "POST"])
+# @api_view(["GET", "POST"])
 # @permission_classes((permissions.AllowAny,))
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        username = request.POST["username"]
-        password = request.POST["password"]
+        # print(request.data)
+        data=request.body
+        data = json.loads(data)
+        username = data["username"]
+        password = data["password"]
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active):
             login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
             print(request.user.is_authenticated)
-            return render(request, "auth/sginsucc.html", {"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
-
+            return JsonResponse(status=201, data={"success": True})
         else:
             # request.method = "GET"
             messages.error(request, "account does not exist, please register first")
-            return render(request, "auth/reg.html")
+            return JsonResponse(status=401, data={"success": False})
             # return redirect("/auth/register")
 
     elif (request.method == "GET"):
