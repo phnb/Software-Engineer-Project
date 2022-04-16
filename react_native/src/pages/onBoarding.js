@@ -40,15 +40,25 @@ const OnBoarding = ({navigation}) => {
           <View style={group2.ellipse3} />
         </View>
       </View>
-      <View style={group1.frame}></View>
-      <Text style={group1.text}>Get Started</Text>
-      {/* <Button
-        title="Go to Jane's profile"
-        onPress={() => navigation.navigate('Profile', {name: 'Jane'})}
-      /> */}
-      <View style={group1.rectangular1}></View>
+      <View style={group1.frame}>
+        <Button
+          title="    Get Started    "
+          color="rgba(63,135,130,255)"
+          onPress={() => navigation.navigate('Login')}
+        />
+      </View>
+      {/* <Text style={group1.text}>Get Started</Text> */}
+      <View style={group1.rectangular1} />
       <Text style={slogen.text1}>Spend Smarter Save More</Text>
-      <Text style={slogen.text2}>Already Have Account? Log in</Text>
+      <Text style={slogen.text2}>Already Have Account?</Text>
+      <View style={slogen.text3}>
+        <Button
+          title="Log in"
+          // color="rgba(68, 68, 68, 0.1)"
+          color="rgba(132, 21, 132, 0.4)"
+          onPress={() => navigation.navigate('Login')}
+        />
+      </View>
     </View>
   );
 };
@@ -131,15 +141,34 @@ const slogen = StyleSheet.create({
     width: 199,
     height: 17,
     top: 720,
-    left: 107,
+    left: 85,
 
     color: 'rgb(68, 68, 68)',
     fontFamily: 'Inter',
     fontSize: 14,
     fontWeight: '400',
     lineHeight: 17,
-    textAlign: 'center',
+    // textAlign: 'center',
     textTransform: 'capitalize',
+  },
+  text3: {
+    /* Already have account? Log In */
+    position: 'absolute',
+    width: 80,
+    height: 34,
+    top: 710,
+    left: 235,
+
+    backgroundColor: 'rgba(132, 21, 132, 0.1)',
+    // borderRadius: 40,
+
+    // color: 'rgb(68, 68, 68)',
+    // fontFamily: 'Inter',
+    // fontSize: 14,
+    // fontWeight: '400',
+    // lineHeight: 17,
+    // textAlign: 'center',
+    // textTransform: 'capitalize',
   },
 });
 

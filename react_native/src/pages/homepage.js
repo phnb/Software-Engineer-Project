@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -33,7 +33,7 @@ const Homescreen = () => {
   //     body: JSON.stringify({
   //       is_many: true,
   //       record_max_num: 5,
-  //       account_id: 
+  //       account_id:
   //     }),
   //     headers: {
   //       'Content-Type': 'application/json'
