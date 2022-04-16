@@ -69,7 +69,31 @@ const Homescreen = () => {
       <Text style={group2.total}>Total Balance</Text>
       <Text style={group2.totalBalance}>$ 2,548.00</Text>
       <Text style={group3.transactions}>Transactions History</Text>
-      <Text style={group3.latest}>Latest 5 records</Text>
+      <Text style={group3.latest}>Latest 4 records</Text>
+      <View style={group4.item1}>
+        <Text style={group4.itemName}>Youtube</Text>
+        <Image style={group4.img} source={require('./imgs/image1.png')} />
+        <Text style={group4.itemDate}>Today</Text>
+        <Text style={group4.itemMoney}> - $ 40.00</Text>
+      </View>
+      <View style={group4.item2}>
+        <Text style={group4.itemName}>Paypal</Text>
+        <Image style={group4.img} source={require('./imgs/image3.png')} />
+        <Text style={group4.itemDate}>Yesterday</Text>
+        <Text style={group4.itemMoney1}> + $ 240.00</Text>
+      </View>
+      <View style={group4.item3}>
+        <Text style={group4.itemName}>Starbucks</Text>
+        <Image style={group4.img} source={require('./imgs/image2.png')} />
+        <Text style={group4.itemDate}>April 10, 2022</Text>
+        <Text style={group4.itemMoney}> - $ 20.00</Text>
+      </View>
+      <View style={group4.item4}>
+        <Text style={group4.itemName}>Paypal</Text>
+        <Image style={group4.img} source={require('./imgs/image3.png')} />
+        <Text style={group4.itemDate}>April 8, 2022</Text>
+        <Text style={group4.itemMoney}> - $ 3000.00</Text>
+      </View>
     </View>
   );
 };
@@ -114,7 +138,7 @@ const Homepage = () => {
           return icon;
         },
       })}>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
@@ -123,7 +147,7 @@ const Homepage = () => {
         name="Statistic"
         component={Statistic}
         options={{headerShown: false}}
-      />
+      /> */}
       <Tab.Screen
         name="Add Expense"
         component={AddExpense}
@@ -384,14 +408,14 @@ const group3 = StyleSheet.create({
   transactions: {
     /* Transactions history */
     position: 'absolute',
-    width: 175,
+    width: 200,
     height: 22,
     top: 376,
     left: 28,
 
     color: 'rgb(34, 34, 34)',
     fontFamily: 'Inter',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     lineHeight: 22,
     textAlign: 'left',
@@ -410,6 +434,119 @@ const group3 = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 17,
     textAlign: 'left',
+  },
+});
+
+const group4 = StyleSheet.create({
+  img: {
+    width: 40,
+    height: 36,
+    top: 16,
+    left: 16,
+  },
+  item1: {
+    /* item1 */
+    position: 'absolute',
+    width: 374,
+    height: 70,
+    top: 422,
+    left: 20,
+
+    backgroundColor: 'rgba(27, 92, 88, 0.1)',
+    borderRadius: 12,
+  },
+  itemName: {
+    /* item1 name*/
+    position: 'absolute',
+    width: 88,
+    height: 19,
+    top: 10,
+    left: 78,
+
+    color: 'rgb(0, 0, 0)',
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 22,
+    textAlign: 'left',
+  },
+  itemDate: {
+    /* Today */
+    position: 'absolute',
+    width: 120,
+    height: 16,
+    top: 35,
+    left: 78,
+
+    color: 'rgb(102, 102, 102)',
+    fontFamily: 'Inter',
+    fontSize: 13,
+    fontWeight: '400',
+    lineHeight: 16,
+    textAlign: 'left',
+  },
+  itemMoney: {
+    /* Today */
+    position: 'absolute',
+    width: 120,
+    height: 24,
+    top: 25,
+    right: 15,
+
+    color: 'rgb(249, 91, 81)',
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22,
+    textAlign: 'right',
+  },
+  itemMoney1: {
+    /* Today */
+    position: 'absolute',
+    width: 120,
+    height: 24,
+    top: 25,
+    right: 15,
+
+    color: 'rgb(37, 169, 105)',
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22,
+    textAlign: 'right',
+  },
+  item2: {
+    /* item1 */
+    position: 'absolute',
+    width: 374,
+    height: 70,
+    top: 502,
+    left: 20,
+
+    backgroundColor: 'rgba(27, 92, 88, 0.1)',
+    borderRadius: 12,
+  },
+  item3: {
+    /* item1 */
+    position: 'absolute',
+    width: 374,
+    height: 70,
+    top: 582,
+    left: 20,
+
+    backgroundColor: 'rgba(27, 92, 88, 0.1)',
+    borderRadius: 12,
+  },
+  item4: {
+    /* item1 */
+    position: 'absolute',
+    width: 374,
+    height: 70,
+    top: 662,
+    left: 20,
+
+    backgroundColor: 'rgba(27, 92, 88, 0.1)',
+    borderRadius: 12,
   },
 });
 

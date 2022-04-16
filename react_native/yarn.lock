@@ -5457,7 +5457,7 @@ prompts@^2.0.1, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@*, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmmirror.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -5526,13 +5526,6 @@ react-is@^16.13.0, react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.npmmirror.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-native-cardview-wayne@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.npmmirror.com/react-native-cardview-wayne/-/react-native-cardview-wayne-1.0.7.tgz#a6e7afbce9c0a0d7ffb9add3f0257c6dfcb6d10f"
-  integrity sha512-nXnOYTz57RaGdvymzfB1yPLOJUBQUq1kTzMoLJmrMezjz0baF5PqJu2ccB2Cup8khloMaqs9c9E039Am0BDaeg==
-  dependencies:
-    prop-types "^15.7.2"
 
 react-native-codegen@*:
   version "0.0.14"
