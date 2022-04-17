@@ -20,7 +20,9 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const AddExpense = () => {
+const AddExpense = ({navigation, route}) => {
+  var account_id = global.accountId;
+  // console.log(account_id);
   const dateNow = new Date();
   const currentDate = `${dateNow.getFullYear()}-${
     dateNow.getMonth() + 1
@@ -37,6 +39,36 @@ const AddExpense = () => {
   const [border4, onChangeBorder4] = React.useState(false);
 
   let types = ['Income', 'Expense'];
+
+  function submit(type, name, amount, note, accountId){
+    fetch('http://10.0.2.2:8000/app/record/', {
+      method: 'post',
+      // body: JSON.stringify({
+      //   name: "wzd's psssresent",
+      //   description: "wzdssssssss's real present",
+      //   balance: 500
+      // }),
+      body: JSON.stringify({
+        // is_many: true,
+        is_income: type,
+        name: name,
+        description: note,
+        account_id: account_id,
+        amount: amount
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+      }
+    }).then(response => {
+      // let token = response.headers;
+      // console.log("account");
+      // console.log(token);
+      return response.json();
+    })
+    .then(function(data){navigation.navigate("Home")});
+  }
+  
 
   return (
     <View>
@@ -171,6 +203,7 @@ const AddExpense = () => {
             color="rgba(63,135,130,255)"
             title="submit"
             style={group2.submitButton}
+            onPress={() => submit(type, name, amount, note, accountId)}
           />
         </View>
       </View>

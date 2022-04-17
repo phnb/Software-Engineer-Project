@@ -12,6 +12,7 @@ import {
   Image,
   TextInput,
 } from 'react-native';
+import store from 'react-native-simple-store'
 
 import {
   Colors,
@@ -23,6 +24,23 @@ import {
 import Homepage from './homepage';
 // import TouchableButton from '../components/button';
 var {width, height, scale} = Dimensions.get('window');
+
+function setCookie(map){
+
+  let cookie = map['set-cookie']
+  // console.log("here");
+
+  if(cookie.includes('Path=/;')){
+      let strArr = cookie.split('Path=/;')
+      cookie = strArr.join('')
+      cookie += '; Path=/'
+      // console.log(cookie)
+  }
+
+  store.save('cookie',cookie)
+  global.cookie = cookie
+}
+
 
 const LoginView = ({navigation}) => {
   const [username, OnchangeUsername] = useState('');
@@ -44,8 +62,8 @@ const LoginView = ({navigation}) => {
   //   // }).then(function(data) {
   //   // navigation.navigate('Homepage');
   //   //   console.log(username);
+
   function submit(username, pwd) {
-    navigation.navigate('Homepage');
     fetch('http://10.0.2.2:8000/auth/signin/', {
       method: 'post',
       body: JSON.stringify({
@@ -56,17 +74,25 @@ const LoginView = ({navigation}) => {
         'Content-Type': 'application/json',
       },
     })
-      .then(response => response.json())
+      .then(response =>{
+        // let token = response.headers;
+        let map = response.headers.map;
+        // console.log(map);
+        setCookie(map);
+        
+        return response.json();
+      })
       .then(function (data) {
         if (!data.success) {
           navigation.navigate('OnBoarding');
         }
         else{
           let account_id = data["default_account_id"];
-          console.log(account_id);
-          OnchangeAccountId(account_id)
+          // OnchangeAccountId(account_id)
           // navigation.setParams(accountId);
-          navigation.navigate('Homepage', {accountId:accountId});
+          global.accountId = account_id;
+          global.username = username;
+          navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
         }
       });
     // .then(function(data) {

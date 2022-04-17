@@ -36,7 +36,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Add">
+      <Stack.Navigator initialRouteName="OnBoarding">
         {/* <Stack.Navigator initialRouteName='Homepage'> */}
         <Stack.Screen
           name="splashScreen"

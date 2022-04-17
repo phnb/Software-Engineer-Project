@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -8,9 +9,14 @@ from cashsys import settings
 from authsys.models import *
 from authsys.form import *
 
+# permissions
+from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import BasicAuthentication
 # decorators
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from rest_framework.decorators import permission_classes
 
 # DRF stuffs
 from cashapp.serializers import *
@@ -28,12 +34,23 @@ from django.db.models import Q
 # signal stuffs
 from cashapp.signals import RecordSaveHandler
 
+
+def rectt(request):
+    print("sdadasd")
+    print(request.user.is_authenticated)
+    print(request.user)
+    return HttpResponse("ff")
+
 @method_decorator(login_required, name='dispatch')
+# @permission_classes((AllowAny, ))
 # @api_view(["GET", "POST", "PATCH", "DELETE"])
 # json provided
 class RecordModify(generics.GenericAPIView):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
+    permission_classes = ()
+    # permission_classes = [IsAuthenticated]
+    # authentication_classes = [BasicAuthentication]
     # filter_backends = [ObjectPermissionsFilter]
 
     def get(self, request):
@@ -82,6 +99,10 @@ class RecordModify(generics.GenericAPIView):
     def post(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
         # add new rec
+        print("sdasa")
+        print(request.user.is_authenticated)
+        print(request.user)
+        print(request.user.username)
         user = request.user
         data = request.data
         accid = data["account_id"]
@@ -170,6 +191,10 @@ class RecordModify(generics.GenericAPIView):
 class AccountModify(generics.GenericAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
+    permission_classes = ()
+    # permission_classes = [IsAuthenticated]
+    authentication_classes = [BasicAuthentication]
+    
     # filter_backends = [ObjectPermissionsFilter]
 
     def get(self, request):
@@ -208,6 +233,9 @@ class AccountModify(generics.GenericAPIView):
         # add new account
         user = request.user
         data = request.data
+        print(user)
+        print(user.username)
+        print(user.is_authenticated)
         # print(data)
         # data = json.loads(body)
         if Account.objects.filter(name=data["name"]):
@@ -217,7 +245,14 @@ class AccountModify(generics.GenericAPIView):
         acc = Account()
         print("in!")
         # set foreign key
-        acc.userProfile = request.user.user_profile
+
+        # avoid fucking error, not finding user
+        try:
+            acc.userProfile = request.user.user_profile
+        except:
+            print("SHIT, user not found")
+            return JsonResponse(status=401, data={"success": False})
+
         # set other normal fields
         accSeri = AccountSerializer(acc, data=data, partial=True)
         if accSeri.is_valid():
