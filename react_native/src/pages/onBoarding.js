@@ -9,6 +9,7 @@ import {
   View,
   Image,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Colors,
@@ -40,25 +41,29 @@ const OnBoarding = ({navigation}) => {
           <View style={group2.ellipse3} />
         </View>
       </View>
-      <View style={group1.frame}>
+      {/* <View style={group1.rectangular1} /> */}
+      <TouchableOpacity
+        style={group1.frame}
+        onPress={() => navigation.navigate('Registration')}
+      >
+        <Text style={slogen.text2}>Get Started </Text>
+      </TouchableOpacity>
+      {/* <View style={group1.frame}>
         <Button
           title="    Get Started    "
           color="rgba(63,135,130,255)"
           onPress={() => navigation.navigate('Login')}
         />
-      </View>
+      </View> */}
       {/* <Text style={group1.text}>Get Started</Text> */}
-      <View style={group1.rectangular1} />
       <Text style={slogen.text1}>Spend Smarter Save More</Text>
-      <Text style={slogen.text2}>Already Have Account?</Text>
-      <View style={slogen.text3}>
-        <Button
-          title="Log in"
-          // color="rgba(68, 68, 68, 0.1)"
-          color="rgba(132, 21, 132, 0.4)"
-          onPress={() => navigation.navigate('Login')}
-        />
-      </View>
+      {/* <Text style={slogen.text2}>Already Have Account?</Text> */}
+      <TouchableOpacity
+        style={slogen.text3}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <Text style={slogen.text4}>Already Have Account? Log in</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -74,6 +79,7 @@ const group1 = StyleSheet.create({
 
     backgroundColor: 'rgba(63,135,130,255)',
     borderRadius: 40,
+    elevation: 10,
 
     display: 'flex',
     flexDirection: 'row',
@@ -136,13 +142,35 @@ const slogen = StyleSheet.create({
     textTransform: 'capitalize',
   },
   text2: {
+    /* spend smarter save more */
+    position: 'absolute',
+    width: 301,
+    height: 76,
+    top: 12,
+    left: 34,
+
+    color: "rgb(255,255,255)",
+    fontFamily: 'Inter',
+    fontSize: 24,
+    fontWeight: '800',
+    lineHeight: 38,
+    textAlign: 'center',
+    textTransform: 'capitalize',
+  },
+  text3: {
     /* Already have account? Log In */
     position: 'absolute',
     width: 199,
     height: 17,
-    top: 720,
-    left: 85,
+    top: 710,
+    left: 100,
 
+    backgroundColor: 'rgb(255, 255, 255, 0.1)',
+    borderRadius: 2,
+  },
+  text4: {
+    position: 'absolute',
+    left: 6,
     color: 'rgb(68, 68, 68)',
     fontFamily: 'Inter',
     fontSize: 14,
@@ -150,25 +178,7 @@ const slogen = StyleSheet.create({
     lineHeight: 17,
     // textAlign: 'center',
     textTransform: 'capitalize',
-  },
-  text3: {
-    /* Already have account? Log In */
-    position: 'absolute',
-    width: 80,
-    height: 34,
-    top: 710,
-    left: 235,
 
-    backgroundColor: 'rgba(132, 21, 132, 0.1)',
-    // borderRadius: 40,
-
-    // color: 'rgb(68, 68, 68)',
-    // fontFamily: 'Inter',
-    // fontSize: 14,
-    // fontWeight: '400',
-    // lineHeight: 17,
-    // textAlign: 'center',
-    // textTransform: 'capitalize',
   },
 });
 
