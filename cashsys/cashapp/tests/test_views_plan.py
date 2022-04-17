@@ -9,7 +9,6 @@ from datetime import datetime
 from datetime import timedelta
 import json
 
-
 # Test view functions.
 class TestPlanViews(TestCase):
     def setUp(self):
@@ -56,7 +55,7 @@ class TestPlanViews(TestCase):
             start_time = datetime.utcnow(),
             end_time = datetime.utcnow() + timedelta(days=2),
             budget = 5000,
-            account = self.accountDef.id,
+            account = self.accountDef,
             userProfile = self.userProf
         )
         self.planBdef = Plan.objects.create(
@@ -65,9 +64,10 @@ class TestPlanViews(TestCase):
             start_time = datetime.utcnow(),
             end_time = datetime.utcnow() + timedelta(seconds=2),
             budget = 3000,
-            account = self.accountDef.id,
+            account = self.accountDef,
             userProfile = self.userProf
         )
+        print("!!!!!!!!!www!!!!!!!!")
 
     # verify the login state
     def test_defaultUsr_login(self):
@@ -105,16 +105,16 @@ class TestPlanViews(TestCase):
             start_time = datetime.utcnow(),
             end_time = datetime.utcnow() + timedelta(days=2),
             budget = 2000,
-            account = self.accountDef.id,
+            account = self.accountDef,
             userProfile = self.userProf
         )
         planD = Plan.objects.create(
             name = "Ah man, more plans, better planned.",
             description = "If Plan A isn't working, I have Plan B, Plan C, and even Plan D. By Serena Williams",
             start_time = datetime.utcnow(),
-            end_time = datetime.utcnow() + timedelta(months=2),
+            end_time = datetime.utcnow() + timedelta(days=2),
             budget = 7000,
-            account = self.accountDef.id,
+            account = self.accountDef,
             userProfile = self.userProf
         )
 
@@ -124,7 +124,7 @@ class TestPlanViews(TestCase):
 
         self.assertEquals(response.status_code, 201)
         self.assertEquals(len(content), 4)
-        self.assertEquals(content[0].id, planD.id) # checking for the descending order
+        self.assertEquals(content[0]["id"], planD.id) # checking for the descending order
         
         # error: invalid account id
         response = self.client.get(reverse("planViews"), {"is_account_many" : 'true', "is_user_many" : 'false', "account_id": str(99999)} )
@@ -140,34 +140,29 @@ class TestPlanViews(TestCase):
             name = "How comes plan E! Fantastic, you mush be a careful man!",
             description = "No one has any idea what's going to happen. Not even Elon Musk. That's why he's building those rockets. He wants a 'Plan B' on another world. By Stephen Colbert",
             start_time = datetime.utcnow(),
-            end_time = datetime.utcnow() + timedelta(months=2),
+            end_time = datetime.utcnow() + timedelta(days=2),
             budget = 3000,
-            account = self.accountDef2.id,
+            account = self.accountDef2,
             userProfile = self.userProf
         )
 
         # normal case
-        response = self.client.get(reverse("planViews"), {"is_account_many" : 'false', "is_user_many" : 'true'} )
+        response = self.client.get(reverse("planViews"), {"is_account_many" : 'false', "is_user_many" : 'true', "uid": str(self.user.id)} )
         content = response.json()
 
         # assert plans' validity
         self.assertEquals(response.status_code, 201)
-        self.assertEquals(len(content), 5)
-        self.assertEquals(content[0].id, planE.id) # check returning order (descending)
+        self.assertEquals(len(content), 3)
+        self.assertEquals(content[0]["id"], planE.id) # check returning order (descending)
 
-        # error case: user logged out!!!!!!!!
-        uid = self.user.id
-        self.client.logout(self.user)
-        response = self.client.get(reverse("planViews"), {"is_account_many" : 'false', "is_user_many" : 'true'} )
+        # error case: uid forgery
+        uid = 3
+        response = self.client.get(reverse("planViews"), {"is_account_many" : 'false', "is_user_many" : 'true', "uid": str(uid)} )
         content = response.json()
 
         # assert plans' validity
-        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)
-
-        # re-in ??????
-        login = self.client.login(username='testuser', password='123456')
-        self.user = User.objects.get(pk=uid)
 
     def test_POST_plan(self):
         # set-up codes
@@ -177,9 +172,10 @@ class TestPlanViews(TestCase):
             "name": "Lazy to make the name.", 
             "description": "Lazy to make the desc. XO", 
             "start_time": datetime.utcnow(), 
-            "end_Time": datetime.utcnow() + timedelta(months=2), 
+            "end_time": datetime.utcnow() + timedelta(days=2), 
             "budget": 3400.5, 
-            "account_id": self.accountDef2
+            "account_id": self.accountDef2.id,
+            "uid": self.user.id
         }
 
         response = self.client.post(reverse("planViews"),
@@ -196,9 +192,10 @@ class TestPlanViews(TestCase):
             "name": "Lazy to make the name.", 
             "description": "Lazy to make the desc. XO", 
             "start_time": datetime.utcnow(), 
-            "end_Time": datetime.utcnow() + timedelta(months=2), 
+            "end_Time": datetime.utcnow() + timedelta(days=2), 
             "budget": -3400.5, 
-            "account_id": self.accountDef2
+            "account_id": self.accountDef2.id,
+            "uid": self.user.id
         }
         response = self.client.post(reverse("planViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -214,9 +211,10 @@ class TestPlanViews(TestCase):
             "name": "Lazy to make the name.", 
             "description": "Lazy to make the desc. XO", 
             "start_time": datetime.utcnow(), 
-            "end_Time": datetime.utcnow() + timedelta(months=2), 
+            "end_Time": datetime.utcnow() + timedelta(days=2), 
             "budget": 8400.5, 
-            "account_id": 9999
+            "account_id": 9999,
+            "uid": self.user.id
         }
         response = self.client.post(reverse("planViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -276,23 +274,23 @@ class TestPlanViews(TestCase):
             start_time = datetime.utcnow(),
             end_time = datetime.utcnow() + timedelta(days=2),
             budget = 3400,
-            account = self.accountDef2.id,
+            account = self.accountDef2,
             userProfile = self.userProf
         )
         planG = Plan.objects.create(
             name = "God I'm tired, this finally becomes my last plan. XO",
             description = "Plan A is to hitch a ride out of here. But if they want a war, then plan G is to win it.. WIN CSC4001 PROJECT! By Lee Child",
             start_time = datetime.utcnow(),
-            end_time = datetime.utcnow() + timedelta(months=2),
+            end_time = datetime.utcnow() + timedelta(days=2),
             budget = 99999,
-            account = self.accountDef2.id,
+            account = self.accountDef2,
             userProfile = self.userProf
         )
 
         # test codes
         # error case: type error
         data_dict = {
-            "del_id_list": [str(planF.id), str(planG.id)]
+            "del_id_list": ["planF.id", "planG.id"]
         }
         response = self.client.delete(reverse("planViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -300,6 +298,9 @@ class TestPlanViews(TestCase):
         content = response.json()
 
         # assert plans' validity
+        print("content！！！！！")
+        print(content)
+        print("csssssssssssssssssssssssssssssssssssssontent")
         self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)
 
@@ -330,3 +331,5 @@ class TestPlanViews(TestCase):
         self.assertEquals(content["success"], True)
 
         
+# logout login behavioral change!
+# uid needs adding for input argument!
