@@ -18,11 +18,18 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
         incr = instance.amount
         is_income = instance.is_income
     else:
+        print("ee")
         try:
-            incr = abs(instance.amount - kwargs["prev_amount"])
-            is_income = (instance.amount >= kwargs["prev_amount"])
+            income_bool_dict = {True: 1, False: -1}
+            if instance.is_income ^ kwargs["prev_is_income"]:
+                incr = abs(income_bool_dict[instance.is_income] * instance.amount + income_bool_dict[kwargs["prev_is_income"]] * kwargs["prev_amount"])
+            else:
+                incr = abs(instance.amount - kwargs["prev_amount"])
+            is_income = ((income_bool_dict[instance.is_income] * instance.amount - income_bool_dict[kwargs["prev_is_income"]] * kwargs["prev_amount"]) >= 0)
         except: 
             return 0
+
+    print("now")
 
     if is_income:
         # update account balance
@@ -30,17 +37,19 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
         instance.account.save()
 
         # update plan remaining 
-        for plan in instance.plans.all():
-            plan.remaining += incr
-            plan.save()
+        # for plan in instance.plans.all():
+        #     plan.remaining += incr
+        #     plan.save()
 
     else:
         # update account balance
+        print("hereeee")
         instance.account.balance -= incr
         instance.account.save()
 
         # update plan remaining 
         for plan in instance.plans.all():
+            print("sub!")
             plan.remaining -= incr
             if plan.remaining <= 0:
                 plan.failed = True
@@ -75,10 +84,6 @@ def RecordDeleteHandler(sender, instance, **kwargs):
   
 # post_save.connect(RecordSaveHandler, sender=Record)
 # post_delete.connect(RecordDeleteHandler, sender=Record)
-
-# def PlanSaveHandler(sender, instance, created, **kwargs):
-#     print(instance.id)
-#     # my code
 
 # def AccountSaveHandler(sender, instance, created, **kwargs):
 #     print(instance.id)

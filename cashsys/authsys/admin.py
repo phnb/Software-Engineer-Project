@@ -1,11 +1,10 @@
 from django.contrib import admin
-
 # Register your models here.
 from .models import UserProfile
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-    # list_display = ['id', 'url', 'file_size', 'FK_Comment_id']
+    list_display = ['id', 'username', 'first_name', 'last_name', "email", "avatar"]
 
     search_fields = ['id']
 
@@ -14,6 +13,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     # ordering设置默认排序字段，负号表示降序排序
     ordering = ['id']
+
 
 # Register your models here.
 admin.site.register(UserProfile, UserProfileAdmin)
