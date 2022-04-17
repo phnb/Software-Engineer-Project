@@ -42,33 +42,33 @@ const ChangePwd = ({navigation}) => {
       Alert.alert('Incorrect password confirmation!');
       return;
     }
-    // fetch('http://10.0.2.2:8000/auth/reset/', {
-    //   method: 'post',
-    //   body: JSON.stringify({
-    //     email: email,
-    //     firstname: "ddg",
-    //     password: pwd,
-    //     confirmpassword: pwdConfirm
-    //   }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(response=>response.json())
-    // .then(function(data) {
-    //   Alert.alert(
-    //     "Welcome!",
-    //     "A confirmation email is sent...",
-    //     [
-    //       {
-    //         text: "OK",
-    //         onPress: () => {
-    //           navigation.navigate('Login');
-    //           console.log(username);
-    //         }
-    //       }
-    //     ]
-    //   );
-    // })
+    fetch('http://10.0.2.2:8000/auth/reset/', {
+      method: 'post',
+      body: JSON.stringify({
+        email: email,
+        firstname: "ddg",
+        password: pwd,
+        confirmpassword: pwdConfirm
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response=>response.json())
+    .then(function(data) {
+      Alert.alert(
+        "Welcome!",
+        "A confirmation email is sent...",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate('Login');
+              console.log(username);
+            }
+          }
+        ]
+      );
+    })
   }
 
   return (
