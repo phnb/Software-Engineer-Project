@@ -38,6 +38,7 @@ function Card({navigation, isExist, name, time, cost, type, top }) {
   );
 };
 
+
 const group1 = StyleSheet.create({
   img: {
     width: 40,
