@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
+  DeviceEventEmitter,
   View,
   Image,
   Button,
@@ -22,21 +23,59 @@ import Profile from './profile';
 import Statistic from './statistic';
 import Wallet from './wallet';
 import AddExpense from './addExpense';
+import Card from '../components/card';
 import { StackRouter } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
+
+function getBeforeDate(n) {
+  var n = n;
+  var d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
+
+function gettime(m_time){
+  var m_date = new Date(m_time)
+  var n_date = new Date();
+  n_date.setDate(n_date.getDate()+2)
+  if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
+    console.log("Today");
+    return "Today";
+  }
+  else{
+    n_date.setDate(n_date.getDate() - 1);
+    if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
+      console.log("Yesterday");
+      return "Yesterday";
+    }
+    else{
+      // console.log(m_date.toDateString())
+      var date = m_date.toDateString();
+      var list = date.split(' ');
+      var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
+      console.log(formal_date);
+      return formal_date;
+    }
+  }
+}
 
 const Homescreen = ({ navigation, route }) => {
   // const { accountId } = route.params;
   // const { username } = route.params;
   var accountId = global.accountId;
   var username = global.username;
+  const [records, setRecords] = useState();
 
   const [expense, OnchangeExpense] = useState(0);
+  const [test, OnchangeTest] = useState(true);
   const [income, OnchangeIncome] = useState(0);
   const [balance, OnchangeBalance] = useState(0);
   // const [username, OnchangeUsername] = useState('');
   const [welcome, OnchangeWelcome] = useState('');
+
+  // const recrodsName = ['Transfer', 'Transfer', 'Paypal'];
+  // let recrodsLen = recrodsName .length;
 
   var date = new Date();
   useEffect(() => {
@@ -50,71 +89,72 @@ const Homescreen = ({ navigation, route }) => {
     }
     // console.log("start");
     // console.log(welcome);
-  },[date])
+    date = new Date();
+  },[test])
   
 
   // console.log(cookie);
   // wzdnb 123
-  // fetch('http://10.0.2.2:8000/app/record/', {
-  //     method: 'post',
-  //     // body: JSON.stringify({
-  //     //   name: "wzd's psssresent",
-  //     //   description: "wzdssssssss's real present",
-  //     //   balance: 500
-  //     // }),
-  //     body: JSON.stringify({
-  //       // is_many: true,
-  //       is_income: true,
-  //       name: "wzd's present",
-  //       description: "wzd's real present",
-  //       account_id: accountId,
-  //       amount: 500
-  //     }),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Cookie': cookie,
-  //     }
-  //   }).then(response => {
-  //     // let token = response.headers;
-  //     // console.log("account");
-  //     // console.log(token);
-  //     return response.json();
-  //   })
-  //     .then(function(data){
-  //       console.log("here");
-  //       // for (let i = 0; i < data.length; i++) {
-  //         const element = data; //[i];
-  //         amount = element["amount"];
-  //         is_income = element["is_income"];
-  //         if (is_income) {
-  //           amount += income;
-  //           OnchangeIncome(amount);
-  //         }
-  //         else{
-  //           amount += expense;
-  //           OnchangeExpense(amount);
-  //         }
-  //       // }
-  //     })
+  
+  // url += accountId;
+  // console.log(start_time);
+  useEffect(() => {
+    console.log("second");
+    var is_many = true;
+    var is_many_time = true;
+    var url = 'http://10.0.2.2:8000/app/record/';
+    var end_time = new Date().toISOString();
+    var start_time = getBeforeDate(7);
+    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+    .then(response => response.json())
+      .then(function(data){
+          // console.log(data);
+          const income_records = data["income_records"]; //[i];
+          const outcome_records = data["outcome_records"];
+          var amount = 0;
+          for (let i = 0; i < income_records.length; i++) {
+            const element = income_records[i];
+            amount += element["amount"];
+          }
+          OnchangeIncome(amount);
+          amount = 0;
+          for (let i = 0; i < outcome_records.length; i++) {
+            const element = outcome_records[i];
+            amount += element["amount"];
+          }
+          OnchangeExpense(amount);
+            // console.log("come in");
+          // }
+      }
+    )
+    is_many = true;
+    var record_max_num = 4;
+    fetch(`${url}?is_many=${is_many}&record_max_num=${record_max_num}&account_id=${accountId}`)
+      .then(response => response.json())
+      .then(
+        data => {
+          for (let i = 0; i < data.length; i++) {
+            data[i]["modified_time"] = gettime(data[0]["modified_time"]);
+          }
+          
+          // console.log(data)
+          setRecords(data);
+        }
+    )
+    
+    is_many = false;
+    url = 'http://10.0.2.2:8000/app/account/'
+    fetch(`${url}?is_many=${is_many}&account_id=${accountId}`)
+    .then(response => response.json())
+      .then(function(data){
+          var bal = data["balance"];
+          // console.log(bal);
+          OnchangeBalance(bal);
+        // }
+      }
+    )
+  },[test])
 
-      // fetch('http://10.0.2.2:8000/auth/signout/').then(response => response.json())
-      // .then(function(data){
-      //   console.log(data);
-      // })
-  // fetch('http://10.0.2.2:8000/app/account/', {
-  //   method: 'get',
-  //   body: JSON.stringify({
-  //     is_many: false,
-  //     account_id: accountId
-  //   }),
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   }
-  // }).then(response => response.json())
-  //   .then(function(data){
-  //     bal = data["balance"];
-  //     OnchangeBalance(bal);
-  //   })
   return (
     <View>
       <View style={group1.rectangle1}>
@@ -126,6 +166,11 @@ const Homescreen = ({ navigation, route }) => {
       </View>
       <View style={group2.rectangle2} />
       <View style={group2.rectangle1}>
+      <Button
+        onPress={() => OnchangeTest(!test)}
+        color="#BCBCBC"
+        title="Forget password?"
+      />
         {/* <View style={group2.frame1}>
           <View style={group2.arrayDown1}>
             <Image
@@ -151,38 +196,21 @@ const Homescreen = ({ navigation, route }) => {
           </View>
         </View> */}
       </View>
+      <Text style={group2.total}>Total Balance</Text>
+      <Text style={group2.totalBalance}>$ {balance} </Text>
+      <Text style={group3.transactions}>Transactions History</Text>
       <Text style={group2.expense}>Expenses</Text>
       <Text style={group2.expenseNum}>$ {expense}</Text>
       <Text style={group2.income}>Income</Text>
       <Text style={group2.incomeNum}>$ {income}</Text>
-      <Text style={group2.total}>Total Balance</Text>
-      <Text style={group2.totalBalance}>$ {balance} </Text>
-      <Text style={group3.transactions}>Transactions History</Text>
       <Text style={group3.latest}>Latest 4 records</Text>
-      <View style={group4.item1}>
-        <Text style={group4.itemName}>Youtube</Text>
-        <Image style={group4.img} source={require('./imgs/image1.png')} />
-        <Text style={group4.itemDate}>Today</Text>
-        <Text style={group4.itemMoney}> - $ 40.00</Text>
-      </View>
-      <View style={group4.item2}>
-        <Text style={group4.itemName}>Paypal</Text>
-        <Image style={group4.img} source={require('./imgs/image3.png')} />
-        <Text style={group4.itemDate}>Yesterday</Text>
-        <Text style={group4.itemMoney1}> + $ 240.00</Text>
-      </View>
-      <View style={group4.item3}>
-        <Text style={group4.itemName}>Starbucks</Text>
-        <Image style={group4.img} source={require('./imgs/image2.png')} />
-        <Text style={group4.itemDate}>April 10, 2022</Text>
-        <Text style={group4.itemMoney}> - $ 20.00</Text>
-      </View>
-      <View style={group4.item4}>
-        <Text style={group4.itemName}>Paypal</Text>
-        <Image style={group4.img} source={require('./imgs/image3.png')} />
-        <Text style={group4.itemDate}>April 8, 2022</Text>
-        <Text style={group4.itemMoney}> - $ 3000.00</Text>
-      </View>
+      {records ? 
+      <View>
+        <Card navigation={navigation} isExist={records.length >= 1} name={records[0]["name"]} time={records[0]["modified_time"]} cost={records[0]["amount"]} type={records[0]["is_income"]} top={422} />
+        <Card navigation={navigation} isExist={records.length >= 2} name={records[1]["name"]} time={records[1]["modified_time"]} cost={records[1]["amount"]} type={records[1]["is_income"]} top={502} />
+        <Card navigation={navigation} isExist={records.length >= 3} name={records[2]["name"]} time={records[2]["modified_time"]} cost={records[2]["amount"]} type={records[2]["is_income"]} top={582} />
+        <Card navigation={navigation} isExist={records.length >= 4} name={records[3]["name"]} time={records[3]["modified_time"]} cost={records[3]["amount"]} type={records[3]["is_income"]} top={662} />
+      </View> : <View></View>}
     </View>
   );
 };
@@ -239,6 +267,7 @@ const Homepage = (navigation, route) => {
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
+        initialParams={{accountId:1}}
         // initialParams={{accountId:1}}
       />
       <Tab.Screen
@@ -312,31 +341,31 @@ const group1 = StyleSheet.create({
   text1: {
     /* Good afternoon */
     position: 'absolute',
-    width: 110,
-    height: 17,
-    top: 54,
+    width: 150,
+    height: 20,
+    top: 50,
     left: 44,
 
     color: 'rgb(255, 255, 255)',
     fontFamily: 'Inter',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    lineHeight: 17,
+    lineHeight: 20,
     textAlign: 'left',
   },
   text2: {
     /* Jared Dai */
     position: 'absolute',
     width: 167,
-    height: 24,
-    top: 78,
+    height: 30,
+    top: 70,
     left: 44,
 
     color: 'rgb(255, 255, 255)',
     fontFamily: 'Inter',
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 24,
+    fontSize: 22,
+    fontWeight: '800',
+    lineHeight: 30,
     textAlign: 'left',
   },
 });
@@ -413,7 +442,7 @@ const group2 = StyleSheet.create({
   expense: {
     /* Expenses */
     position: 'absolute',
-    width: 77,
+    width: 90,
     height: 22,
     top: 246,
     left: 260,
@@ -428,7 +457,7 @@ const group2 = StyleSheet.create({
   income: {
     /* Income */
     position: 'absolute',
-    width: 53,
+    width: 90,
     height: 19,
     top: 246,
     left: 48,
@@ -458,7 +487,7 @@ const group2 = StyleSheet.create({
   expenseNum: {
     /* Expenses */
     position: 'absolute',
-    width: 81,
+    width: 120,
     height: 24,
     top: 266,
     left: 260,
@@ -612,39 +641,6 @@ const group4 = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 22,
     textAlign: 'right',
-  },
-  item2: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 502,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
-  },
-  item3: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 582,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
-  },
-  item4: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 662,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
   },
 });
 

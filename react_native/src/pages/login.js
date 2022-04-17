@@ -11,6 +11,7 @@ import {
   Dimensions,
   Image,
   TextInput,
+  Alert,
 } from 'react-native';
 import store from 'react-native-simple-store'
 
@@ -34,6 +35,7 @@ function setCookie(map){
       let strArr = cookie.split('Path=/;')
       cookie = strArr.join('')
       cookie += '; Path=/'
+      // cookie = 'uid=1; ' + cookie;
       // console.log(cookie)
   }
 
@@ -73,7 +75,18 @@ const LoginView = ({navigation}) => {
       })
       .then(function (data) {
         if (!data.success) {
-          navigation.navigate('OnBoarding');
+          Alert.alert(
+            "sorry!",
+            "password or username is error!",
+            [
+              {
+                text: "OK",
+                onPress: () => {
+                  navigation.navigate('OnBoarding');
+                }
+              }
+            ]
+          );
         }
         else{
           let account_id = data["default_account_id"];
@@ -81,6 +94,8 @@ const LoginView = ({navigation}) => {
           // navigation.setParams(accountId);
           global.accountId = account_id;
           global.username = username;
+          global.refresh = false;
+          global.uid = data["uid"];
           navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
         }
       });

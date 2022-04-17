@@ -23,6 +23,7 @@ import Homepage from './pages/homepage';
 import LoginView from './pages/login';
 import Registration from './pages/registrate';
 import ChangePwd from './pages/changePwd';
+import CardInfo from './pages/cardInfo';
 // import LevelSeparator from './pages/LevelSeparator';
 
 const SplashScreen = () => {
@@ -38,10 +39,11 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="OnBoarding">
+      {/* <Stack.Navigator initialRouteName="OnBoarding"> */}
+      <Stack.Navigator initialRouteName="Homepage">
         {/* <Stack.Navigator initialRouteName='Homepage'> */}
         <Stack.Screen
-          name="splashScreen"
+          name="SplashScreen"
           component={SplashScreen}
           options={{headerShown: false}}
         />
@@ -68,6 +70,11 @@ const App = () => {
         <Stack.Screen
           name="ChangePwd"
           component={ChangePwd}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="CardInfo"
+          component={CardInfo}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

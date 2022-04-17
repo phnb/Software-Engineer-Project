@@ -7,6 +7,7 @@ import {
   Text,
   useColorScheme,
   View,
+  DeviceEventEmitter,
   Image,
   Button,
   TextInput,
@@ -37,11 +38,25 @@ const AddExpense = ({navigation, route}) => {
   const [border2, onChangeBorder2] = React.useState(false);
   const [border3, onChangeBorder3] = React.useState(false);
   const [border4, onChangeBorder4] = React.useState(false);
+  const [refresh, OnchangeRefresh] = React.useState(true);
 
   let types = ['Income', 'Expense'];
 
+  React.useEffect(() => {
+    onChangeName('');
+    onChangeAmount('');
+    onChangeDate('  '+currentDate);
+    onChangeNote('');
+    onChangeType(true);
+    onChangeBorder1(false);
+    onChangeBorder2(false);
+    onChangeBorder3(false);
+    onChangeBorder4(false);
+  },[refresh])
+
   function submit(type, name, amount, note, accountId){
-    fetch('http://10.0.2.2:8000/app/record/', {
+    console.log(cookie);
+    fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'post',
       // body: JSON.stringify({
       //   name: "wzd's psssresent",
@@ -54,7 +69,8 @@ const AddExpense = ({navigation, route}) => {
         name: name,
         description: note,
         account_id: account_id,
-        amount: amount
+        amount: amount,
+        uid: global.uid
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +82,13 @@ const AddExpense = ({navigation, route}) => {
       // console.log(token);
       return response.json();
     })
-    .then(function(data){navigation.navigate("Home")});
+    .then(function(data){
+      // DeviceEventEmitter.emit('refresh');
+      OnchangeRefresh(!refresh);
+      navigation.navigate("Home");
+    });
+
+
   }
   
 

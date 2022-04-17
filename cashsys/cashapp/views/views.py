@@ -1,3 +1,5 @@
+import re
+from urllib import response
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -37,16 +39,34 @@ class RecordModify(generics.GenericAPIView):
     serializer_class = RecordSerializer
     # filter_backends = [ObjectPermissionsFilter]
 
+    # input: "true"/"false", output: T/F
+    def bool_to_bool(self, bol):
+        if (bol=='true'):
+            return True
+        else:
+            return False
+
+    # input: "4", output: 4
+    def int_to_int(self, num):
+        return int(num)
+
     def get(self, request):
         user = request.user
-        body = request.body
-        data = json.loads(body)
-        is_many = data["is_many"]
+        # body = request.body
+        data = request.query_params
+        # data = request.query_params.dict()
+        print(data)
+        print(data["is_many"])
+        print(type(data["is_many"]))
+        # print(is_many)
+        is_many = self.bool_to_bool(data["is_many"])
+        print(is_many)
+
 
         # is_many: controls the number of records to be searched
         # is_many_time: controls the time-range filtering
         try: 
-            is_many_time = data["is_many_time"]
+            is_many_time = self.bool_to_bool(data["is_many_time"])
         except:
             is_many_time = False
         # print("hee")
@@ -55,8 +75,10 @@ class RecordModify(generics.GenericAPIView):
             if (not is_many_time):
                 # Getting data permuted by created time
                 # filter records
-                accid = data["account_id"]
-                maxrec = data["record_max_num"]
+                print(data["account_id"])
+                accid = self.int_to_int(data["account_id"])
+                maxrec = self.int_to_int(data["record_max_num"])
+                print(accid)
 
                 # avoid null-finding case
                 try:
@@ -77,6 +99,7 @@ class RecordModify(generics.GenericAPIView):
                 accid = data["account_id"]
                 stt_time = data["start_time"]
                 end_time = data["end_time"]
+                accid = self.int_to_int(data["account_id"]) 
 
                 # filter the records within the time range
                 try:
@@ -97,7 +120,7 @@ class RecordModify(generics.GenericAPIView):
                 # serialize and return
         else:
             # Getting data with record_id    
-            record_id = data["record_id"]
+            record_id = self.int_to_int(data["record_id"])
             try:
                 rec = self.queryset.get(id=record_id)
             except:
@@ -113,9 +136,28 @@ class RecordModify(generics.GenericAPIView):
     def post(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
         # add new rec
-        user = request.user
+        # print(request.COOKIES)
+        # print("sdasa")
+        # print(request.user.is_authenticated)
+        # print(request.user)
+        # print(request.user.username)
+        # user = request.user
         data = request.data
         accid = data["account_id"]
+
+        # user_id re-authenticate for stronger robustness
+        uid = data["uid"]
+        try:
+            verify_usr = User.objects.get(pk=uid)
+            print("veri hw!!!!!!!")
+            print(verify_usr.username)
+            print(verify_usr.is_authenticated)
+            if (not verify_usr.is_authenticated):
+                # user unauthenticated
+                return JsonResponse(status=401, data={"success": False})
+        except:
+            # user_id not found
+            return JsonResponse(status=401, data={"success": False})
 
         # set foreign key
         rec = Record()
@@ -186,13 +228,26 @@ class RecordModify(generics.GenericAPIView):
     def patch(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
         # modify existing rec
-        user = request.user
+        # user = request.user
         data = request.data
         try:
             rec = self.queryset.get(id=data["record_id"])
         except:
             return JsonResponse(status=400, data={"success": False})
         
+        # user_id re-authenticate for stronger robustness
+        uid = data["uid"]
+        try:
+            verify_usr = User.objects.get(pk=uid)
+            print(verify_usr.username)
+            print(verify_usr.is_authenticated)
+            if (not verify_usr.is_authenticated):
+                # user unauthenticated
+                return JsonResponse(status=401, data={"success": False})
+        except:
+            # user_id not found
+            return JsonResponse(status=401, data={"success": False})
+
         # update changes in database and return
         prev_amount = rec.amount
         prev_is_income = rec.is_income
@@ -208,9 +263,22 @@ class RecordModify(generics.GenericAPIView):
     
     def delete(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
-        user = request.user
+        # user = request.user
         data = request.data
         delList = data["del_id_list"]
+
+        # user_id re-authenticate for stronger robustness
+        uid = data["uid"]
+        try:
+            verify_usr = User.objects.get(pk=uid)
+            print(verify_usr.username)
+            print(verify_usr.is_authenticated)
+            if (not verify_usr.is_authenticated):
+                # user unauthenticated
+                return JsonResponse(status=401, data={"success": False})
+        except:
+            # user_id not found
+            return JsonResponse(status=401, data={"success": False})
 
         # filter out the set to be deleted and delete it
         try:
@@ -238,11 +306,22 @@ class AccountModify(generics.GenericAPIView):
     serializer_class = AccountSerializer
     # filter_backends = [ObjectPermissionsFilter]
 
+    # input: ["true"]/["false"], output: T/F
+    def bool_to_bool(self, bol):
+        if (bol[0]=='true'):
+            return True
+        else:
+            return False
+
+    # input: ["4"], output: 4
+    def int_to_int(self, num):
+        return int(num)
+        
     def get(self, request):
         user = request.user
         # body = request.body
-        data = request.data
-        is_many = data["is_many"]
+        data = request.query_params
+        is_many = self.bool_to_bool(data["is_many"])
 
         if (not is_many):
             # get according to account_id

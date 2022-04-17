@@ -142,7 +142,7 @@ def signin(request):
             # get default account's id
             try:
                 defacc = usr.user_profile.accounts.get(is_default=True)
-                return JsonResponse(status=200, data={"success": True, "default_account_id": defacc.id, "uname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
+                return JsonResponse(status=200, data={"success": True, "uid": usr.id, "default_account_id": defacc.id, "uname": usr.username, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
             except:
                 # no default account or more than 1 accounts
                 return JsonResponse(status=401, data={"success": False})
@@ -177,9 +177,13 @@ def signout(request):
 
 def reset_send_mail(request):
     if request.method == "POST":
-        email = request.POST["email"]
-        pw1 = request.POST["pw1"]
-        pw2 = request.POST["pw2"]
+        data = json.loads(request.body)
+        # email = request.POST["email"]
+        # pw1 = request.POST["pw1"]
+        # pw2 = request.POST["pw2"]
+        email = data["email"]
+        pw1 = data["pw1"]
+        pw2 = data["pw2"]
         # check email-user existance
         try:
             usr = User.objects.get(email=email)
@@ -189,8 +193,8 @@ def reset_send_mail(request):
             return render(request, "resetpw/resetpw.html")
 
         if usr.is_active:
-            usr.is_reset_active = True
-            usr.save()
+            usr.user_profile.is_reset_active = True
+            usr.user_profile.save()
             # send verification email
             current_site = get_current_site(request)
             email_subject = "confirm your email - Reset password"
@@ -210,11 +214,12 @@ def reset_send_mail(request):
             email_sent.fail_silently=True
             email_sent.send()
 
-            return render(request, "resetpw/resetlink.html", {"user_name": (usr.username)})
+            return JsonResponse(status=201, data={"success": True, "username": usr.username, "uid": usr.id})
         else:
             # not activated: send error message
             messages.error(request, "user not activated yet.")
-            return render(request, "resetpw/resetpw.html")
+            return JsonResponse(status=401, data={"success": False})
+            # return render(request, "resetpw/resetpw.html")
     # return render(request, "resetpw/resetlink.html")
 
 

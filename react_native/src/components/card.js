@@ -1,61 +1,105 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+  Image,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  Colors,
+  DebugInstructions,
+  Header,
+  LearnMoreLinks,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen';
 
-class Card extends React.Component {
-  render() {
-    return (
-      <Container>
-        <Cover>
-          <Image source={this.props.image} />
-          <Title>{this.props.title}</Title>
-          <Author>by {this.props.author}</Author>
-        </Cover>
-        <Text>{this.props.text}</Text>
-      </Container>
-    );
-  }
-}
+
+function Card({navigation, isExist, name, time, cost, type, top }) {
+  let str = type ? '+' : '-';
+  return (
+    <View>
+      {!isExist ? <View></View>:
+      <TouchableOpacity 
+        style={[group1.item, {top: top}]}
+        onPress={() => navigation.navigate('CardInfo')}
+      >
+        <Text style={group1.itemName}>{name}</Text>
+        <Image style={group1.img} source={require('../pages/imgs/image3.png')} />
+        <Text style={group1.itemDate}>{time}</Text>
+        <Text style={[group1.itemMoney, {color: type ? 'rgb(37, 169, 105)' : 'rgb(249, 91, 81)'}]}>{str + ' $ ' + cost}</Text>
+      </TouchableOpacity> }
+    </View>
+  );
+};
+
+
+const group1 = StyleSheet.create({
+  img: {
+    width: 40,
+    height: 36,
+    top: 16,
+    left: 16,
+  },
+  item: {
+    /* item */
+    position: 'absolute',
+    width: 374,
+    height: 70,
+    left: 20,
+
+    backgroundColor: 'rgba(27, 92, 88, 0.1)',
+    borderRadius: 12,
+  },
+  itemName: {
+    /* item1 name*/
+    position: 'absolute',
+    width: 88,
+    height: 19,
+    top: 10,
+    left: 78,
+
+    color: 'rgb(0, 0, 0)',
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 22,
+    textAlign: 'left',
+  },
+  itemDate: {
+    /* Today */
+    position: 'absolute',
+    width: 120,
+    height: 16,
+    top: 35,
+    left: 78,
+
+    color: 'rgb(102, 102, 102)',
+    fontFamily: 'Inter',
+    fontSize: 13,
+    fontWeight: '400',
+    lineHeight: 16,
+    textAlign: 'left',
+  },
+  itemMoney: {
+    /* Today */
+    position: 'absolute',
+    width: 120,
+    height: 24,
+    top: 25,
+    right: 15,
+
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '700',
+    lineHeight: 22,
+    textAlign: 'right',
+  },
+});
 
 export default Card;
-
-const Container = styled.view`
-  width: 315px;
-  height: 460px;
-  border-radius: 14px;
-  background-color: white;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-`;
-const Cover = styled.view`
-  height: 290px;
-  border-top-left-radius: 14px;
-  border-top-right-radius: 14px;
-  overflow: hidden;
-`;
-const Image = styled.image`
-  width: 100%;
-  height: 290px;
-`;
-const Title = styled.text`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  width: 300px;
-`;
-const Author = styled.text`
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 15px;
-  font-weight: 600;
-  text-transform: uppercase;
-`;
-const Text = styled.text`
-  font-size: 17px;
-  margin: 20px;
-  line-height: 24px;
-  color: #3c4560;
-`;
