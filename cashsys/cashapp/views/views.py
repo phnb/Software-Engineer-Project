@@ -8,6 +8,7 @@ from django.contrib import messages
 from cashsys import settings
 from authsys.models import *
 from authsys.form import *
+from datetime import datetime 
 
 # permissions
 from rest_framework.permissions import AllowAny
@@ -58,29 +59,58 @@ class RecordModify(generics.GenericAPIView):
         body = request.body
         data = json.loads(body)
         is_many = data["is_many"]
+
+        # is_many: controls the number of records to be searched
+        # is_many_time: controls the time-range filtering
+        try: 
+            is_many_time = data["is_many_time"]
+        except:
+            is_many_time = False
         # print("hee")
 
         if (is_many):  
-            # Getting data permuted by created time
-            # filter records
-            accid = data["account_id"]
-            maxrec = data["record_max_num"]
+            if (not is_many_time):
+                # Getting data permuted by created time
+                # filter records
+                accid = data["account_id"]
+                maxrec = data["record_max_num"]
 
-            # avoid null-finding case
-            try:
-                # print(self.queryset.filter(account__id=accid))
-                # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
-                # print(min(maxrec, self.queryset.count()))
-                resrec = self.queryset.filter(account__id=accid).order_by("-created_time")[:min(maxrec, self.queryset.count())]
-            except:
-                resrec = None
+                # avoid null-finding case
+                try:
+                    # print(self.queryset.filter(account__id=accid))
+                    # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
+                    # print(min(maxrec, self.queryset.count()))
+                    resrec = self.queryset.filter(account__id=accid).order_by("-created_time")[:min(maxrec, self.queryset.count())]
+                except:
+                    resrec = None
 
-            # serialize and return
-            if resrec:
-                recordSeri = RecordSerializer(resrec, many=True)
-                return JsonResponse(status=201, data=recordSeri.data, safe=False)
+                # serialize and return
+                if resrec:
+                    recordSeri = RecordSerializer(resrec, many=True)
+                    return JsonResponse(status=201, data=recordSeri.data, safe=False)
+                else:
+                    return JsonResponse(status=400, data={"success": False})
             else:
-                return JsonResponse(status=400, data={"success": False})
+                stt_time = data["start_time"]
+                end_time = data["end_time"]
+
+                # filter the records within the time range
+                try:
+                    # print(self.queryset.filter(account__id=accid))
+                    # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
+                    # print(min(maxrec, self.queryset.count()))
+                    rangeRec = self.queryset.filter(Q(modified_time__gte=stt_time) & Q(modified_time__lte=end_time))
+                except:
+                    return JsonResponse(status=400, data={"success": False})
+
+                incomeRec = rangeRec.filter(is_income=True).order_by("-amount")
+                outcomeRec = rangeRec.filter(is_income=False).order_by("-amount")
+                incomeSeri = RecordSerializer(incomeRec, many=True, allow_null=True)
+                outcomeSeri = RecordSerializer(outcomeRec, many=True, allow_null=True)
+                return JsonResponse(status=201, data={"income_records": incomeSeri.data, "outcome_records": outcomeSeri.data})
+
+
+                # serialize and return
         else:
             # Getting data with record_id    
             record_id = data["record_id"]
@@ -119,15 +149,24 @@ class RecordModify(generics.GenericAPIView):
             return JsonResponse(status=401, data={"success": False})
         
         rec.account = rec_acc
+        
+        # try:
+        #     # TODO: this condition needs testing!!!
+        #     # print(rec_acc)
+        #     # print(datetime.utcnow())
+        #     # print(rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow())))
+        #     validPlans = rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow()))
+        #     # for plan in validPlans:
+        #     planList = []
+        #     for plan in validPlans:
+        #         planList.append(plan.id)
+        #         print(plan.id)
+        #     print("hee")
+        #     rec.plans.add(planList)
+        # except:
+        #     print("bnnn")
+        #     pass
 
-        # set plan (troublesome, by finding the overlapping plans and binding)
-        # avoid null plan available
-        try:
-            # TODO: this condition needs testing!!!
-            validPlans = rec_acc.plans.all().filter(Q(start_time__lte=rec.created_time) & Q(end_time__gte=rec.created_time))
-            rec.plans.set(validPlans)
-        except:
-            validPlans = None
         # validPlans = []
         # for plan in planset:
         #     if ((plan.start_time <= rec.created_time) and (plan.end_time >= rec.created_time)):
@@ -138,8 +177,27 @@ class RecordModify(generics.GenericAPIView):
         if recSeri.is_valid():
             rec = recSeri.save()
             # rec.save() # to invoke signal
-            print("here")
-            print(rec)
+
+            # set plan (troublesome, by finding the overlapping plans and binding)
+            # avoid null plan available
+            try:
+                # TODO: this condition needs testing!!!
+                print(rec_acc)
+                print(datetime.utcnow())
+                print(rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow())))
+                validPlans = rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow()))
+                # for plan in validPlans:
+                for plan in validPlans:
+                    rec.plans.add(plan.id)
+                    if not rec.is_income:
+                        plan.remaining -= rec.amount
+                        if plan.remaining <= 0:
+                            plan.failed = True
+                        plan.save()
+
+            except:
+                pass
+
             print(recSeri.data)
             return JsonResponse(status=201, data=recSeri.data)
         # "wrong parameters"
@@ -157,11 +215,13 @@ class RecordModify(generics.GenericAPIView):
         
         # update changes in database and return
         prev_amount = rec.amount
+        prev_is_income = rec.is_income
         recSeri = RecordSerializer(rec, data=data, partial=True)
         if recSeri.is_valid():
             # TODO: patch update problematic!!!!!!!
+            print("her!")
             rec = recSeri.save()
-            RecordSaveHandler(Record, rec, False, prev_amount=prev_amount)
+            RecordSaveHandler(Record, rec, False, prev_amount=prev_amount, prev_is_income=prev_is_income)
             return JsonResponse(status=201, data=recSeri.data)
         # "wrong parameters"
         return JsonResponse(status=400, data={"success": False})
@@ -310,7 +370,7 @@ class PlanModify(generics.GenericAPIView):
         if acc_many:
             # Look for the plans of a given account
             accid = data["account_id"]
-            planset = self.queryset.filter(account__id==accid)
+            planset = self.queryset.filter(account__id=accid)
             if not planset:
                 # account has no plan
                 return JsonResponse(status=201, data={"success": False})
@@ -320,7 +380,7 @@ class PlanModify(generics.GenericAPIView):
         elif usr_many:
             # Look for the plans of a given user
             upid = user.user_profile.id
-            planset = self.queryset.filter(userProfile__id==upid)
+            planset = self.queryset.filter(userProfile__id=upid)
             if not planset:
                 # user has no plan
                 return JsonResponse(status=201, data={"success": False})
@@ -364,22 +424,26 @@ class PlanModify(generics.GenericAPIView):
         user = request.user
         data = request.data
         plan = self.queryset.get(id=data["plan_id"])
-        # original_buget = plan.budget
-        # data["remaining"] = plan.remaining
-        # data["failed"] = plan.failed
+        original_buget = plan.budget
+        data["remaining"] = plan.remaining
+        data["failed"] = plan.failed
 
-        # # fields to change directly: name, description, start_time, end_time, budget
-        # # fields to change indirectly: remaining, failed
-        # if (original_buget >= data["budget"]):
-        #     # budget decrease
-        #     data["remaining"] -= original_buget - data["budget"]
-        #     # if fail after changing
-        #     if (data["remaining"] <= 0):
-        #         data["remaining"] = 0
-        #         data["failed"] = True
-        # else:
-        #     # budget increase
-        #     data["remaining"] += data["budget"] - original_buget
+        # fields to change directly: name, description, start_time, end_time, budget
+        # fields to change indirectly: remaining, failed
+        if (original_buget >= data["budget"]):
+            # budget decrease
+            data["remaining"] -= original_buget - data["budget"]
+            # Failure after changing
+            if (data["remaining"] <= 0):
+                # data["remaining"] = 0
+                data["failed"] = True
+        else:
+            # budget increase
+            ori_remain = data["remaining"]
+            data["remaining"] += data["budget"] - original_buget
+            # revival judgement
+            if ((ori_remain <= 0) and (data["remaining"] > 0)):
+                data["failed"] = False
 
         # update changes in database and return
         planSeri = PlanSerializer(plan, data=data, partial=True)

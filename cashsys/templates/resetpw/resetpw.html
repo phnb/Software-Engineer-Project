@@ -7,12 +7,19 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Reset password? Enter your email</h2>
+    <h2>Reset password? Enter your email and pws</h2>
 
     <form action="/auth/resetSend/" method="POST">
         {% csrf_token %}
         <label>Email</label>
         <input type="text" id="emil" name="email" placeholder="Input your user email" required>
+
+        <label>new pw</label>
+        <input type="text" id="pw1" name="pw1" placeholder="Input your pw" required>
+
+        <label>new pw again</label>
+        <input type="text" id="pw2" name="pw2" placeholder="Input your pw again" required>
+
         <button type="submit">Send verification email</button>
     </form>
 </body>

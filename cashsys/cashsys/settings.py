@@ -167,9 +167,15 @@ REST_FRAMEWORK = {
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+<<<<<<< HEAD
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+=======
         'rest_framework.authentication.BasicAuthentication',   # 基本认证
         # 'rest_framework.authentication.SessionAuthentication',  # session认证
     ]
+>>>>>>> 31ef0b6d5dcb909dd64c05a0c9c6a976654bf416
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
