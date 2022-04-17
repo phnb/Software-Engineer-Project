@@ -11,7 +11,7 @@ urlpatterns = [
 
     # data requests
     path('resetSend/', reset_send_mail),
-    path('resetPw/', reset_pw),
+    path('resetPw/', reset_pw), # just for testing reset pw page GETting
     path('register/', register),
     path('signin/', signin),
     path('signout/', signout),

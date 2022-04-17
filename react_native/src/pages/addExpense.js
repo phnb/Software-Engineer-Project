@@ -41,7 +41,8 @@ const AddExpense = ({navigation, route}) => {
   let types = ['Income', 'Expense'];
 
   function submit(type, name, amount, note, accountId){
-    fetch('http://10.0.2.2:8000/app/record/', {
+    console.log(cookie);
+    fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'post',
       // body: JSON.stringify({
       //   name: "wzd's psssresent",
@@ -54,7 +55,8 @@ const AddExpense = ({navigation, route}) => {
         name: name,
         description: note,
         account_id: account_id,
-        amount: amount
+        amount: amount,
+        uid: global.uid
       }),
       headers: {
         'Content-Type': 'application/json',

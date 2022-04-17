@@ -60,6 +60,7 @@ class RecordModify(generics.GenericAPIView):
         data = json.loads(body)
         is_many = data["is_many"]
 
+
         # is_many: controls the number of records to be searched
         # is_many_time: controls the time-range filtering
         try: 
@@ -129,13 +130,28 @@ class RecordModify(generics.GenericAPIView):
     def post(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
         # add new rec
-        print("sdasa")
-        print(request.user.is_authenticated)
-        print(request.user)
-        print(request.user.username)
-        user = request.user
+        # print(request.COOKIES)
+        # print("sdasa")
+        # print(request.user.is_authenticated)
+        # print(request.user)
+        # print(request.user.username)
+        # user = request.user
         data = request.data
         accid = data["account_id"]
+
+        # user_id re-authenticate for stronger robustness
+        uid = data["uid"]
+        try:
+            verify_usr = User.objects.get(pk=uid)
+            print("veri hw!!!!!!!")
+            print(verify_usr.username)
+            print(verify_usr.is_authenticated)
+            if (not verify_usr.is_authenticated):
+                # user unauthenticated
+                return JsonResponse(status=401, data={"success": False})
+        except:
+            # user_id not found
+            return JsonResponse(status=401, data={"success": False})
 
         # set foreign key
         rec = Record()
@@ -206,13 +222,26 @@ class RecordModify(generics.GenericAPIView):
     def patch(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
         # modify existing rec
-        user = request.user
+        # user = request.user
         data = request.data
         try:
             rec = self.queryset.get(id=data["record_id"])
         except:
             return JsonResponse(status=400, data={"success": False})
         
+        # user_id re-authenticate for stronger robustness
+        uid = data["uid"]
+        try:
+            verify_usr = User.objects.get(pk=uid)
+            print(verify_usr.username)
+            print(verify_usr.is_authenticated)
+            if (not verify_usr.is_authenticated):
+                # user unauthenticated
+                return JsonResponse(status=401, data={"success": False})
+        except:
+            # user_id not found
+            return JsonResponse(status=401, data={"success": False})
+
         # update changes in database and return
         prev_amount = rec.amount
         prev_is_income = rec.is_income
@@ -228,9 +257,22 @@ class RecordModify(generics.GenericAPIView):
     
     def delete(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
-        user = request.user
+        # user = request.user
         data = request.data
         delList = data["del_id_list"]
+
+        # user_id re-authenticate for stronger robustness
+        uid = data["uid"]
+        try:
+            verify_usr = User.objects.get(pk=uid)
+            print(verify_usr.username)
+            print(verify_usr.is_authenticated)
+            if (not verify_usr.is_authenticated):
+                # user unauthenticated
+                return JsonResponse(status=401, data={"success": False})
+        except:
+            # user_id not found
+            return JsonResponse(status=401, data={"success": False})
 
         # filter out the set to be deleted and delete it
         delSet = self.queryset.filter(pk__in=delList)

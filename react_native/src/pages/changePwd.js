@@ -42,32 +42,39 @@ const ChangePwd = ({navigation}) => {
       Alert.alert('Incorrect password confirmation!');
       return;
     }
-    fetch('http://10.0.2.2:8000/auth/reset/', {
+    fetch('http://10.0.2.2:8000/auth/resetSend/', {
       method: 'post',
       body: JSON.stringify({
         email: email,
-        firstname: "ddg",
-        password: pwd,
-        confirmpassword: pwdConfirm
+        pw1: pwd,
+        pw2: pwdConfirm
       }),
       headers: {
         'Content-Type': 'application/json'
       }
     }).then(response=>response.json())
     .then(function(data) {
-      Alert.alert(
-        "Welcome!",
-        "A confirmation email is sent...",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              navigation.navigate('Login');
-              console.log(username);
+      success = data["success"];
+      if (success){
+        uname = data["username"]
+        Alert.alert(
+          "Welcome, " + uname + "!",
+          "A confirmation email is sent...",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate('Login');
+              }
             }
-          }
-        ]
-      );
+          ]
+        );
+      }
+      else{
+        Alert.alert("sorry! \n Your account does not exit!");
+      }
+      console.log(data);
+      
     })
   }
 
@@ -79,7 +86,7 @@ const ChangePwd = ({navigation}) => {
         <TextInput
           placeholder={'Enter your email'}
           clearButtonMode={'while-editing'}
-          secureTextEntry={true}
+          secureTextEntry={false}
           selectionColor={'black'}
           keyboardAppearance={'dark'}
           style={[
@@ -96,7 +103,7 @@ const ChangePwd = ({navigation}) => {
           onChangeText={text => onChangeEmail(text)}
           onFocus={() => onChangeBorder3(true)}
           onBlur={() => onChangeBorder3(false)}
-          value={pwd}
+          value={email}
         />
       {/* <View style={styles.rectangular1}> */}
         <Text style={styles.name}>New Password</Text>
