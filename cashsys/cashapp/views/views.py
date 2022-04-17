@@ -1,3 +1,4 @@
+import re
 from urllib import response
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -54,17 +55,34 @@ class RecordModify(generics.GenericAPIView):
     # authentication_classes = [BasicAuthentication]
     # filter_backends = [ObjectPermissionsFilter]
 
+    # input: "true"/"false", output: T/F
+    def bool_to_bool(self, bol):
+        if (bol=='true'):
+            return True
+        else:
+            return False
+
+    # input: "4", output: 4
+    def int_to_int(self, num):
+        return int(num)
+
     def get(self, request):
         user = request.user
-        body = request.body
-        data = json.loads(body)
-        is_many = data["is_many"]
+        # body = request.body
+        data = request.query_params
+        # data = request.query_params.dict()
+        print(data)
+        print(data["is_many"])
+        print(type(data["is_many"]))
+        # print(is_many)
+        is_many = self.bool_to_bool(data["is_many"])
+        print(is_many)
 
 
         # is_many: controls the number of records to be searched
         # is_many_time: controls the time-range filtering
         try: 
-            is_many_time = data["is_many_time"]
+            is_many_time = self.bool_to_bool(data["is_many_time"])
         except:
             is_many_time = False
         # print("hee")
@@ -73,8 +91,10 @@ class RecordModify(generics.GenericAPIView):
             if (not is_many_time):
                 # Getting data permuted by created time
                 # filter records
-                accid = data["account_id"]
-                maxrec = data["record_max_num"]
+                print(data["account_id"])
+                accid = self.int_to_int(data["account_id"])
+                maxrec = self.int_to_int(data["record_max_num"])
+                print(accid)
 
                 # avoid null-finding case
                 try:
@@ -94,13 +114,14 @@ class RecordModify(generics.GenericAPIView):
             else:
                 stt_time = data["start_time"]
                 end_time = data["end_time"]
+                accid = self.int_to_int(data["account_id"]) 
 
                 # filter the records within the time range
                 try:
                     # print(self.queryset.filter(account__id=accid))
                     # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
                     # print(min(maxrec, self.queryset.count()))
-                    rangeRec = self.queryset.filter(Q(modified_time__gte=stt_time) & Q(modified_time__lte=end_time))
+                    rangeRec = self.queryset.filter(Q(account__id=accid) & Q(modified_time__gte=stt_time) & Q(modified_time__lte=end_time))
                 except:
                     return JsonResponse(status=400, data={"success": False})
 
@@ -114,7 +135,7 @@ class RecordModify(generics.GenericAPIView):
                 # serialize and return
         else:
             # Getting data with record_id    
-            record_id = data["record_id"]
+            record_id = self.int_to_int(data["record_id"])
             try:
                 rec = self.queryset.get(id=record_id)
             except:
@@ -299,15 +320,26 @@ class AccountModify(generics.GenericAPIView):
     
     # filter_backends = [ObjectPermissionsFilter]
 
+    # input: ["true"]/["false"], output: T/F
+    def bool_to_bool(self, bol):
+        if (bol[0]=='true'):
+            return True
+        else:
+            return False
+
+    # input: ["4"], output: 4
+    def int_to_int(self, num):
+        return int(num)
+        
     def get(self, request):
         user = request.user
         # body = request.body
-        data = request.data
-        is_many = data["is_many"]
+        data = request.query_params
+        is_many = self.bool_to_bool(data["is_many"])
 
         if (not is_many):
             # get according to account_id
-            acc_id = data["account_id"]
+            acc_id = self.int_to_int(data["account_id"])
             acc = self.queryset.get(id=acc_id)
 
             # acc existance
