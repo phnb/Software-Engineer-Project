@@ -20,7 +20,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const CardInfo = ({navigation}) => {
-  const type = true;
+  const type = false;
   let str = type ? '+' : '-';
   let useage = 'Starbucks';
   let displayType = type ? 'Income' : 'Expense';

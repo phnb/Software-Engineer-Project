@@ -3,6 +3,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Use camera -->
+    <uses-permission android:name="android.permission.CAMERA"/> 
+    <!-- Use front camera -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
