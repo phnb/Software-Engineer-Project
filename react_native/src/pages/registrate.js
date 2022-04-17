@@ -57,21 +57,34 @@ const Registration = ({navigation}) => {
       Alert.alert('Incorrect password confirmation!');
       return;
     }
-    navigation.navigate('Homepage');
-    // navigation.navigate('Homepage');
-    //   fetch('http://10.0.2.2:8000/auth/signin/', {
-    //   method: 'post',
-    //   body: JSON.stringify({
-    //     username: username,
-    //     password: pwd
-    //   }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(function(data) {
-    // navigation.navigate('Homepage');
-    //   console.log(username);
-    // })
+      fetch('http://10.0.2.2:8000/auth/register/', {
+      method: 'post',
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        firstname: "ddg",
+        lastname: "nb",
+        password: pwd,
+        confirmpassword: pwdConfirm
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(function(data) {
+      Alert.alert(
+        "Welcome!",
+        "A confirmation email is sent...",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate('Login');
+              console.log(username);
+            }
+          }
+        ]
+      );
+    })
   }
 
   return (

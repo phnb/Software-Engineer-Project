@@ -41,7 +41,7 @@ DEBUG = True
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -93,23 +93,23 @@ WSGI_APPLICATION = 'cashsys.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'monager',
-        'USER': 'monager',
-        'PASSWORD': '123456',
-        'HOST': 'localhost',  
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'monager',
+#         'USER': 'monager',
+#         'PASSWORD': '123456',
+#         'HOST': 'localhost',  
+#         'PORT': '3306',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -165,7 +165,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+<<<<<<< HEAD
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+=======
+        'rest_framework.authentication.BasicAuthentication',   # 基本认证
+        # 'rest_framework.authentication.SessionAuthentication',  # session认证
     ]
+>>>>>>> 31ef0b6d5dcb909dd64c05a0c9c6a976654bf416
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

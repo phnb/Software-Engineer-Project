@@ -52,7 +52,7 @@ const OnBoarding = ({navigation}) => {
         <Button
           title="    Get Started    "
           color="rgba(63,135,130,255)"
-          onPress={() => navigation.navigate('Login')}
+          onPress={() => navigation.navigate("Registration")}
         />
       </View> */}
       {/* <Text style={group1.text}>Get Started</Text> */}

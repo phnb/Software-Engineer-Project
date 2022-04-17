@@ -23,12 +23,15 @@ import Statistic from './statistic';
 import Wallet from './wallet';
 import AddExpense from './addExpense';
 import Card from '../components/card';
+import { StackRouter } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 const Homescreen = ({ navigation, route }) => {
-  const { accountId } = route.params;
-  var username = "ddg"
+  // const { accountId } = route.params;
+  // const { username } = route.params;
+  var accountId = global.accountId;
+  var username = global.username;
 
   const [expense, OnchangeExpense] = useState(0);
   const [income, OnchangeIncome] = useState(0);
@@ -46,50 +49,73 @@ const Homescreen = ({ navigation, route }) => {
     } else {
       OnchangeWelcome('Good evening, ');
     }
-    console.log("start");
-    console.log(welcome);
+    // console.log("start");
+    // console.log(welcome);
   },[date])
   
-  fetch('http://10.0.2.2:8000/app/record/', {
-      method: 'get',
-      body: JSON.stringify({
-        is_many: true,
-        record_max_num: 4,
-        account_id: accountId
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => response.json())
-      .then(function(data){
-        for (let i = 0; i < data.length; i++) {
-          const element = data[i];
-          amount = element["amount"];
-          is_income = element["is_income"];
-          if (is_income) {
-            amount += income;
-            OnchangeIncome(amount);
-          }
-          else{
-            amount += expense;
-            OnchangeExpense(amount);
-          }
-        }
-      })
-  fetch('http://10.0.2.2:8000/app/account/', {
-    method: 'get',
-    body: JSON.stringify({
-      is_many: false,
-      account_id: accountId
-    }),
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }).then(response => response.json())
-    .then(function(data){
-      bal = data["balance"];
-      OnchangeBalance(bal);
-    })
+
+  // console.log(cookie);
+  // wzdnb 123
+  // fetch('http://10.0.2.2:8000/app/record/', {
+  //     method: 'post',
+  //     // body: JSON.stringify({
+  //     //   name: "wzd's psssresent",
+  //     //   description: "wzdssssssss's real present",
+  //     //   balance: 500
+  //     // }),
+  //     body: JSON.stringify({
+  //       // is_many: true,
+  //       is_income: true,
+  //       name: "wzd's present",
+  //       description: "wzd's real present",
+  //       account_id: accountId,
+  //       amount: 500
+  //     }),
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Cookie': cookie,
+  //     }
+  //   }).then(response => {
+  //     // let token = response.headers;
+  //     // console.log("account");
+  //     // console.log(token);
+  //     return response.json();
+  //   })
+  //     .then(function(data){
+  //       console.log("here");
+  //       // for (let i = 0; i < data.length; i++) {
+  //         const element = data; //[i];
+  //         amount = element["amount"];
+  //         is_income = element["is_income"];
+  //         if (is_income) {
+  //           amount += income;
+  //           OnchangeIncome(amount);
+  //         }
+  //         else{
+  //           amount += expense;
+  //           OnchangeExpense(amount);
+  //         }
+  //       // }
+  //     })
+
+      // fetch('http://10.0.2.2:8000/auth/signout/').then(response => response.json())
+      // .then(function(data){
+      //   console.log(data);
+      // })
+  // fetch('http://10.0.2.2:8000/app/account/', {
+  //   method: 'get',
+  //   body: JSON.stringify({
+  //     is_many: false,
+  //     account_id: accountId
+  //   }),
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   }
+  // }).then(response => response.json())
+  //   .then(function(data){
+  //     bal = data["balance"];
+  //     OnchangeBalance(bal);
+  //   })
   return (
     <View>
       <View style={group1.rectangle1}>
@@ -126,38 +152,15 @@ const Homescreen = ({ navigation, route }) => {
           </View>
         </View> */}
       </View>
+      <Text style={group2.total}>Total Balance</Text>
+      <Text style={group2.totalBalance}>$ {balance} </Text>
+      <Text style={group3.transactions}>Transactions History</Text>
       <Text style={group2.expense}>Expenses</Text>
       <Text style={group2.expenseNum}>$ {expense}</Text>
       <Text style={group2.income}>Income</Text>
       <Text style={group2.incomeNum}>$ {income}</Text>
-      <Text style={group2.total}>Total Balance</Text>
-      <Text style={group2.totalBalance}>$ {balance} </Text>
-      <Text style={group3.transactions}>Transactions History</Text>
+
       <Text style={group3.latest}>Latest 4 records</Text>
-      {/* <View style={group4.item1}>
-        <Text style={group4.itemName}>Youtube</Text>
-        <Image style={group4.img} source={require('./imgs/image1.png')} />
-        <Text style={group4.itemDate}>Today</Text>
-        <Text style={group4.itemMoney}> - $ 40.00</Text>
-      </View>
-      <View style={group4.item2}>
-        <Text style={group4.itemName}>Paypal</Text>
-        <Image style={group4.img} source={require('./imgs/image3.png')} />
-        <Text style={group4.itemDate}>Yesterday</Text>
-        <Text style={group4.itemMoney1}> + $ 240.00</Text>
-      </View>
-      <View style={group4.item3}>
-        <Text style={group4.itemName}>Starbucks</Text>
-        <Image style={group4.img} source={require('./imgs/image2.png')} />
-        <Text style={group4.itemDate}>April 10, 2022</Text>
-        <Text style={group4.itemMoney}> - $ 20.00</Text>
-      </View>
-      <View style={group4.item4}>
-        <Text style={group4.itemName}>Paypal</Text>
-        <Image style={group4.img} source={require('./imgs/image3.png')} />
-        <Text style={group4.itemDate}>April 8, 2022</Text>
-        <Text style={group4.itemMoney}> - $ 3000.00</Text>
-      </View> */}
       <Card navigation={navigation} name={'Youtube'} time={'Today'} cost={240.00} type={true} top={422} />
       <Card navigation={navigation} name={'Starbucks'} time={'Today'} cost={80.00} type={false} top={502} />
       <Card navigation={navigation} name={'Transfer'} time={'Today'} cost={20000.00} type={true} top={582} />
@@ -166,7 +169,15 @@ const Homescreen = ({ navigation, route }) => {
   );
 };
 
-const Homepage = () => {
+const Homepage = (navigation, route) => {
+  // navigation.navigate('Homepage', {
+  //   screen: 'Home',
+  //   params: { accountId: 1 },
+  // });
+  // const accountId = route.params;
+  // // const [acc, OnchangeAcc] = useState(0);
+  // // OnchangeAcc(accountId);
+  // const username = route.params;
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -211,6 +222,7 @@ const Homepage = () => {
         component={Homescreen}
         options={{headerShown: false}}
         initialParams={{accountId:1}}
+        // initialParams={{accountId:1}}
       />
       <Tab.Screen
         name="Statistic"

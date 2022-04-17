@@ -26,10 +26,12 @@ import Homepage from './homepage';
 var {width, height, scale} = Dimensions.get('window');
 
 const ChangePwd = ({navigation}) => {
+  const [email, onChangeEmail] = useState('');
   const [pwd, onChangePwd] = useState('');
   const [pwdConfirm, onChangePwdConfirm] = useState('');
   const [border1, onChangeBorder1] = React.useState(false);
   const [border2, onChangeBorder2] = React.useState(false);
+  const [border3, onChangeBorder3] = React.useState(false);
 
   function submit(pwd, pwdConfirm) {
     if (pwd === '') {
@@ -40,13 +42,63 @@ const ChangePwd = ({navigation}) => {
       Alert.alert('Incorrect password confirmation!');
       return;
     }
-    navigation.navigate('Homepage');
+    // fetch('http://10.0.2.2:8000/auth/reset/', {
+    //   method: 'post',
+    //   body: JSON.stringify({
+    //     email: email,
+    //     firstname: "ddg",
+    //     password: pwd,
+    //     confirmpassword: pwdConfirm
+    //   }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // }).then(response=>response.json())
+    // .then(function(data) {
+    //   Alert.alert(
+    //     "Welcome!",
+    //     "A confirmation email is sent...",
+    //     [
+    //       {
+    //         text: "OK",
+    //         onPress: () => {
+    //           navigation.navigate('Login');
+    //           console.log(username);
+    //         }
+    //       }
+    //     ]
+    //   );
+    // })
   }
 
   return (
     <View style={styles.container}>
       {/* <Text style={styles.login}>Login</Text> */}
       <View style={styles.rectangular1}>
+        <Text style={styles.email}>Your email</Text>
+        <TextInput
+          placeholder={'Enter your email'}
+          clearButtonMode={'while-editing'}
+          secureTextEntry={true}
+          selectionColor={'black'}
+          keyboardAppearance={'dark'}
+          style={[
+            styles.emailenter,
+            // eslint-disable-next-line react-native/no-inline-styles
+            {
+              borderColor: border3
+                ? 'rgba(66,150,144,255)'
+                : 'rgb(211, 211, 211)',
+              borderWidth: border3 ? 2 : 1,
+            },
+          ]}
+          // style={styles.username}
+          onChangeText={text => onChangeEmail(text)}
+          onFocus={() => onChangeBorder3(true)}
+          onBlur={() => onChangeBorder3(false)}
+          value={pwd}
+        />
+      {/* <View style={styles.rectangular1}> */}
         <Text style={styles.name}>New Password</Text>
         <TextInput
           placeholder={'Enter your new password'}
@@ -148,12 +200,38 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
   },
+  email: {
+    /* EMAIL */
+    position: 'absolute',
+    width: 400,
+    height: 40,
+    top: 80,
+    left: 30,
+
+    color: 'rgb(0, 0, 0)',
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 20,
+    textAlign: 'left',
+  },
+  emailenter: {
+    /* email enter*/
+    position: 'absolute',
+    width: 290,
+    height: 40,
+    top: 110,
+    left: 30,
+    borderColor: 'rgb(211, 211, 211)',
+    borderWidth: 1,
+    borderRadius: 8,
+  },
   name: {
     /* NAME */
     position: 'absolute',
     width: 400,
     height: 40,
-    top: 80,
+    top: 190,
     left: 30,
 
     color: 'rgb(0, 0, 0)',
@@ -168,7 +246,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 290,
     height: 40,
-    top: 110,
+    top: 210,
     left: 30,
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
@@ -179,7 +257,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 400,
     height: 40,
-    top: 190,
+    top: 300,
     left: 30,
 
     color: 'rgb(0, 0, 0)',
@@ -194,7 +272,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 290,
     height: 40,
-    top: 220,
+    top: 330,
     left: 30,
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
@@ -205,7 +283,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 200,
     height: 48,
-    top: 300,
+    top: 400,
     left: 70,
 
     backgroundColor: 'rgba(62, 124, 120, 0.1)',
@@ -216,7 +294,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 280,
     height: 40,
-    top: 360,
+    top: 460,
     left: 45,
 
     color: 'rgb(102, 102, 102)',

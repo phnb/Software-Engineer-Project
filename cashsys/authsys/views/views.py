@@ -15,6 +15,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from authsys.models import *
 from cashapp.models import *
 from authsys.form import *
+import json
 # login decorator
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
@@ -35,12 +36,21 @@ from django.db.models import Q
 def register(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        unm = request.POST["username"]
-        fnm = request.POST["firstname"]
-        lnm = request.POST["lastname"]
-        em = request.POST["email"]
-        pw = request.POST["password"]
-        pw2 = request.POST["confirmpassword"]
+        data = json.loads(request.body)
+
+        unm = data["username"]
+        fnm = data["firstname"]
+        lnm = data["lastname"]
+        em = data["email"]
+        pw = data["password"]
+        pw2 = data["confirmpassword"]
+
+        # unm = request.POST["username"]
+        # fnm = request.POST["firstname"]
+        # lnm = request.POST["lastname"]
+        # em = request.POST["email"]
+        # pw = request.POST["password"]
+        # pw2 = request.POST["confirmpassword"]
 
         # TODO: checks
         if User.objects.filter(username=unm):
@@ -130,14 +140,21 @@ def register(request):
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        username = request.POST["username"]
-        password = request.POST["password"]
+        data = json.loads(request.body)
+        # username = request.POST["username"]
+        # password = request.POST["password"]
+        username = data["username"]
+        password = data["password"]
+
+        # refresh
+        if (request.user.is_authenticated):
+            logout(request)
 
         usr = authenticate(username=username, password=password)
-        if ((usr is not None) and usr.is_active):
+        if ((usr is not None) and usr.is_active and usr.user_profile):
             login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
-            # print(request.user.is_authenticated)
+            print(request.user.is_authenticated)
 
             # get default account's id
             try:
@@ -149,20 +166,28 @@ def signin(request):
 
         else:
             # request.method = "GET"
-            messages.error(request, "account does not exist, please register first")
+            # maybe the user is the superuser (which may not have profile)
+            messages.error(request, "user does not exist, please register first")
             return JsonResponse(status=401, data={"success": False})
             # return redirect("/auth/register")
 
     elif (request.method == "GET"):
         if (request.user.is_authenticated):
             usr = request.user
+
+            # avoid superuser from logging in from the normal interface 
+            try: 
+                prof = usr.user_profile
+            except:
+                return render(request, "auth/sgin.html")
+
             return render(request, "auth/sginsucc.html",{"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
         else:
             return render(request, "auth/sgin.html")
 
 @login_required
 def signout(request):
-    logout(request, backend='django.contrib.auth.backends.ModelBackend')
+    logout(request)
     messages.success(request, "Logged out successfully")
     return redirect("/auth/")
 
@@ -170,6 +195,8 @@ def signout(request):
 def reset_send_mail(request):
     if request.method == "POST":
         email = request.POST["email"]
+        pw1 = request.POST["pw1"]
+        pw2 = request.POST["pw2"]
         # check email-user existance
         try:
             usr = User.objects.get(email=email)
@@ -179,6 +206,8 @@ def reset_send_mail(request):
             return render(request, "resetpw/resetpw.html")
 
         if usr.is_active:
+            usr.is_reset_active = True
+            usr.save()
             # send verification email
             current_site = get_current_site(request)
             email_subject = "confirm your email - Reset password"
@@ -186,7 +215,8 @@ def reset_send_mail(request):
                 "name": usr.username,
                 "domain": current_site.domain,
                 "uid": urlsafe_base64_encode(force_bytes(usr.pk)),
-                "token": generate_token.make_token(usr)
+                "token": generate_token.make_token(usr),
+                "pw": urlsafe_base64_encode(force_bytes(pw1))
             })
             email_sent = EmailMessage(
                 email_subject,
@@ -202,10 +232,6 @@ def reset_send_mail(request):
             # not activated: send error message
             messages.error(request, "user not activated yet.")
             return render(request, "resetpw/resetpw.html")
-
-
-
-
     # return render(request, "resetpw/resetlink.html")
 
 
@@ -239,9 +265,10 @@ def register_activate(request, uid64d, token):
         # return JsonResponse(statu=401, data={"success": False})
 
 
-def reset_activate(request, uid64d, token):
+def reset_activate(request, uid64d, token, pw):
     try:
         uid = force_text(urlsafe_base64_decode(uid64d))
+        pw = force_text(urlsafe_base64_decode(pw))
         myuser = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExists):
         print("geterr!!")
@@ -251,50 +278,52 @@ def reset_activate(request, uid64d, token):
     if (myuser is not None and generate_token.check_token(myuser, token)):
         # Only when token verification succeeded can you query the password reset web-page
         # TODO: periodically set is_reset_active to False
-        myuser.user_profile.is_reset_active = True
+        myuser.user_profile.is_reset_active = False
         myuser.user_profile.save()
+
+        myuser.set_password(pw)
+        myuser.save()
         # print("acttt!")
         # print("usr name %s" %(myuser.username))
         # print("usr id %s" %(myuser.id))
         # print("activ sta %d" %(myuser.user_profile.is_reset_active))
-        return render(request, "resetpw/setnwpw.html", {"uname":myuser.username, "uid":myuser.id})
+        return render(request, "resetpw/resetsucc.html")
     else:
         return render(request, "activation_failed.html")
 
 
 def reset_pw(request):
-    if request.method == "POST":
-        # by default, the uid should be valid (for the hidden field)
-        uid = int(request.POST["uid"]) # uid 
-        pw = request.POST["pw"]
-        pw2 = request.POST["pw2"]
-        # print("uid is")
-        # print(uid)
-        # print(type(uid))
+    # if request.method == "POST":
+    #     # by default, the uid should be valid (for the hidden field)
+    #     uid = int(request.POST["uid"]) # uid 
+    #     pw = request.POST["pw"]
+    #     pw2 = request.POST["pw2"]
+    #     # print("uid is")
+    #     # print(uid)
+    #     # print(type(uid))
 
-        if (pw==pw2):
-            usr = User.objects.get(pk=uid)
-            # print("usrname is")
-            # print(usr.username)
-            if (usr.user_profile.is_reset_active):
-                usr.set_password(pw)
-                usr.save()
+    #     if (pw==pw2):
+    #         usr = User.objects.get(pk=uid)
+    #         # print("usrname is")
+    #         # print(usr.username)
+    #         if (usr.user_profile.is_reset_active):
+    #             usr.set_password(pw)
+    #             usr.save()
 
-                usr.user_profile.is_reset_active = False
-                usr.user_profile.save()
-                return render(request, "resetpw/resetsucc.html")
-            else:
-                # print("not active!!")
-                # print("active sta %d" %(usr.user_profile.is_reset_active))
-                messages.error(request, "validation outdated, please email-validate again")
-                return render(request, "resetpw/setnwpw.html", {"uname":usr.username, "uid":usr.id})                
+    #             usr.user_profile.is_reset_active = False
+    #             usr.user_profile.save()
+    #             return render(request, "resetpw/resetsucc.html")
+    #         else:
+    #             # print("not active!!")
+    #             # print("active sta %d" %(usr.user_profile.is_reset_active))
+    #             messages.error(request, "validation outdated, please email-validate again")
+    #             return render(request, "resetpw/setnwpw.html", {"uname":usr.username, "uid":usr.id})                
 
 
-        else:
-            messages.error(request, "password disagrees")
-            return render(request, "resetpw/setnwpw.html", {"uname":"", "uid":uid})
-        
-    elif request.method == "GET":
+    #     else:
+    #         messages.error(request, "password disagrees")
+    #         return render(request, "resetpw/setnwpw.html", {"uname":"", "uid":uid})    
+    if request.method == "GET":
         return render(request, "resetpw/resetpw.html")
 
 @login_required
