@@ -41,7 +41,7 @@ const AddExpense = () => {
   return (
     <View>
       <View style={group1.rectangle1}>
-        <Text style={group1.addRecord}>Add Record</Text>
+        <Text style={group1.addRecord}>ADD RECORD</Text>
       </View>
       <View style={group1.rectangle2}>
         <Text style={group2.name}>NAME</Text>
@@ -244,7 +244,7 @@ const group2 = StyleSheet.create({
     borderRadius: 8,
   },
   amount: {
-    /* NAME */
+    /* Amount */
     position: 'absolute',
     width: 100,
     height: 14,

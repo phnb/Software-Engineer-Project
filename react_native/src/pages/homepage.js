@@ -201,12 +201,12 @@ const Homepage = () => {
           return icon;
         },
       })}>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
         initialParams={{accountId:1}}
-      />
+      /> */}
       <Tab.Screen
         name="Statistic"
         component={Statistic}

@@ -22,6 +22,7 @@ import OnBoarding from './pages/onBoarding';
 import Homepage from './pages/homepage';
 import LoginView from './pages/login';
 import Registration from './pages/registrate';
+// import LevelSeparator from './pages/LevelSeparator';
 
 const SplashScreen = () => {
   return (
@@ -36,7 +37,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Add">
+      <Stack.Navigator initialRouteName="Homepage">
         {/* <Stack.Navigator initialRouteName='Homepage'> */}
         <Stack.Screen
           name="splashScreen"
@@ -63,6 +64,11 @@ const App = () => {
           component={Registration}
           options={{headerShown: false}}
         />
+        {/* <Stack.Screen
+          name="LevelSeparator"
+          component={LevelSeparator}
+          options={{headerShown: false}}
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
