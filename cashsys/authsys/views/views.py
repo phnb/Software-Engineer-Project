@@ -15,6 +15,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from authsys.models import *
 from cashapp.models import *
 from authsys.form import *
+import json
 # login decorator
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
@@ -35,12 +36,21 @@ from django.db.models import Q
 def register(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        unm = request.POST["username"]
-        fnm = request.POST["firstname"]
-        lnm = request.POST["lastname"]
-        em = request.POST["email"]
-        pw = request.POST["password"]
-        pw2 = request.POST["confirmpassword"]
+        data = json.loads(request.body)
+
+        unm = data["username"]
+        fnm = data["firstname"]
+        lnm = data["lastname"]
+        em = data["email"]
+        pw = data["password"]
+        pw2 = data["confirmpassword"]
+
+        # unm = request.POST["username"]
+        # fnm = request.POST["firstname"]
+        # lnm = request.POST["lastname"]
+        # em = request.POST["email"]
+        # pw = request.POST["password"]
+        # pw2 = request.POST["confirmpassword"]
 
         # TODO: checks
         if User.objects.filter(username=unm):
@@ -130,14 +140,21 @@ def register(request):
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        username = request.POST["username"]
-        password = request.POST["password"]
+        data = json.loads(request.body)
+        # username = request.POST["username"]
+        # password = request.POST["password"]
+        username = data["username"]
+        password = data["password"]
+
+        # refresh
+        if (request.user.is_authenticated):
+            logout(request)
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active and usr.user_profile):
             login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
-            # print(request.user.is_authenticated)
+            print(request.user.is_authenticated)
 
             # get default account's id
             try:
@@ -170,7 +187,7 @@ def signin(request):
 
 @login_required
 def signout(request):
-    logout(request, backend='django.contrib.auth.backends.ModelBackend')
+    logout(request)
     messages.success(request, "Logged out successfully")
     return redirect("/auth/")
 

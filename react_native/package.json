@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.12.1",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.1",
@@ -17,7 +18,8 @@
     "react-native": "0.68.0",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-safe-area-context": "^4.2.4",
-    "react-native-screens": "^3.13.1"
+    "react-native-screens": "^3.13.1",
+    "react-native-simple-store": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

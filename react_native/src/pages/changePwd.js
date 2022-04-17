@@ -11,8 +11,8 @@ import {
   Dimensions,
   Image,
   TextInput,
+  Alert,
 } from 'react-native';
-import store from 'react-native-simple-store'
 
 import {
   Colors,
@@ -25,69 +25,49 @@ import Homepage from './homepage';
 // import TouchableButton from '../components/button';
 var {width, height, scale} = Dimensions.get('window');
 
-function setCookie(map){
-
-  let cookie = map['set-cookie']
-  // console.log("here");
-
-  if(cookie.includes('Path=/;')){
-      let strArr = cookie.split('Path=/;')
-      cookie = strArr.join('')
-      cookie += '; Path=/'
-      // console.log(cookie)
-  }
-
-  store.save('cookie',cookie)
-  global.cookie = cookie
-}
-
-
-const LoginView = ({navigation}) => {
-  const [username, OnchangeUsername] = useState('');
-  const [pwd, OnchangePwd] = useState('');
+const ChangePwd = ({navigation}) => {
+  const [email, onChangeEmail] = useState('');
+  const [pwd, onChangePwd] = useState('');
+  const [pwdConfirm, onChangePwdConfirm] = useState('');
   const [border1, onChangeBorder1] = React.useState(false);
   const [border2, onChangeBorder2] = React.useState(false);
+  const [border3, onChangeBorder3] = React.useState(false);
 
-  function forgetpasssword(username) {
-    navigation.navigate('ChangePwd');
-  }
-
-  function submit(username, pwd) {
-    fetch('http://10.0.2.2:8000/auth/signin/', {
-      method: 'post',
-      body: JSON.stringify({
-        username: username,
-        password: pwd,
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response =>{
-        // let token = response.headers;
-        let map = response.headers.map;
-        // console.log(map);
-        setCookie(map);
-        
-        return response.json();
-      })
-      .then(function (data) {
-        if (!data.success) {
-          navigation.navigate('OnBoarding');
-        }
-        else{
-          let account_id = data["default_account_id"];
-          // OnchangeAccountId(account_id)
-          // navigation.setParams(accountId);
-          global.accountId = account_id;
-          global.username = username;
-          navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
-        }
-      });
+  function submit(pwd, pwdConfirm) {
+    if (pwd === '') {
+        Alert.alert('New password cannot be empty!');
+        return;
+      }
+    if (pwd !== pwdConfirm) {
+      Alert.alert('Incorrect password confirmation!');
+      return;
+    }
+    // fetch('http://10.0.2.2:8000/auth/reset/', {
+    //   method: 'post',
+    //   body: JSON.stringify({
+    //     email: email,
+    //     firstname: "ddg",
+    //     password: pwd,
+    //     confirmpassword: pwdConfirm
+    //   }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   }
+    // }).then(response=>response.json())
     // .then(function(data) {
-    //   console.log(data.json);
-    //   // navigation.navigate('Homepage');
-    //   // console.log(username);
+    //   Alert.alert(
+    //     "Welcome!",
+    //     "A confirmation email is sent...",
+    //     [
+    //       {
+    //         text: "OK",
+    //         onPress: () => {
+    //           navigation.navigate('Login');
+    //           console.log(username);
+    //         }
+    //       }
+    //     ]
+    //   );
     // })
   }
 
@@ -95,10 +75,37 @@ const LoginView = ({navigation}) => {
     <View style={styles.container}>
       {/* <Text style={styles.login}>Login</Text> */}
       <View style={styles.rectangular1}>
-        <Text style={styles.name}>Username or email address</Text>
+        <Text style={styles.email}>Your email</Text>
         <TextInput
-          // placeholder={'Enter your username or email address'}
+          placeholder={'Enter your email'}
           clearButtonMode={'while-editing'}
+          secureTextEntry={true}
+          selectionColor={'black'}
+          keyboardAppearance={'dark'}
+          style={[
+            styles.emailenter,
+            // eslint-disable-next-line react-native/no-inline-styles
+            {
+              borderColor: border3
+                ? 'rgba(66,150,144,255)'
+                : 'rgb(211, 211, 211)',
+              borderWidth: border3 ? 2 : 1,
+            },
+          ]}
+          // style={styles.username}
+          onChangeText={text => onChangeEmail(text)}
+          onFocus={() => onChangeBorder3(true)}
+          onBlur={() => onChangeBorder3(false)}
+          value={pwd}
+        />
+      {/* <View style={styles.rectangular1}> */}
+        <Text style={styles.name}>New Password</Text>
+        <TextInput
+          placeholder={'Enter your new password'}
+          clearButtonMode={'while-editing'}
+          secureTextEntry={true}
+          selectionColor={'black'}
+          keyboardAppearance={'dark'}
           style={[
             styles.username,
             // eslint-disable-next-line react-native/no-inline-styles
@@ -110,21 +117,20 @@ const LoginView = ({navigation}) => {
             },
           ]}
           // style={styles.username}
-          onChangeText={text => OnchangeUsername(text)}
+          onChangeText={text => onChangePwd(text)}
           onFocus={() => onChangeBorder1(true)}
           onBlur={() => onChangeBorder1(false)}
-          value={username}
+          value={pwd}
         />
-        <Text style={styles.pass}>Password</Text>
+        <Text style={styles.pass}>Password Confirmation</Text>
         <TextInput
-          // placeholder={'Enter your password'}
+          placeholder={'Enter your password again'}
           clearButtonMode={'while-editing'}
           secureTextEntry={true}
           selectionColor={'black'}
           keyboardAppearance={'dark'}
           style={[
             styles.password,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border2
                 ? 'rgba(66,150,144,255)'
@@ -132,28 +138,19 @@ const LoginView = ({navigation}) => {
               borderWidth: border2 ? 2 : 1,
             },
           ]}
-          onChangeText={text => OnchangePwd(text)}
+          onChangeText={text => onChangePwdConfirm(text)}
           onFocus={() => onChangeBorder2(true)}
           onBlur={() => onChangeBorder2(false)}
-          value={pwd}
+          value={pwdConfirm}
         />
-        {/* <View style={styles.loginBtnStyle}> */}
-        {/* <Text style={{color: 'white'}}>sign in</Text> */}
-        {/* </View> */}
         <View style={styles.button}>
           <Button
-            onPress={() => submit(username, pwd)}
-            color="rgba(63,135,130,255)"
-            title="Sign in"
-          />
-        </View>
-        <View style={styles.forgetButton}>
-          <Button
-            onPress={() => forgetpasssword(username)}
+            onPress={() => submit(pwd, pwdConfirm)}
             color="#BCBCBC"
-            title="Forget password?"
+            title="Change password"
           />
         </View>
+        <Text style={styles.notice}>* We will send a password change confirmation mail. Please check in your mail box.</Text>
       </View>
       <Image source={require('./imgs/icon.jpeg')} style={styles.iconStyle} />
     </View>
@@ -164,7 +161,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     height: '100%',
-    backgroundColor: 'rgba(66,150,144,1)',
+    backgroundColor: 'rgba(66,150,144,0.6)',
   },
   login: {
     /* login */
@@ -193,7 +190,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(255, 255, 255)',
     borderRadius: 40,
     elevation: 8,
-    // box-shadow: 0px 22px 35px rgba(0, 0, 0, 0.08),
   },
   iconStyle: {
     width: 120,
@@ -204,12 +200,38 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
   },
+  email: {
+    /* EMAIL */
+    position: 'absolute',
+    width: 400,
+    height: 40,
+    top: 80,
+    left: 30,
+
+    color: 'rgb(0, 0, 0)',
+    fontFamily: 'Inter',
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 20,
+    textAlign: 'left',
+  },
+  emailenter: {
+    /* email enter*/
+    position: 'absolute',
+    width: 290,
+    height: 40,
+    top: 110,
+    left: 30,
+    borderColor: 'rgb(211, 211, 211)',
+    borderWidth: 1,
+    borderRadius: 8,
+  },
   name: {
     /* NAME */
     position: 'absolute',
     width: 400,
     height: 40,
-    top: 80,
+    top: 190,
     left: 30,
 
     color: 'rgb(0, 0, 0)',
@@ -224,29 +246,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 290,
     height: 40,
-    top: 110,
+    top: 210,
     left: 30,
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
     borderRadius: 8,
-
-    // position: 'absolute',
-    // width: 270,
-    // height: 38,
-    // top: 50,
-    // left: 25,
-
-    // backgroundColor: 'white',
-    // marginBottom: 60,
-    // paddingLeft: 10,
-    // textAlign: 'left',
   },
   pass: {
     /* passwordText */
     position: 'absolute',
     width: 400,
     height: 40,
-    top: 190,
+    top: 300,
     left: 30,
 
     color: 'rgb(0, 0, 0)',
@@ -261,46 +272,38 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 290,
     height: 40,
-    top: 220,
+    top: 330,
     left: 30,
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
     borderRadius: 8,
-    // height: 35,
-    // width: width * 0.9,
-    // backgroundColor: 'blue',
-    // marginTop: 30,
-    // marginBottom: 20,
-    // paddingLeft: 10,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // borderRadius: 8,
   },
   button: {
     /* Submit */
     position: 'absolute',
     width: 200,
     height: 48,
-    top: 300,
+    top: 400,
     left: 70,
 
     backgroundColor: 'rgba(62, 124, 120, 0.1)',
     borderRadius: 40,
   },
-  // submitButton: {
-  //   borderRadius: 40,
-  // },
-  forgetButton: {
-    /* Submit */
+  notice: {
+    /* Notice */
     position: 'absolute',
-    width: 200,
-    height: 48,
-    top: 360,
-    left: 70,
+    width: 280,
+    height: 40,
+    top: 460,
+    left: 45,
 
-    backgroundColor: 'rgba(188,188,188,0.2)',
-    borderRadius: 40,
+    color: 'rgb(102, 102, 102)',
+    fontFamily: 'Inter',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 14,
+    textAlign: 'left',
   },
 });
 
-export default LoginView;
+export default ChangePwd;

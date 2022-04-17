@@ -22,6 +22,8 @@ import OnBoarding from './pages/onBoarding';
 import Homepage from './pages/homepage';
 import LoginView from './pages/login';
 import Registration from './pages/registrate';
+import ChangePwd from './pages/changePwd';
+// import LevelSeparator from './pages/LevelSeparator';
 
 const SplashScreen = () => {
   return (
@@ -36,7 +38,7 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Add">
+      <Stack.Navigator initialRouteName="OnBoarding">
         {/* <Stack.Navigator initialRouteName='Homepage'> */}
         <Stack.Screen
           name="splashScreen"
@@ -63,6 +65,11 @@ const App = () => {
           component={Registration}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="ChangePwd"
+          component={ChangePwd}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -77,9 +84,6 @@ const styles = StyleSheet.create({
     top: 2.61,
     left: -3,
     backgroundColor: 'rgba(63, 135, 130, 255)',
-
-    // background: url(),
-    // opacity: 0.99,
   },
   text: {
     position: 'absolute',
