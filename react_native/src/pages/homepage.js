@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
+  DeviceEventEmitter,
   View,
   Image,
   Button,
@@ -27,17 +28,48 @@ import { StackRouter } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
+function getBeforeDate(n) {
+  var n = n;
+  var d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
+
 const Homescreen = ({ navigation, route }) => {
   // const { accountId } = route.params;
   // const { username } = route.params;
   var accountId = global.accountId;
   var username = global.username;
+  var records = new Array();
 
   const [expense, OnchangeExpense] = useState(0);
+  const [test, OnchangeTest] = useState(true);
   const [income, OnchangeIncome] = useState(0);
   const [balance, OnchangeBalance] = useState(0);
   // const [username, OnchangeUsername] = useState('');
   const [welcome, OnchangeWelcome] = useState('');
+
+  // componentDidMount(){
+ 
+  //   DeviceEventEmitter.addListener('refresh', (param) => {
+  //       //收到通知后处理逻辑
+  //       //eg 刷新数据    
+  //   })
+  // }
+  // componentWillUnmount() {
+  //   DeviceEventEmitter.remove();
+  // }
+
+  // useEffect(() => {
+  //   DeviceEventEmitter.addListener('refresh', () => {
+  //     //收到通知后处理逻辑
+  //     //eg 刷新数据    
+      
+  //   })
+  //   return function cleanup() {
+  //     DeviceEventEmitter.remove();
+  //   }
+  // });
 
   var date = new Date();
   useEffect(() => {
@@ -51,71 +83,68 @@ const Homescreen = ({ navigation, route }) => {
     }
     // console.log("start");
     // console.log(welcome);
-  },[date])
+    date = new Date();
+  },[test])
   
 
   // console.log(cookie);
   // wzdnb 123
-  // fetch('http://10.0.2.2:8000/app/record/', {
-  //     method: 'post',
-  //     // body: JSON.stringify({
-  //     //   name: "wzd's psssresent",
-  //     //   description: "wzdssssssss's real present",
-  //     //   balance: 500
-  //     // }),
-  //     body: JSON.stringify({
-  //       // is_many: true,
-  //       is_income: true,
-  //       name: "wzd's present",
-  //       description: "wzd's real present",
-  //       account_id: accountId,
-  //       amount: 500
-  //     }),
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Cookie': cookie,
-  //     }
-  //   }).then(response => {
-  //     // let token = response.headers;
-  //     // console.log("account");
-  //     // console.log(token);
-  //     return response.json();
-  //   })
-  //     .then(function(data){
-  //       console.log("here");
-  //       // for (let i = 0; i < data.length; i++) {
-  //         const element = data; //[i];
-  //         amount = element["amount"];
-  //         is_income = element["is_income"];
-  //         if (is_income) {
-  //           amount += income;
-  //           OnchangeIncome(amount);
-  //         }
-  //         else{
-  //           amount += expense;
-  //           OnchangeExpense(amount);
-  //         }
-  //       // }
-  //     })
-
-      // fetch('http://10.0.2.2:8000/auth/signout/').then(response => response.json())
-      // .then(function(data){
-      //   console.log(data);
-      // })
-  // fetch('http://10.0.2.2:8000/app/account/', {
-  //   method: 'get',
-  //   body: JSON.stringify({
-  //     is_many: false,
-  //     account_id: accountId
-  //   }),
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   }
-  // }).then(response => response.json())
-  //   .then(function(data){
-  //     bal = data["balance"];
-  //     OnchangeBalance(bal);
-  //   })
+  
+  // url += accountId;
+  
+  // console.log(start_time);
+  useEffect(() => {
+    var is_many = true;
+    var is_many_time = true;
+    var url = 'http://10.0.2.2:8000/app/record/';
+    var end_time = new Date().toISOString();
+    var start_time = getBeforeDate(7);
+    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+    .then(response => response.json())
+      .then(function(data){
+          // console.log(data);
+          const income_records = data["income_records"]; //[i];
+          const outcome_records = data["outcome_records"];
+          var amount = 0;
+          for (let i = 0; i < income_records.length; i++) {
+            const element = income_records[i];
+            amount += element["amount"];
+          }
+          OnchangeIncome(amount);
+          amount = 0;
+          for (let i = 0; i < outcome_records.length; i++) {
+            const element = outcome_records[i];
+            amount += element["amount"];
+          }
+          OnchangeExpense(amount);
+          // console.log("come in");
+        // }
+      }
+    )
+    is_many = true;
+    var record_max_num = 4;
+    fetch(`${url}?is_many=${is_many}&record_max_num=${record_max_num}&account_id=${accountId}`)
+    .then(response => response.json())
+      .then(function(data){
+        for (let i = 0; i < data.length; i++) {
+          records[i] = data[i];
+        }
+        console.log(records);
+      }
+    )
+    
+    is_many = false;
+    url = 'http://10.0.2.2:8000/app/account/'
+    fetch(`${url}?is_many=${is_many}&account_id=${accountId}`)
+    .then(response => response.json())
+      .then(function(data){
+          var bal = data["balance"];
+          // console.log(bal);
+          OnchangeBalance(bal);
+        // }
+      }
+    )
+  },[test])
   return (
     <View>
       <View style={group1.rectangle1}>
@@ -127,6 +156,11 @@ const Homescreen = ({ navigation, route }) => {
       </View>
       <View style={group2.rectangle2} />
       <View style={group2.rectangle1}>
+      <Button
+        onPress={() => OnchangeTest(!test)}
+        color="#BCBCBC"
+        title="Forget password?"
+      />
         {/* <View style={group2.frame1}>
           <View style={group2.arrayDown1}>
             <Image
@@ -159,12 +193,11 @@ const Homescreen = ({ navigation, route }) => {
       <Text style={group2.expenseNum}>$ {expense}</Text>
       <Text style={group2.income}>Income</Text>
       <Text style={group2.incomeNum}>$ {income}</Text>
-
       <Text style={group3.latest}>Latest 4 records</Text>
-      <Card navigation={navigation} name={'Youtube'} time={'Today'} cost={240.00} type={true} top={422} />
-      <Card navigation={navigation} name={'Starbucks'} time={'Today'} cost={80.00} type={false} top={502} />
-      <Card navigation={navigation} name={'Transfer'} time={'Today'} cost={20000.00} type={true} top={582} />
-      <Card navigation={navigation} name={'Paypal'} time={'Today'} cost={20.00} type={true} top={662} />
+      <Card navigation={navigation} name={"try"} time={'Today'} cost={240.00} type={true} top={422} />
+      <Card navigation={navigation} name={"description"} time={'Today'} cost={80.00} type={false} top={502} />
+      <Card navigation={navigation} name={"description"} time={'Today'} cost={20000.00} type={true} top={582} />
+      <Card navigation={navigation} name={"description"} time={'Today'} cost={20.00} type={true} top={662} />
     </View>
   );
 };
@@ -396,7 +429,7 @@ const group2 = StyleSheet.create({
   expense: {
     /* Expenses */
     position: 'absolute',
-    width: 77,
+    width: 90,
     height: 22,
     top: 246,
     left: 260,
@@ -411,7 +444,7 @@ const group2 = StyleSheet.create({
   income: {
     /* Income */
     position: 'absolute',
-    width: 53,
+    width: 90,
     height: 19,
     top: 246,
     left: 48,
@@ -441,7 +474,7 @@ const group2 = StyleSheet.create({
   expenseNum: {
     /* Expenses */
     position: 'absolute',
-    width: 81,
+    width: 120,
     height: 24,
     top: 266,
     left: 260,

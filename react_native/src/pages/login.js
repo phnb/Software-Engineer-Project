@@ -94,6 +94,7 @@ const LoginView = ({navigation}) => {
           // navigation.setParams(accountId);
           global.accountId = account_id;
           global.username = username;
+          global.refresh = false;
           global.uid = data["uid"];
           navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
         }
