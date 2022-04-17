@@ -20,7 +20,7 @@ Then, in the MySQL terminal, create the user and the database with certain names
 
         > DROP USER 'monager'@'localhost';
         > CREATE USER 'monager'@'localhost' IDENTIFIED BY '123456';
-        > GRANT ALL ON monager.* TO 'monager'@'localhost';
+        > GRANT ALL ON *.* TO 'monager'@'localhost';
 
 After that, you may run migrations for the project:
 

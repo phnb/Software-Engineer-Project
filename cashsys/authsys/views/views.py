@@ -15,7 +15,6 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from authsys.models import *
 from cashapp.models import *
 from authsys.form import *
-import json
 # login decorator
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
@@ -36,49 +35,40 @@ from django.db.models import Q
 def register(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        data = json.loads(request.body)
-
-        unm = data["username"]
-        fnm = data["firstname"]
-        lnm = data["lastname"]
-        em = data["email"]
-        pw = data["password"]
-        pw2 = data["confirmpassword"]
-
-        # unm = request.POST["username"]
-        # fnm = request.POST["firstname"]
-        # lnm = request.POST["lastname"]
-        # em = request.POST["email"]
-        # pw = request.POST["password"]
-        # pw2 = request.POST["confirmpassword"]
+        unm = request.POST["username"]
+        fnm = request.POST["firstname"]
+        lnm = request.POST["lastname"]
+        em = request.POST["email"]
+        pw = request.POST["password"]
+        pw2 = request.POST["confirmpassword"]
 
         # TODO: checks
         if User.objects.filter(username=unm):
             messages.error(request, "username already exists")
-            print("heer")
+            # print("heer")
             return redirect("/auth/")
 
         if User.objects.filter(email=em):
             messages.error(request, "email already exists")
-            print("heerusr")
+            # print("heerusr")
             return redirect("/auth/")
 
         if len(unm) > 10:
             messages.error(request, "username should be less than 10")
-            print("heerlen")
+            # print("heerlen")
             return redirect("/auth/")
 
         if pw!=pw2:
             messages.error(request, "pw didn't match")
-            print("heerpw")
+            # print("heerpw")
             return redirect("/auth/")
 
         if not unm.isalnum():
             messages.error(request, "username must be alpha-numeric")
-            print("errrrrrrrr")
+            # print("errrrrrrrr")
             return redirect("/auth/")
 
-        print("heer")
+        # print("heer")
 
         # inner user for credentials, outer user for profiles
         # create base user
@@ -140,21 +130,14 @@ def register(request):
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        data = json.loads(request.body)
-        # username = request.POST["username"]
-        # password = request.POST["password"]
-        username = data["username"]
-        password = data["password"]
-
-        # refresh
-        if (request.user.is_authenticated):
-            logout(request)
+        username = request.POST["username"]
+        password = request.POST["password"]
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active and usr.user_profile):
             login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
-            print(request.user.is_authenticated)
+            # print(request.user.is_authenticated)
 
             # get default account's id
             try:
@@ -187,7 +170,7 @@ def signin(request):
 
 @login_required
 def signout(request):
-    logout(request)
+    logout(request, backend='django.contrib.auth.backends.ModelBackend')
     messages.success(request, "Logged out successfully")
     return redirect("/auth/")
 
@@ -271,7 +254,7 @@ def reset_activate(request, uid64d, token, pw):
         pw = force_text(urlsafe_base64_decode(pw))
         myuser = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExists):
-        print("geterr!!")
+        # print("geterr!!")
         return render(request, "activation_failed.html")
 
 
@@ -338,22 +321,22 @@ def profile(request):
         # profile validity check (upper-lower case sensitive)
         if User.objects.filter(Q(email=email)&~Q(id=request.user.id)):
             messages.error(request, "email exists")
-            print("heeremi")
+            # print("heeremi")
             return redirect("/auth/profile/")
 
         if User.objects.filter(Q(username=unm)&~Q(id=request.user.id)):
             messages.error(request, "username already exists")
-            print("heer")
+            # print("heer")
             return redirect("/auth/profile/")
 
         if len(unm) > 10:
             messages.error(request, "username should be less than 10")
-            print("heerlen")
+            # print("heerlen")
             return redirect("/auth/profile/")
 
         if not unm.isalnum():
             messages.error(request, "username must be alpha-numeric")
-            print("errrrrrrrr")
+            # print("errrrrrrrr")
             return redirect("/auth/profile/")
 
         profForm = UserProfileForm(request.POST, instance=usr.user_profile)
