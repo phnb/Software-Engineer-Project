@@ -22,6 +22,7 @@ import OnBoarding from './pages/onBoarding';
 import Homepage from './pages/homepage';
 import LoginView from './pages/login';
 import Registration from './pages/registrate';
+import ChangePwd from './pages/changePwd';
 // import LevelSeparator from './pages/LevelSeparator';
 
 const SplashScreen = () => {
@@ -64,11 +65,11 @@ const App = () => {
           component={Registration}
           options={{headerShown: false}}
         />
-        {/* <Stack.Screen
-          name="LevelSeparator"
-          component={LevelSeparator}
+        <Stack.Screen
+          name="ChangePwd"
+          component={ChangePwd}
           options={{headerShown: false}}
-        /> */}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -83,9 +84,6 @@ const styles = StyleSheet.create({
     top: 2.61,
     left: -3,
     backgroundColor: 'rgba(63, 135, 130, 255)',
-
-    // background: url(),
-    // opacity: 0.99,
   },
   text: {
     position: 'absolute',
