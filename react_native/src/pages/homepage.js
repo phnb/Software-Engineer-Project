@@ -239,7 +239,7 @@ const Homepage = (navigation, route) => {
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
-        // initialParams={{accountId:accountId}}
+        // initialParams={{accountId:1}}
       />
       <Tab.Screen
         name="Statistic"

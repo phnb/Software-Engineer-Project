@@ -71,8 +71,19 @@ const Registration = ({navigation}) => {
         'Content-Type': 'application/json'
       }
     }).then(function(data) {
-    navigation.navigate('Login');
-      console.log(username);
+      Alert.alert(
+        "Welcome!",
+        "A confirmation email is sent...",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate('Login');
+              console.log(username);
+            }
+          }
+        ]
+      );
     })
   }
 
