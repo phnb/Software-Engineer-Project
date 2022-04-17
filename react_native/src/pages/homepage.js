@@ -22,6 +22,7 @@ import Profile from './profile';
 import Statistic from './statistic';
 import Wallet from './wallet';
 import AddExpense from './addExpense';
+import Card from '../components/card';
 
 const Tab = createBottomTabNavigator();
 
@@ -133,7 +134,7 @@ const Homescreen = ({ navigation, route }) => {
       <Text style={group2.totalBalance}>$ {balance} </Text>
       <Text style={group3.transactions}>Transactions History</Text>
       <Text style={group3.latest}>Latest 4 records</Text>
-      <View style={group4.item1}>
+      {/* <View style={group4.item1}>
         <Text style={group4.itemName}>Youtube</Text>
         <Image style={group4.img} source={require('./imgs/image1.png')} />
         <Text style={group4.itemDate}>Today</Text>
@@ -156,7 +157,11 @@ const Homescreen = ({ navigation, route }) => {
         <Image style={group4.img} source={require('./imgs/image3.png')} />
         <Text style={group4.itemDate}>April 8, 2022</Text>
         <Text style={group4.itemMoney}> - $ 3000.00</Text>
-      </View>
+      </View> */}
+      <Card navigation={navigation} name={'Youtube'} time={'Today'} cost={240.00} type={true} top={422} />
+      <Card navigation={navigation} name={'Starbucks'} time={'Today'} cost={80.00} type={false} top={502} />
+      <Card navigation={navigation} name={'Transfer'} time={'Today'} cost={20000.00} type={true} top={582} />
+      <Card navigation={navigation} name={'Paypal'} time={'Today'} cost={20.00} type={true} top={662} />
     </View>
   );
 };
@@ -201,12 +206,12 @@ const Homepage = () => {
           return icon;
         },
       })}>
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
         initialParams={{accountId:1}}
-      /> */}
+      />
       <Tab.Screen
         name="Statistic"
         component={Statistic}
@@ -278,31 +283,31 @@ const group1 = StyleSheet.create({
   text1: {
     /* Good afternoon */
     position: 'absolute',
-    width: 110,
-    height: 17,
-    top: 54,
+    width: 150,
+    height: 20,
+    top: 50,
     left: 44,
 
     color: 'rgb(255, 255, 255)',
     fontFamily: 'Inter',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    lineHeight: 17,
+    lineHeight: 20,
     textAlign: 'left',
   },
   text2: {
     /* Jared Dai */
     position: 'absolute',
     width: 167,
-    height: 24,
-    top: 78,
+    height: 30,
+    top: 70,
     left: 44,
 
     color: 'rgb(255, 255, 255)',
     fontFamily: 'Inter',
-    fontSize: 20,
-    fontWeight: '700',
-    lineHeight: 24,
+    fontSize: 22,
+    fontWeight: '800',
+    lineHeight: 30,
     textAlign: 'left',
   },
 });
@@ -578,39 +583,6 @@ const group4 = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 22,
     textAlign: 'right',
-  },
-  item2: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 502,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
-  },
-  item3: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 582,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
-  },
-  item4: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 662,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
   },
 });
 

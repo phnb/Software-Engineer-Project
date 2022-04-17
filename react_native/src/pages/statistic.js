@@ -1,33 +1,3 @@
-// import React from 'react';
-// import {
-//   SafeAreaView,
-//   ScrollView,
-//   StatusBar,
-//   StyleSheet,
-//   Text,
-//   useColorScheme,
-//   View,
-//   Image,
-//   Button,
-// } from 'react-native';
-// import {
-//   Colors,
-//   DebugInstructions,
-//   Header,
-//   LearnMoreLinks,
-//   ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
-
-// const Statistic = () => {
-//   return (
-//     <View>
-//       <Text>TODO: WZD come ob</Text>
-//     </View>
-//   );
-// };
-
-// export default Statistic;
-
 import React from 'react';
 import {
   SafeAreaView,
@@ -51,12 +21,13 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 // import LevelSeparator from './LevelSeparator';
 
+import Card from '../components/card';
 import SeparatorsLayer from '../components/SeparatorsLayer';
 import PointsPath from '../components/PointsPath';
 import { Point } from '../components/pointUtils';
 import { startingPoint, vectorTransform } from '../components/Scaler';
 
-const Statistic = () => {
+const Statistic = ({navigation}) => {
   const lightBlue = '#40C4FE';
   const green = '#53E69D';
   const MAX_VALUE = 20;
@@ -106,6 +77,10 @@ const Statistic = () => {
         <Text style={styles.income}>Income</Text>
         <View style={styles.incomeSign}/>
       </View>
+      <Card navigation={navigation} name={'Youtube'} time={'Today'} cost={240.00} type={true} top={422} />
+      <Card navigation={navigation} name={'Starbucks'} time={'Today'} cost={80.00} type={false} top={502} />
+      <Card navigation={navigation} name={'Transfer'} time={'Today'} cost={20000.00} type={true} top={582} />
+      <Card navigation={navigation} name={'Paypal'} time={'Today'} cost={20.00} type={true} top={662} />
     </View>
   );
 };
@@ -117,7 +92,7 @@ const group1 = StyleSheet.create({
     width: 414,
     height: 247,
 
-    backgroundColor: 'rgba(66,150,144,0.2)',
+    backgroundColor: 'rgb(238, 248, 247)',
   },
   statistic: {
     /* statistic */
