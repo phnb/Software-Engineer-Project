@@ -39,6 +39,9 @@ const Homescreen = ({ navigation, route }) => {
   // const [username, OnchangeUsername] = useState('');
   const [welcome, OnchangeWelcome] = useState('');
 
+  const recrodsName = ['Transfer', 'Transfer', 'Paypal'];
+  let recrodsLen = recrodsName .length;
+
   var date = new Date();
   useEffect(() => {
     if (date.getHours() < 12){
@@ -161,10 +164,10 @@ const Homescreen = ({ navigation, route }) => {
       <Text style={group2.incomeNum}>$ {income}</Text>
 
       <Text style={group3.latest}>Latest 4 records</Text>
-      <Card navigation={navigation} name={'Youtube'} time={'Today'} cost={240.00} type={true} top={422} />
-      <Card navigation={navigation} name={'Starbucks'} time={'Today'} cost={80.00} type={false} top={502} />
-      <Card navigation={navigation} name={'Transfer'} time={'Today'} cost={20000.00} type={true} top={582} />
-      <Card navigation={navigation} name={'Paypal'} time={'Today'} cost={20.00} type={true} top={662} />
+      <Card navigation={navigation} isExist={recrodsLen >= 1} name={'Youtube'} time={'Today'} cost={240.00} type={true} top={422} />
+      <Card navigation={navigation} isExist={recrodsLen >= 2} name={'Starbucks'} time={'Today'} cost={80.00} type={false} top={502} />
+      <Card navigation={navigation} isExist={recrodsLen >= 3} name={'Transfer'} time={'Today'} cost={20000.00} type={true} top={582} />
+      <Card navigation={navigation} isExist={recrodsLen >= 4}  name={'Paypal'} time={'Today'} cost={20.00} type={true} top={662} />
     </View>
   );
 };
