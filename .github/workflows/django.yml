@@ -11,14 +11,12 @@ jobs:
     env:
       DB_DATABASE: monager
       DB_USER: monager
-      DB_PASSWORD: 123456
+      DB_PASSWORD: root
 
     services:
       # How to use MySQL
       mysql:
         image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: 123456
         ports:
         - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
