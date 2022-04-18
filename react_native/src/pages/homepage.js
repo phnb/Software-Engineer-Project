@@ -263,7 +263,7 @@ const Homepage = (navigation, route) => {
           return icon;
         },
       })}>
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Home"
         component={Homescreen}
         options={{headerShown: false}}
@@ -284,7 +284,7 @@ const Homepage = (navigation, route) => {
         name="Wallet"
         component={Wallet}
         options={{headerShown: false}}
-      /> */}
+      />
       <Tab.Screen
         name="Profile"
         component={Profile}
