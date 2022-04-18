@@ -175,6 +175,8 @@ REST_FRAMEWORK = {
     ]
 }
 
+SILENCED_SYSTEM_CHECKS = ["fields.W161"]
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
