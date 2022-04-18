@@ -13,7 +13,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v3
@@ -27,5 +27,5 @@ jobs:
         pip install -r cashsys/requirements.txt
     - name: Automatically run 4001 backend Django Unit Tests
       run: |
-        python cashsys/manage.py test
+        python cashsys/manage.py cashapp.test
       continue-on-error: true
