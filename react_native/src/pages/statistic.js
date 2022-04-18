@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -28,23 +28,163 @@ import PointsPath from '../components/PointsPath';
 import { Point } from '../components/pointUtils';
 import { startingPoint, vectorTransform } from '../components/Scaler';
 
+function getBeforeDate(n) {
+  var n = n;
+  var d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString();
+}
+
+function getDateInfo(n){
+  const date = new Date();
+  date.setDate(date.getDate()-n);
+  var s_date = date.toDateString();
+  var list = s_date.split(' ');
+  // var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
+  // console.log(formal_date);
+  return list[2];
+}
+function getendInfo(n){
+  const date = new Date();
+  date.setDate(date.getDate()-n);
+  var s_date = date.toDateString();
+  var list = s_date.split(' ');
+  var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
+  // console.log(formal_date);
+  return formal_date;
+}
+
+function gettime(m_time){
+  const m_date = new Date(m_time)
+  const n_date = new Date();
+  // n_date.setDate(n_date.getDate()+1)
+  if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
+    // console.log("Today");
+    return "Today";
+  }
+  else{
+    var t_date = new Date();
+    t_date.setDate(n_date.getDate() - 1);
+    if (m_date.getDate() == t_date.getDate() && m_date.getMonth() == t_date.getMonth() && t_date.getFullYear() == t_date.getFullYear()){
+      // console.log("Yesterday");
+      return "Yesterday";
+    }
+    else{
+      console.log(m_date.toDateString())
+      var date = m_date.toDateString();
+      var list = date.split(' ');
+      var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
+      console.log(formal_date);
+      return formal_date;
+    }
+  }
+}
+
 const Statistic = ({navigation}) => {
   const lightBlue = '#40C4FE';
   const green = '#53E69D';
-  const MAX_VALUE = 3000;
+  const [MAX_VALUE, OnchangeMAX_VALUE] = React.useState(10);
   const Y_LEVELS = 4;
   const X_LEVELS = 7;
   
-  const incomePoints = [Point(0, 300), Point(1, 2), Point(2, 3), Point(3, 6), Point(4, 6), Point(5, 3.4), Point(6, 10)];
-  const expensePoints = [Point(0, 2), Point(1, 4), Point(2, 7), Point(3, 10), Point(4, 12), Point(5, 6), Point(6, 0)];
+  // const incomePoints = [Point(0, 300), Point(1, 2), Point(2, 3), Point(3, 6), Point(4, 6), Point(5, 3.4), Point(6, 10)];
+  const [expensePoints, setExpensePoints] = React.useState([Point(0, 2), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
+  const [incomePoints, setIncomePoints] = React.useState([Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
+
+  const [len, OnchangeLen] = React.useState(0);
 
   const [type, onChangeType] = React.useState(true);
 
   let displayType = type ? 'Income' : 'Expense';
-  const incomeName = ['Transfer', 'Transfer', 'Paypal'];
-  const expenseName = ['Starbucks', 'Youtube', 'Transfer', 'Transfer'];
-  let incomeLength = incomeName.length;
-  let expenseLength = expenseName.length;
+  const [incomeRecords, setIncomeRecords] = React.useState();
+  // const [expenseRecords, setExpenseRecords] = React.useState();
+
+  React.useEffect(() => {
+    console.log("new");
+    var is_many = true;
+    var is_many_time = true;
+    var url = 'http://10.0.2.2:8000/app/record/';
+    var end_time = new Date().toISOString();
+    var start_time = getBeforeDate(7);
+    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+    .then(response => response.json())
+      .then(function(data){
+          // console.log(data);
+          let in_arr = new Array();
+          let ele;
+          if (type){
+            ele = data["income_records"];
+          }
+          else{
+            ele = data["outcome_records"]
+          }
+          // console.log(ele);
+          // let out_arr = new Array();
+          let len_income = ele.length > 4 ? 4 : ele.length;
+          OnchangeLen(len_income);
+          for (let i = 0; i < len_income; i++) {
+            ele[i]["modified_time"] = gettime(ele[i]["modified_time"]);
+            in_arr.push(ele[i]);
+          }
+          if (len_income < 4){
+            for (let i = 0; i < 4-len_income; i++){
+              in_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
+            }
+          }
+          // let len_outcome = data["outcome_records"].length > 4 ? 4 : data["outcome_records"].length;
+          // for (let i = 0; i < len_outcome; i++) {
+          //   data["outcome_records"][i]["modified_time"] = gettime(data["outcome_records"][i]["modified_time"]);
+          //   out_arr.push(data["outcome_records"][i]);
+          // }
+          setIncomeRecords(in_arr); //[i];
+          // setExpenseRecords(out_arr);
+      }
+    )
+
+      // {"incomerecords", "income": [{"x": 0, "y": 500},{"x": 1, "y": 500}]}
+  }, [type])
+
+  React.useEffect(() => {
+    var is_many = true;
+    var is_many_time = true;
+    var url = 'http://10.0.2.2:8000/app/record/';
+    // var end_time = new Date().toISOString();
+    // var start_time = getBeforeDate(7);
+    const in_P = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)];
+    const out_P = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)];
+
+    for (let m = 0; m < 7; m++) {
+      var start_time = getBeforeDate(7-m);
+      var end_time = getBeforeDate(6-m);
+      fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+      .then(response => response.json())
+        .then(function(data){
+          var amount = 0;
+          for (let i = 0; i < data["income_records"].length; i++) {
+            const element = data["income_records"][i]["amount"];
+            amount += element;
+          }
+          if (amount > MAX_VALUE){
+            OnchangeMAX_VALUE(amount);
+          }
+          in_P[m] = Point(m, amount);
+          // console.log(in_P);
+          setIncomePoints(in_P);
+          amount = 0;
+          for (let i = 0; i < data["outcome_records"].length; i++) {
+            const element = data["outcome_records"][i]["amount"];
+            amount += element;
+          }
+          if (amount > MAX_VALUE){
+            OnchangeMAX_VALUE(amount);
+          }
+          out_P[m] = Point(m, amount);
+          // console.log(in_P);
+          setExpensePoints(out_P);
+        }
+      )
+    }
+  }, [])
 
   return (
     <View>
@@ -54,9 +194,9 @@ const Statistic = ({navigation}) => {
       <TouchableOpacity style={group1.wallet}>
         <Text style={group1.walletText}>Default Wallet </Text>
       </TouchableOpacity>
-      <Text style={group1.startTime}>Apr 12, 2022</Text>
+      <Text style={group1.startTime}>{getendInfo(6)}</Text>
       <View style={group1.array} />
-      <Text style={group1.endTime}>Apr 18, 2022</Text>
+      <Text style={group1.endTime}>{getendInfo(0)}</Text>
       <View style={styles.rectangular}>
         <View style={styles.container}>
           <SeparatorsLayer topValue={MAX_VALUE} separators={Y_LEVELS} height={100}>
@@ -78,13 +218,13 @@ const Statistic = ({navigation}) => {
             />
           </SeparatorsLayer>
           <View style={styles.horizontalScale}>
-            <Text style={styles.date}>Mon</Text>
-            <Text style={styles.date}>Tue</Text>
-            <Text style={styles.date}>Wen</Text>
-            <Text style={styles.date}>Thur</Text>
-            <Text style={styles.date}>Fri</Text>
-            <Text style={styles.date}>Sat</Text>
-            <Text style={styles.date}>Sun</Text>
+            <Text style={styles.date}>{getDateInfo(6)}</Text>
+            <Text style={styles.date}>{getDateInfo(5)}</Text>
+            <Text style={styles.date}>{getDateInfo(4)}</Text>
+            <Text style={styles.date}>{getDateInfo(3)}</Text>
+            <Text style={styles.date}>{getDateInfo(2)}</Text>
+            <Text style={styles.date}>{getDateInfo(1)}</Text>
+            <Text style={styles.date}>{getDateInfo(0)}</Text>
           </View>
         </View>
         <Text style={styles.expense}>Expense</Text>
@@ -100,18 +240,54 @@ const Statistic = ({navigation}) => {
         <View style={[group1.displaySign, {backgroundColor: type ? 'rgb(37, 169, 105)' : 'rgb(249, 91, 81)'}]}/>
         <Text style={group1.displayText}>{displayType}</Text>
       </TouchableOpacity>
-      {type ? 
+      {incomeRecords ? 
         <View>
-          <Card navigation={navigation} isExist={incomeLength >= 1} name={incomeName[0]} time={'Today'} cost={80.00} type={type} top={442} />
-          <Card navigation={navigation} isExist={incomeLength >= 2} name={incomeName[1]} time={'Today'} cost={20000.00} type={type} top={522} />
-          <Card navigation={navigation} isExist={incomeLength >= 3} name={incomeName[2]} time={'Today'} cost={20.00} type={type} top={602} />
-          <Card navigation={navigation} isExist={incomeLength >= 4} name={incomeName[2]} time={'Today'} cost={240.00} type={type} top={682} />
+          <Card navigation={navigation} 
+            isExist={len >= 1} 
+            name={incomeRecords[0]["name"]} 
+            time={incomeRecords[0]["modified_time"]} 
+            cost={incomeRecords[0]["amount"]} 
+            type={type} 
+            top={442} 
+            description={incomeRecords[0]["description"]}
+            id={incomeRecords[0]["id"]} />
+          <Card navigation={navigation} 
+            isExist={len >= 2} 
+            name={incomeRecords[1]["name"]} 
+            time={incomeRecords[1]["modified_time"]} 
+            cost={incomeRecords[1]["amount"]} 
+            type={type} 
+            top={522} 
+            description={incomeRecords[1]["description"]}
+            id={incomeRecords[1]["id"]} />
+          <Card navigation={navigation} 
+            isExist={len >= 3} 
+            name={incomeRecords[2]["name"]} 
+            time={incomeRecords[2]["modified_time"]} 
+            cost={incomeRecords[2]["amount"]} 
+            type={type} 
+            top={602} 
+            description={incomeRecords[2]["description"]} 
+            id={incomeRecords[2]["id"]}/>
+          <Card navigation={navigation} 
+            isExist={len >= 4} 
+            name={incomeRecords[3]["name"]} 
+            time={incomeRecords[3]["modified_time"]} 
+            cost={incomeRecords[3]["amount"]} 
+            type={type} 
+            top={682} 
+            description={incomeRecords[3]["description"]} 
+            id={incomeRecords[3]["id"]}/>
+          {/* <Card navigation={navigation} isExist={incomeRecords.length >= 2} name={incomeRecords[incomeRecords.length > 1 ? 1 : incomeRecords.length]["name"]} time={incomeRecords[1]["modified_time"]} cost={incomeRecords[1]["amount"]} type={type} top={522} description={incomeRecords[1]["description"]} />
+          <Card navigation={navigation} isExist={incomeRecords.length >= 3} name={incomeRecords[incomeRecords.length > 2 ? 2 : incomeRecords.length]["name"]} time={incomeRecords[2]["modified_time"]} cost={incomeRecords[2]["amount"]} type={type} top={602} description={incomeRecords[2]["description"]} />
+          <Card navigation={navigation} isExist={incomeRecords.length >= 4} name={incomeRecords[incomeRecords.length > 3 ? 3 : incomeRecords.length]["name"]} time={incomeRecords[3]["modified_time"]} cost={incomeRecords[3]["amount"]} type={type} top={682} description={incomeRecords[3]["description"]}/> */}
         </View>  : 
+        // <View> </View>
         <View>
-          <Card navigation={navigation} isExist={expenseLength >= 1} name={'Starbucks'} time={'Today'} cost={80.00} type={type} top={442} />
+          {/* <Card navigation={navigation} isExist={expenseLength >= 1} name={incomeRecords[0]["name"]} time={'Today'} cost={80.00} type={type} top={442} />
           <Card navigation={navigation} isExist={expenseLength >= 2} name={'Transfer'} time={'Today'} cost={20000.00} type={type} top={522} />
           <Card navigation={navigation} isExist={expenseLength >= 3} name={'Paypal'} time={'Today'} cost={20.00} type={type} top={602} />
-          <Card navigation={navigation} isExist={expenseLength >= 4} name={'Youtube'} time={'Today'} cost={240.00} type={type} top={682} />
+          <Card navigation={navigation} isExist={expenseLength >= 4} name={'Youtube'} time={'Today'} cost={240.00} type={type} top={682} /> */}
         </View>
       }
     </View>

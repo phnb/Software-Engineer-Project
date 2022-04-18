@@ -36,21 +36,22 @@ function getBeforeDate(n) {
 }
 
 function gettime(m_time){
-  var m_date = new Date(m_time)
-  var n_date = new Date();
-  n_date.setDate(n_date.getDate()+2)
+  const m_date = new Date(m_time)
+  const n_date = new Date();
+  // n_date.setDate(n_date.getDate()+1)
   if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
     console.log("Today");
     return "Today";
   }
   else{
-    n_date.setDate(n_date.getDate() - 1);
-    if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
+    var t_date = new Date();
+    t_date.setDate(n_date.getDate() - 1);
+    if (m_date.getDate() == t_date.getDate() && m_date.getMonth() == t_date.getMonth() && t_date.getFullYear() == t_date.getFullYear()){
       console.log("Yesterday");
       return "Yesterday";
     }
     else{
-      // console.log(m_date.toDateString())
+      console.log(m_date.toDateString())
       var date = m_date.toDateString();
       var list = date.split(' ');
       var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
@@ -73,6 +74,7 @@ const Homescreen = ({ navigation, route }) => {
   const [balance, OnchangeBalance] = useState(0);
   // const [username, OnchangeUsername] = useState('');
   const [welcome, OnchangeWelcome] = useState('');
+  const [len, OnchangeLen] = useState(0);
 
   // const recrodsName = ['Transfer', 'Transfer', 'Paypal'];
   // let recrodsLen = recrodsName .length;
@@ -133,12 +135,22 @@ const Homescreen = ({ navigation, route }) => {
       .then(response => response.json())
       .then(
         data => {
+          
           for (let i = 0; i < data.length; i++) {
-            data[i]["modified_time"] = gettime(data[0]["modified_time"]);
+            // n_arr.push[data[i]]
+            data[i]["modified_time"] = gettime(data[i]["modified_time"]);
           }
+          let n_arr = data;
+          let len_income = data.length > 4 ? 4 : data.length;
+          if (len_income < 4){
+            for (let i = 0; i < 4-len_income; i++){
+              n_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
+            }
+          }
+          OnchangeLen(len_income);
           
           // console.log(data)
-          setRecords(data);
+          setRecords(n_arr);
         }
     )
     
@@ -206,10 +218,45 @@ const Homescreen = ({ navigation, route }) => {
       <Text style={group3.latest}>Latest 4 records</Text>
       {records ? 
       <View>
-        <Card navigation={navigation} isExist={records.length >= 1} name={records[0]["name"]} time={records[0]["modified_time"]} cost={records[0]["amount"]} type={records[0]["is_income"]} top={422} />
-        <Card navigation={navigation} isExist={records.length >= 2} name={records[1]["name"]} time={records[1]["modified_time"]} cost={records[1]["amount"]} type={records[1]["is_income"]} top={502} />
-        <Card navigation={navigation} isExist={records.length >= 3} name={records[2]["name"]} time={records[2]["modified_time"]} cost={records[2]["amount"]} type={records[2]["is_income"]} top={582} />
-        <Card navigation={navigation} isExist={records.length >= 4} name={records[3]["name"]} time={records[3]["modified_time"]} cost={records[3]["amount"]} type={records[3]["is_income"]} top={662} />
+        <Card navigation={navigation} 
+          isExist={len >= 1} 
+          name={records[0]["name"]} 
+          time={records[0]["modified_time"]} 
+          cost={records[0]["amount"]} 
+          type={records[0]["is_income"]} 
+          top={422} 
+          description={records[0]["description"]}
+          id={records[0]["id"]}/>
+        <Card navigation={navigation} 
+          isExist={len >= 2} 
+          name={records[1]["name"]} 
+          time={records[1]["modified_time"]} 
+          cost={records[1]["amount"]} 
+          type={records[1]["is_income"]} 
+          top={502} 
+          description={records[1]["description"]}
+          id={records[1]["id"]}/>
+        <Card navigation={navigation} 
+          isExist={len >= 3} 
+          name={records[2]["name"]} 
+          time={records[2]["modified_time"]} 
+          cost={records[2]["amount"]} 
+          type={records[2]["is_income"]} 
+          top={582} 
+          description={records[2]["description"]}
+          id={records[2]["id"]}/>
+        <Card navigation={navigation} 
+          isExist={len >= 4} 
+          name={records[3]["name"]} 
+          time={records[3]["modified_time"]} 
+          cost={records[3]["amount"]} 
+          type={records[3]["is_income"]} 
+          top={662} 
+          description={records[3]["description"]}
+          id={records[3]["id"]}/>
+        {/* <Card navigation={navigation} isExist={records.length >= 2} name={records[1]["name"]} time={records[1]["modified_time"]} cost={records[1]["amount"]} type={records[1]["is_income"]} top={502} description={records[0]["description"]}/>
+        <Card navigation={navigation} isExist={records.length >= 3} name={records[2]["name"]} time={records[2]["modified_time"]} cost={records[2]["amount"]} type={records[2]["is_income"]} top={582} description={records[0]["description"]}/>
+        <Card navigation={navigation} isExist={records.length >= 4} name={records[3]["name"]} time={records[3]["modified_time"]} cost={records[3]["amount"]} type={records[3]["is_income"]} top={662} description={records[0]["description"]}/> */}
       </View> : <View></View>}
     </View>
   );

@@ -55,7 +55,7 @@ const AddExpense = ({navigation, route}) => {
   },[refresh])
 
   function submit(type, name, amount, note, accountId){
-    console.log(cookie);
+    // console.log(cookie);
     fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'post',
       // body: JSON.stringify({
@@ -68,7 +68,7 @@ const AddExpense = ({navigation, route}) => {
         is_income: type,
         name: name,
         description: note,
-        account_id: account_id,
+        account_id: accountId,
         amount: amount,
         uid: global.uid
       }),
@@ -225,7 +225,7 @@ const AddExpense = ({navigation, route}) => {
             color="rgba(63,135,130,255)"
             title="submit"
             style={group2.submitButton}
-            onPress={() => submit(type, name, amount, note, accountId)}
+            onPress={() => submit(type, name, amount, note, global.accountId)}
           />
         </View>
       </View>

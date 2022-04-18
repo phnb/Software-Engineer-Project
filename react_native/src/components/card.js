@@ -20,14 +20,14 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 
-function Card({navigation, isExist, name, time, cost, type, top }) {
+function Card({navigation, isExist, name, time, cost, type, top, description, id}) {
   let str = type ? '+' : '-';
   return (
     <View>
       {!isExist ? <View></View>:
       <TouchableOpacity 
         style={[group1.item, {top: top}]}
-        onPress={() => navigation.navigate('CardInfo')}
+        onPress={() => navigation.navigate('CardInfo',{type:type, useage:name, remark:description, amount:cost, date:time, id:id})}
       >
         <Text style={group1.itemName}>{name}</Text>
         <Image style={group1.img} source={require('../pages/imgs/image3.png')} />

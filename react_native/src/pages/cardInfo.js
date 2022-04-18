@@ -7,6 +7,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Alert,
   Image,
   Button,
   TouchableOpacity,
@@ -19,13 +20,49 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const CardInfo = ({navigation}) => {
-  const type = true;
+const CardInfo = ({navigation, route}) => {
+  const {type} = route.params;
+  const {useage} = route.params;
+  const {date} = route.params;
+  const {remark} = route.params;
+  const {amount} = route.params;
+  const {id} = route.params;
   let str = type ? '+' : '-';
-  let useage = 'Starbucks';
   let displayType = type ? 'Income' : 'Expense';
-  let date = 'Apr 18, 2022';
-  let remark = 'Oh, God! Caramel Macchiato is really good!';
+
+  function deleteRecords(){
+    console.log(id);
+    fetch('http://10.0.2.2:8000/app/record/', { 
+      method: 'delete',
+      body: JSON.stringify({
+        // is_many: true,
+        del_id_list:[id],
+        uid: global.uid
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+      }
+    }).then(response => {
+      return response.json();
+    })
+    .then(function(data){
+      Alert.alert(
+        "Congratulations!",
+        "You delete the record!",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate('Homepage');
+            }
+          }
+        ]
+      );
+      // navigation.navigate('Homepage')
+    });
+    
+  }
 
   return (
     <View>
@@ -39,7 +76,7 @@ const CardInfo = ({navigation}) => {
         <View style={[group1.type,  {backgroundColor: type ? 'rgba(67, 136, 131, 0.1)' : 'rgba(249, 91, 81, 0.1)'}]}>
           <Text style={[group1.typeText, , {color: type ? 'rgb(67, 136, 131)' : 'rgb(249, 91, 81)'}]}>{displayType}</Text>
         </View>
-        <Text style={group1.amount}>$ 600,000</Text>
+        <Text style={group1.amount}>$ {amount}</Text>
         <Text style={group1.details}>Record Details</Text>
         <Image style={group1.vector} source={require('./imgs/Vector10.png')} />
         <Text style={group1.status}>Status</Text>
@@ -53,7 +90,7 @@ const CardInfo = ({navigation}) => {
         <View style={group1.line}></View>
         <TouchableOpacity
             style={group1.delete}
-            onPress={() => navigation.navigate('Homepage')}
+            onPress={() => deleteRecords()}
         >
           <Text style={group1.deleteText}>Delete Record</Text>
         </TouchableOpacity>
