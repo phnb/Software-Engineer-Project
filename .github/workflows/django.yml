@@ -27,5 +27,5 @@ jobs:
         pip install -r cashsys/requirements.txt
     - name: Automatically run 4001 backend Django Unit Tests
       run: |
-        python cashsys/manage.py cashapp.test
+        python cashsys/manage.py test cashapp.test
       continue-on-error: true
