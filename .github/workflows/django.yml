@@ -36,8 +36,8 @@ jobs:
       run: |
         sudo /etc/init.d/mysql start
         mysql -e "CREATE DATABASE ${{ env.DB_DATABASE }};" -uroot -proot
-        mysql -e "CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }};" -uroot -proot
-        mysql -e "GRANT ALL ON *.* TO ${{ env.DB_USER }}@'localhost';" -uroot -proot
+        mysql -e "CREATE USER '${{ env.DB_USER }}'@'localhost' IDENTIFIED BY '${{ env.DB_PASSWORD }}';" -uroot -proot
+        mysql -e "GRANT ALL ON *.* TO '${{ env.DB_USER }}'@'localhost';" -uroot -proot
 
     - name: Make migrations
       run: |
