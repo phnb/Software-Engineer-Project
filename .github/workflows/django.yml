@@ -8,8 +8,22 @@ on:
 
 jobs:
   build:
+    env:
+      DB_DATABASE: monager
+      DB_USER: monager
+      DB_PASSWORD: 123456
 
+    services:
+      # How to use MySQL
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: 123456
+        ports:
+        - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     runs-on: ubuntu-latest
+    
     strategy:
       max-parallel: 4
       matrix:
@@ -21,10 +35,22 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+        
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r cashsys/requirements.txt
+        
+    - name: Set up MySQL
+      run: |
+        sudo /etc/init.d/mysql start
+        mysql -e "DROP DATABASE ${{ env.DB_DATABASE }}; CREATE DATABASE ${{ env.DB_DATABASE }}; DROP USER ${{ env.DB_USER }}@'localhost'; CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }}; GRANT ALL ON *.* TO ${{ env.DB_USER }}@'localhost';" -uroot -p123456
+
+    - name: Make migrations
+      run: |
+        python cashsys/manage.py makemigrations
+        python cashsys/manage.py migrate
+    
     - name: Automatically run 4001 backend Django Unit Tests
       run: |
         python cashsys/manage.py test cashapp.tests
