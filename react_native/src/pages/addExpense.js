@@ -70,7 +70,8 @@ const AddExpense = ({navigation, route}) => {
         description: note,
         account_id: accountId,
         amount: amount,
-        uid: global.uid
+        uid: global.uid,
+        start_time: new Date().toISOString()
       }),
       headers: {
         'Content-Type': 'application/json',

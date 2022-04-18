@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,6 +8,7 @@ import {
   useColorScheme,
   View,
   Image,
+  Alert,
   Button,
   TextInput,
   Icon,
@@ -39,8 +40,42 @@ const Profile = ({navigation}) => {
   const [count, setCount] = useState(0);
   const onPress = () => setCount(count + 1);
 
+  useEffect(() => {
+    if (image != './imgs/images.jpg'){
+      fetch('http://10.0.2.2:8000/auth/profile/', {
+        method: 'post',
+        body: JSON.stringify({
+          username: username,
+          first_name: "ddg",
+          last_name: "nb",
+          email: global.email,
+          avatar: image,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => response.json())
+        .then(function (data) {
+          // setImage(data["avatarLink"])
+        }
+      )
+    }
+  }, [image])
+
+  useEffect(() => {
+    fetch('http://10.0.2.2:8000/auth/profile/')
+      .then(response => response.json())
+      .then(function (data) {
+        // console.log(image);
+        setImage(data["avatarLink"])
+        onChangeImageType(false);
+        // bs.current.snapTo(1);
+      })
+  }, [])
+
   const choosePhotoFromLibrary = () => {
-    onChangeImageType(false);
+    
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -48,12 +83,18 @@ const Profile = ({navigation}) => {
     }).then(image => {
       console.log(image);
       setImage(image.path);
+      onChangeImageType(false);
+      bs.current.snapTo(1);
+    }).catch(error => {
+      // console.log("error");
+      if (image == './imgs/images.jpg'){
+        onChangeImageType(true);
+      }
       bs.current.snapTo(1);
     });
   }
 
   const takePhotoFromCamera = () => {
-    onChangeImageType(false);
     ImagePicker.openCamera({
       width: 300,
       height: 300,
@@ -61,8 +102,35 @@ const Profile = ({navigation}) => {
     }).then(image => {
       console.log(image);
       setImage(image.path);
+      onChangeImageType(false);
+      bs.current.snapTo(1);
+    }).catch(error => {
+      // console.log("error");
+      if (image == './imgs/images.jpg'){
+        onChangeImageType(true);
+      }
       bs.current.snapTo(1);
     });
+  }
+
+  function signout(){
+    global.username = "Guest";
+    global.accountId = -1;
+    global.uid = -1;
+    global.email = "";
+    Alert.alert(
+      "Good bye!",
+      "",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate('Login');
+            // console.log(username);
+          }
+        }
+      ]
+    );
   }
 
   renderInner = () => (
@@ -99,10 +167,10 @@ const Profile = ({navigation}) => {
       {/* <View style={group1.imageBox}>
         <Image source={require('./imgs/woman3.png')} style={group1.image} />
       </View> */}
-      <Text style = {group1.userName}>WZD NB</Text>
+      <Text style = {group1.userName}>{global.username}</Text>
       {/* <Image souce={require('./imgs/Vector7.png')} style={group1.nameFill} /> */}
       {/* <Image souce={require('./imgs/Vector10.png')} style={group1.emailFill} /> */}
-      <Text style = {group1.userEmail}>119010321@link.cuhk.edu.cn</Text>
+      <Text style = {group1.userEmail}>{global.email}</Text>
       <View style={group1.line1}></View>
       <Text style = {group1.funnyThing}>More features are under development ... </Text>
       <TouchableOpacity style={group1.frame} onPress={onPress}>
@@ -119,7 +187,7 @@ const Profile = ({navigation}) => {
       <View style={group1.line2}></View>
       <TouchableOpacity
         style={group1.signout}
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => signout()}
       >
         <Text style={group1.signoutText}>Sign Out</Text>
       </TouchableOpacity>

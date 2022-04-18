@@ -54,6 +54,7 @@ const ChangePwd = ({navigation}) => {
       }
     }).then(response=>response.json())
     .then(function(data) {
+      console.log(data);
       success = data["success"];
       if (success){
         uname = data["username"]

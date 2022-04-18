@@ -45,7 +45,7 @@ ALLOWED_HOSTS = ["*"]
 
 # for UTC time difference (between pytz and MySQL) correction
 # NOTE: This is an MACHINE-DEPENDENT HYPER-PARAMETER, so make sure to adjust it (until all unit tests are passed) when deploying the project on a new server!
-SECOND_ERROR_PARAM = 20
+SECOND_ERROR_PARAM = 0
 
 # Application definition
 

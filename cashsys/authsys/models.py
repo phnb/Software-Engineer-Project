@@ -10,6 +10,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=100, blank=True)
     email = models.EmailField(max_length=100, blank=True, unique=True)
     avatar = models.ImageField(default="default_img.png", null=False, blank=False)
+    avatar_back_up = models.CharField(max_length=100, blank=True)
     is_reset_active = models.BooleanField(default=False)
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)

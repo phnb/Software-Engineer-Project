@@ -94,8 +94,10 @@ const LoginView = ({navigation}) => {
           // navigation.setParams(accountId);
           global.accountId = account_id;
           global.username = username;
-          global.refresh = false;
           global.uid = data["uid"];
+          global.email = data["email"];
+          OnchangePwd('');
+          OnchangeUsername('');
           navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
         }
       });
@@ -110,7 +112,7 @@ const LoginView = ({navigation}) => {
     <View style={styles.container}>
       {/* <Text style={styles.login}>Login</Text> */}
       <View style={styles.rectangular1}>
-        <Text style={styles.name}>Username or email address</Text>
+        <Text style={styles.name}>Username</Text>
         <TextInput
           // placeholder={'Enter your username or email address'}
           clearButtonMode={'while-editing'}

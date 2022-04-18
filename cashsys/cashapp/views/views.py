@@ -103,13 +103,13 @@ class RecordModify(generics.GenericAPIView):
                 accid = self.int_to_int(data["account_id"]) 
 
                 # filter the records within the time range
-                end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-                end_time = end_time - timedelta(seconds=SECOND_ERROR_PARAM)
-                end_time = end_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                # end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+                # end_time = end_time - timedelta(seconds=SECOND_ERROR_PARAM)
+                # end_time = end_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                 
-                stt_time = datetime.strptime(stt_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-                stt_time = stt_time - timedelta(seconds=SECOND_ERROR_PARAM)
-                stt_time = stt_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                # stt_time = datetime.strptime(stt_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+                # stt_time = stt_time - timedelta(seconds=SECOND_ERROR_PARAM)
+                # stt_time = stt_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                 # print(end_time)
                 # print(stt_time)
 

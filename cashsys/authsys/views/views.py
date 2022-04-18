@@ -25,13 +25,6 @@ import json
 from django.db.models import Q
 
 # Create your views here.
-# def get_register(request):
-#     return render(request, "auth/reg.html")
-
-# def get_signin(request):
-#     return render(request, "auth/sgin.html")
-
-
 
 def register(request):
     # print("hahahahah")
@@ -114,10 +107,7 @@ def register(request):
         email.fail_silently=True
         email.send()
 
-
-        # success message?????
-        # print("dne!!!")
-        return render(request, "auth/regwait.html")
+        return JsonResponse(status=200, data={"success": True})
     
     elif (request.method == "GET"):
         return render(request, "auth/reg.html")
@@ -193,7 +183,7 @@ def reset_send_mail(request):
         except User.DoesNotExist:
             # no such user  
             messages.error(request, "no such user")
-            return render(request, "resetpw/resetpw.html")
+            return JsonResponse(status=401, data={"success": False})
 
         if usr.is_active:
             usr.user_profile.is_reset_active = True
@@ -321,32 +311,38 @@ def reset_pw(request):
 def profile(request):
     if request.method == "POST":
         # print(request.POST)
-        # print(request.FILES)
+        print(request.FILES)
         usr = User.objects.get(id=request.user.id)
         data = json.loads(request.body)
-        unm = data["username"]
-        email = data["email"]
+        print(data)
+        try:
+            unm = data["username"]
+            email = data["email"]
+            avatar_front_back_up = data["avatar"]
+        except:
+            return JsonResponse(status=401, data={"success": False})
 
-        # profile validity check (upper-lower case sensitive)
-        if User.objects.filter(Q(email=email)&~Q(id=request.user.id)):
-            messages.error(request, "email exists")
-            # print("heeremi")
-            return redirect("/auth/profile/")
 
-        if User.objects.filter(Q(username=unm)&~Q(id=request.user.id)):
-            messages.error(request, "username already exists")
-            # print("heer")
-            return redirect("/auth/profile/")
+        # # profile validity check (upper-lower case sensitive)
+        # if User.objects.filter(Q(email=email)&~Q(id=request.user.id)):
+        #     messages.error(request, "email exists")
+        #     # print("heeremi")
+        #     return JsonResponse(status=401, data={"success": False})
 
-        if len(unm) > 10:
-            messages.error(request, "username should be less than 10")
-            # print("heerlen")
-            return redirect("/auth/profile/")
+        # if User.objects.filter(Q(username=unm)&~Q(id=request.user.id)):
+        #     messages.error(request, "username already exists")
+        #     # print("heer")
+        #     return JsonResponse(status=401, data={"success": False})
 
-        if not unm.isalnum():
-            messages.error(request, "username must be alpha-numeric")
-            # print("errrrrrrrr")
-            return redirect("/auth/profile/")
+        # if len(unm) > 10:
+        #     messages.error(request, "username should be less than 10")
+        #     # print("heerlen")
+        #     return JsonResponse(status=401, data={"success": False})
+
+        # if not unm.isalnum():
+        #     messages.error(request, "username must be alpha-numeric")
+        #     # print("errrrrrrrr")
+        #     return JsonResponse(status=401, data={"success": False})
 
         profForm = UserProfileForm(data, instance=usr.user_profile)
         usrForm = UserForm(data, instance=usr)
@@ -358,7 +354,8 @@ def profile(request):
             # update avatar
             if 'avatar' in request.FILES:
                 profile.avatar = request.FILES['avatar']
-
+            # avatar link in the mobile, for back up
+            profile.avatar_back_up = avatar_front_back_up
             profile.save()
             
             # update deep User
@@ -367,7 +364,9 @@ def profile(request):
             messages.success(request, "profile update successful!")
             # redirect to the main page we just updated
             # return JsonResponse()
-            return render(request, "auth/sginsucc.html", {"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url})
+            return JsonResponse(status=201, data={"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarLink": avatar_front_back_up})
+        return JsonResponse(status=401, data={"success": False})
     elif request.method == "GET":
+        usr = request.user
         profForm = UserProfileForm(instance=request.user.user_profile)
-        return render(request, "auth/usrprof.html", {"form": profForm})
+        return JsonResponse(status=201, data={"fname": usr.username, "frname": usr.first_name, "laname": usr.last_name, "email": usr.email, "avatarLink": usr.user_profile.avatar_back_up})

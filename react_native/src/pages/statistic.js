@@ -109,7 +109,7 @@ const Statistic = ({navigation}) => {
     fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
     .then(response => response.json())
       .then(function(data){
-          // console.log(data);
+          console.log(data);
           let in_arr = new Array();
           let ele;
           if (type){
@@ -137,12 +137,17 @@ const Statistic = ({navigation}) => {
           //   out_arr.push(data["outcome_records"][i]);
           // }
           setIncomeRecords(in_arr); //[i];
+          // console.log("test");
           // setExpenseRecords(out_arr);
       }
     )
 
       // {"incomerecords", "income": [{"x": 0, "y": 500},{"x": 1, "y": 500}]}
   }, [type])
+
+  React.useEffect(() => {
+    console.log(len);
+  }, [len]);
 
   React.useEffect(() => {
     var is_many = true;
