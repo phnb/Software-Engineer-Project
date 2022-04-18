@@ -29,14 +29,14 @@ var {width, height, scale} = Dimensions.get('window');
 function setCookie(map){
 
   let cookie = map['set-cookie']
-  // console.log("here");
+  // // console.log("here");
 
   if(cookie.includes('Path=/;')){
       let strArr = cookie.split('Path=/;')
       cookie = strArr.join('')
       cookie += '; Path=/'
       // cookie = 'uid=1; ' + cookie;
-      // console.log(cookie)
+      // // console.log(cookie)
   }
 
   store.save('cookie',cookie)
@@ -68,7 +68,7 @@ const LoginView = ({navigation}) => {
       .then(response =>{
         // let token = response.headers;
         let map = response.headers.map;
-        // console.log(map);
+        // // console.log(map);
         setCookie(map);
         
         return response.json();
@@ -96,15 +96,16 @@ const LoginView = ({navigation}) => {
           global.username = username;
           global.uid = data["uid"];
           global.email = data["email"];
+          global.planId = data["default_plan_id"];
           OnchangePwd('');
           OnchangeUsername('');
           navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
         }
       });
     // .then(function(data) {
-    //   console.log(data.json);
+    //   // console.log(data.json);
     //   // navigation.navigate('Homepage');
-    //   // console.log(username);
+    //   // // console.log(username);
     // })
   }
 

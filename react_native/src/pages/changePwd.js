@@ -54,7 +54,7 @@ const ChangePwd = ({navigation}) => {
       }
     }).then(response=>response.json())
     .then(function(data) {
-      console.log(data);
+      // // console.log(data);
       success = data["success"];
       if (success){
         uname = data["username"]
@@ -74,7 +74,7 @@ const ChangePwd = ({navigation}) => {
       else{
         Alert.alert("sorry! \n Your account does not exit!");
       }
-      console.log(data);
+      // // console.log(data);
       
     })
   }

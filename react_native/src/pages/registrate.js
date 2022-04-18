@@ -79,7 +79,7 @@ const Registration = ({navigation}) => {
             text: "OK",
             onPress: () => {
               navigation.navigate('Login');
-              console.log(username);
+              // console.log(username);
             }
           }
         ]

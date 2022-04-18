@@ -232,7 +232,7 @@ class RecordModify(generics.GenericAPIView):
             # invalid id input
             return JsonResponse(status=401, data={"success": False})
 
-        if delSet.count() is not 0:
+        if delSet.count() != 0:
             delSet.delete()
             return JsonResponse(status=200, data={"success": True})
         else:
@@ -406,6 +406,10 @@ class PlanModify(generics.GenericAPIView):
     def int_to_int(self, num):
         return int(num)
 
+    # input: "4.0", output: 4.0
+    def f_to_f(self, num):
+        return float(num)
+
     def get(self, request):
         user = request.user
         data = request.query_params
@@ -424,7 +428,9 @@ class PlanModify(generics.GenericAPIView):
                 # account has no plan 
                 return JsonResponse(status=400, data={"success": False})
             plseri = PlanSerializer(planset, many=True)
-            return JsonResponse(status=201, data=plseri.data, safe=False)
+            seridata = plseri.data
+            seridata["success"] = True
+            return JsonResponse(status=201, data=seridata, safe=False)
 
         elif usr_many:
             # user_id re-authenticate for stronger robustness
@@ -456,7 +462,9 @@ class PlanModify(generics.GenericAPIView):
                 # user has no plan
                 return JsonResponse(status=400, data={"success": False})
             plseri = PlanSerializer(planset, many=True)
-            return JsonResponse(status=201, data=plseri.data, safe=False)
+            seridata = plseri.data
+            seridata["success"] = True
+            return JsonResponse(status=201, data=seridata, safe=False)
 
         else:
             # Look for a given plan_id's plan
@@ -468,8 +476,10 @@ class PlanModify(generics.GenericAPIView):
 
             # plan existance
             if (plan):  
-                planSeri = PlanSerializer(plan)
-                return JsonResponse(status=201, data=planSeri.data)
+                plseri = PlanSerializer(plan)
+                seridata = plseri.data
+                seridata["success"] = True
+                return JsonResponse(status=201, data=seridata)
             else:
                 # plan does not exist
                 return JsonResponse(status=400, data={"success": False})
@@ -479,6 +489,8 @@ class PlanModify(generics.GenericAPIView):
         # add new plan
         user = request.user
         data = request.data
+        print(data)
+        data["budget"] = self.f_to_f(data["budget"])
 
         # user_id re-authenticate for stronger robustness
         try:
@@ -512,7 +524,9 @@ class PlanModify(generics.GenericAPIView):
         planSeri = PlanSerializer(plan, data=data, partial=True)
         if planSeri.is_valid():
             planSeri.save()
-            return JsonResponse(status=201, data=planSeri.data)
+            pl = planSeri.data
+            pl["success"]=True
+            return JsonResponse(status=201, data=pl)
         # "wrong parameters"
         return JsonResponse(status=400, data={"success": False})
 
@@ -521,12 +535,16 @@ class PlanModify(generics.GenericAPIView):
         user = request.user
         data = request.data
         
-        # avoid invalid plan_id
+        
+        # # avoid invalid plan_id
+        # print(data)
+        # print(data["plan_id"])
+        # print(type(data["plan_id"]))
         try:
             plan = self.queryset.get(id=data["plan_id"])
         except:
             return JsonResponse(status=400, data={"success": False})
-        
+        data["budget"] = plan.budget + self.f_to_f(data["budget"])
         original_buget = plan.budget
         data["remaining"] = plan.remaining
         data["failed"] = plan.failed
@@ -537,7 +555,7 @@ class PlanModify(generics.GenericAPIView):
             # budget decrease
             data["remaining"] -= original_buget - data["budget"]
             # Failure after changing
-            if (data["remaining"] <= 0):
+            if (data["remaining"] < 0):
                 # data["remaining"] = 0
                 data["failed"] = True
         else:
@@ -545,11 +563,13 @@ class PlanModify(generics.GenericAPIView):
             ori_remain = data["remaining"]
             data["remaining"] += data["budget"] - original_buget
             # revival judgement
-            if ((ori_remain <= 0) and (data["remaining"] > 0)):
+            if ((ori_remain < 0) and (data["remaining"] >= 0)):
                 data["failed"] = False
 
         # update changes in database and return
+        # print(data)
         planSeri = PlanSerializer(plan, data=data, partial=True)
+        
         if planSeri.is_valid():
             planSeri.save() 
             return JsonResponse(status=201, data=planSeri.data)

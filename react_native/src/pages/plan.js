@@ -20,13 +20,72 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+function getAfterDate(n) {
+  var n = n;
+  var d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString();
+}
+
 const Plan = () => {
-  var days = 14;
-  var remainBudget = 5000;
+  var url = 'http://10.0.2.2:8000/app/plan/';
+  var days = 30 - new Date().getDate();
+  const [remainBudget, onChangeRemainBudget] = useState(5000);
   var dailyRemain = remainBudget / days;
   const [press, OnchangePress] = useState(true);
-  const [budget, OnchangeBudget] = useState(0);
+  const [budget, OnchangeBudget] = useState("");
   const [confirm, OnchangeConfirm] = useState(false);
+
+  useEffect(() => {
+    fetch(`${url}?is_account_many=false&is_user_many=false&max_num=1&plan_id=${global.planId}`)
+    .then(response => response.json())
+      .then(function(data){
+        // console.log(data);
+        if (!data["success"]){
+          onChangeRemainBudget(0);
+          OnchangeBudget('');
+        }
+        else{
+          // global.bu = data["budget"];
+          onChangeRemainBudget(data["remaining"]);
+          // OnchangeBudget(data["budget"].toString());
+        }
+      })
+  },[])
+
+  function submitPlan(days){
+    var start_time = new Date().toISOString();
+    fetch('http://10.0.2.2:8000/app/plan/', { 
+      method: 'patch',
+      body: JSON.stringify({
+        // is_many: true,
+        name: "plan",
+        description: "plan to save money",
+        plan_id: global.planId,
+        start_time: start_time,
+        end_time: getAfterDate(days),
+        budget: budget,
+        remaining:remainBudget,
+        uid:global.uid
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': global.cookie,
+      }
+    }).then(response => {
+      // let token = response.headers;
+      // console.log("account");
+      // console.log(token);
+      return response.json();
+    })
+    .then(function(data){
+      // DeviceEventEmitter.emit('refresh');
+      onChangeRemainBudget(data["remaining"]);
+      // OnchangeBudget(data["budget"].toString());
+    });
+  }
+
+
 
   return (
     <View>
@@ -65,7 +124,7 @@ const Plan = () => {
         />
         <TouchableOpacity
           style={group1.confirm}
-          onPress={() => OnchangeConfirm(!confirm)}
+          onPress={() => submitPlan(days)}
         >
           {remainBudget >= 0 ?  
           <Image style={group1.confirmImg} source={require('./imgs/confirm.png')}/>

@@ -70,11 +70,11 @@ function gettime(m_time){
       return "Yesterday";
     }
     else{
-      console.log(m_date.toDateString())
+      // console.log(m_date.toDateString())
       var date = m_date.toDateString();
       var list = date.split(' ');
       var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
-      console.log(formal_date);
+      // console.log(formal_date);
       return formal_date;
     }
   }
@@ -101,7 +101,7 @@ const Statistic = ({navigation}) => {
   // const [expenseRecords, setExpenseRecords] = React.useState();
 
   React.useEffect(() => {
-    console.log("new");
+    // console.log("new");
     var is_many = true;
     var is_many_time = true;
     var url = 'http://10.0.2.2:8000/app/record/';
@@ -110,7 +110,7 @@ const Statistic = ({navigation}) => {
     fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
-          console.log(data);
+          // console.log(data);
           let in_arr = new Array();
           let ele;
           if (type){
@@ -146,9 +146,9 @@ const Statistic = ({navigation}) => {
       // {"incomerecords", "income": [{"x": 0, "y": 500},{"x": 1, "y": 500}]}
   }, [type])
 
-  React.useEffect(() => {
-    console.log(len);
-  }, [len]);
+  // React.useEffect(() => {
+  //   console.log(len);
+  // }, [len]);
 
   React.useEffect(() => {
     var is_many = true;
@@ -165,6 +165,7 @@ const Statistic = ({navigation}) => {
       fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
       .then(response => response.json())
         .then(function(data){
+          // console.log(data);
           var amount = 0;
           for (let i = 0; i < data["income_records"].length; i++) {
             const element = data["income_records"][i]["amount"];
@@ -190,7 +191,7 @@ const Statistic = ({navigation}) => {
         }
       )
     }
-  }, [])
+  }, [test])
 
   return (
     <View>

@@ -41,22 +41,22 @@ function gettime(m_time){
   const n_date = new Date();
   // n_date.setDate(n_date.getDate()+1)
   if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
-    console.log("Today");
+    // // console.log("Today");
     return "Today";
   }
   else{
     var t_date = new Date();
     t_date.setDate(n_date.getDate() - 1);
     if (m_date.getDate() == t_date.getDate() && m_date.getMonth() == t_date.getMonth() && t_date.getFullYear() == t_date.getFullYear()){
-      console.log("Yesterday");
+      // // console.log("Yesterday");
       return "Yesterday";
     }
     else{
-      console.log(m_date.toDateString())
+      // // console.log(m_date.toDateString())
       var date = m_date.toDateString();
       var list = date.split(' ');
       var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
-      console.log(formal_date);
+      // // console.log(formal_date);
       return formal_date;
     }
   }
@@ -90,19 +90,19 @@ const Homescreen = ({ navigation, route }) => {
     } else {
       OnchangeWelcome('Good evening, ');
     }
-    // console.log("start");
-    // console.log(welcome);
+    // // console.log("start");
+    // // console.log(welcome);
     date = new Date();
   },[test])
   
 
-  // console.log(cookie);
+  // // console.log(cookie);
   // wzdnb 123
   
   // url += accountId;
-  // console.log(start_time);
+  // // console.log(start_time);
   useEffect(() => {
-    console.log("second");
+    // console.log("second");
     var is_many = true;
     var is_many_time = true;
     var url = 'http://10.0.2.2:8000/app/record/';
@@ -111,7 +111,7 @@ const Homescreen = ({ navigation, route }) => {
     fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
-          // console.log(data);
+          // // console.log(data);
           const income_records = data["income_records"]; //[i];
           const outcome_records = data["outcome_records"];
           var amount = 0;
@@ -126,7 +126,7 @@ const Homescreen = ({ navigation, route }) => {
             amount += element["amount"];
           }
           OnchangeExpense(amount);
-            // console.log("come in");
+            // // console.log("come in");
           // }
       }
     )
@@ -138,7 +138,7 @@ const Homescreen = ({ navigation, route }) => {
           return response.json();
         }
         else{
-          // console.log(error);
+          // // console.log(error);
           const n_arr = new Array();
           // let n_arr = new Array([{"name":""}, {"name":""}, {"name":""}, {"name":""}]);
           for (let i = 0; i < 4; i++){
@@ -165,7 +165,7 @@ const Homescreen = ({ navigation, route }) => {
             }
             OnchangeLen(len_income);
             
-            // console.log(data)
+            // // console.log(data)
             setRecords(n_arr);
           }
         }
@@ -177,7 +177,7 @@ const Homescreen = ({ navigation, route }) => {
     .then(response => response.json())
       .then(function(data){
           var bal = data["balance"];
-          // console.log(bal);
+          // // console.log(bal);
           OnchangeBalance(bal);
         // }
       }

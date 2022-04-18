@@ -127,7 +127,7 @@ def signin(request):
         password = data["password"]
 
         usr = authenticate(username=username, password=password)
-        if ((usr is not None) and usr.is_active and usr.user_profile):
+        if ((usr != None) and usr.is_active and usr.user_profile):
             login(request, usr, backend='django.contrib.auth.backends.ModelBackend')
             fname = usr.username
             # print(request.user.is_authenticated)
@@ -135,7 +135,8 @@ def signin(request):
             # get default account's id
             try:
                 defacc = usr.user_profile.accounts.get(is_default=True)
-                return JsonResponse(status=200, data={"success": True, "uid": usr.id, "default_account_id": defacc.id, "uname": usr.username, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
+                defplan = usr.user_profile.plans.get(is_default=True)
+                return JsonResponse(status=200, data={"success": True, "uid": usr.id, "default_account_id": defacc.id, "default_plan_id": defplan.id, "uname": usr.username, "email": usr.email, "avatarUrl": usr.user_profile.avatar.url}) 
             except:
                 # no default account or more than 1 accounts
                 return JsonResponse(status=401, data={"success": False})
@@ -225,7 +226,7 @@ def register_activate(request, uid64d, token):
         return render(request, "activation_failed.html")
         # return JsonResponse(statu=401, data={"success": False})
 
-    if (myuser is not None and generate_token.check_token(myuser, token)):
+    if ((myuser != None) and generate_token.check_token(myuser, token)):
         myuser.is_active = True
         myuser.save()
         login(request, myuser, backend='django.contrib.auth.backends.ModelBackend')
@@ -238,6 +239,14 @@ def register_activate(request, uid64d, token):
             defacc.name = myuser.username + "'s first account"
             defacc.description = myuser.username + "'s first account, hello world!"
             defacc.save()
+
+        # create default plan for the new user (login, should be returned)
+        if (not Plan.objects.filter(Q(userProfile__id=myuser.user_profile.id)&Q(is_default=True))):
+            defplan = Plan(userProfile=myuser.user_profile, account=defacc)
+            defplan.is_default = True
+            defplan.name = myuser.username + "'s first plan"
+            defplan.description = myuser.username + "'s first plan, hello world!"
+            defplan.save()
 
         return render(request, "auth/sucver.html")
         # return JsonResponse(statu=200, data={"is_active": True})
@@ -256,7 +265,7 @@ def reset_activate(request, uid64d, token, pw):
         return render(request, "activation_failed.html")
 
 
-    if (myuser is not None and generate_token.check_token(myuser, token)):
+    if ((myuser != None) and generate_token.check_token(myuser, token)):
         # Only when token verification succeeded can you query the password reset web-page
         # TODO: periodically set is_reset_active to False
         myuser.user_profile.is_reset_active = False

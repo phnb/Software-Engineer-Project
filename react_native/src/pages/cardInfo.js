@@ -31,7 +31,7 @@ const CardInfo = ({navigation, route}) => {
   let displayType = type ? 'Income' : 'Expense';
 
   function deleteRecords(){
-    console.log(id);
+    // console.log(id);
     fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'delete',
       body: JSON.stringify({

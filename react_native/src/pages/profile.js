@@ -61,15 +61,23 @@ const Profile = ({navigation}) => {
         }
       )
     }
+    else{
+      onChangeImageType(true);
+    }
   }, [image])
 
   useEffect(() => {
     fetch('http://10.0.2.2:8000/auth/profile/')
       .then(response => response.json())
       .then(function (data) {
-        // console.log(image);
-        setImage(data["avatarLink"])
-        onChangeImageType(false);
+        // console.log(data);
+        if (data["avatarLink"]){
+          setImage(data["avatarLink"]);
+          onChangeImageType(false);
+        }
+        else{
+          onChangeImageType(true);
+        }
         // bs.current.snapTo(1);
       })
   }, [])
@@ -81,7 +89,7 @@ const Profile = ({navigation}) => {
       height: 300,
       cropping: true,
     }).then(image => {
-      console.log(image);
+      // console.log(image);
       setImage(image.path);
       onChangeImageType(false);
       bs.current.snapTo(1);
@@ -100,7 +108,7 @@ const Profile = ({navigation}) => {
       height: 300,
       cropping: true,
     }).then(image => {
-      console.log(image);
+      // console.log(image);
       setImage(image.path);
       onChangeImageType(false);
       bs.current.snapTo(1);

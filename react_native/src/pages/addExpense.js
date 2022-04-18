@@ -23,7 +23,7 @@ import {
 
 const AddExpense = ({navigation, route}) => {
   var account_id = global.accountId;
-  // console.log(account_id);
+  // // console.log(account_id);
   const dateNow = new Date();
   const currentDate = `${dateNow.getFullYear()}-${
     dateNow.getMonth() + 1
@@ -55,7 +55,7 @@ const AddExpense = ({navigation, route}) => {
   },[refresh])
 
   function submit(type, name, amount, note, accountId){
-    // console.log(cookie);
+    // // console.log(cookie);
     fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'post',
       // body: JSON.stringify({
@@ -79,8 +79,8 @@ const AddExpense = ({navigation, route}) => {
       }
     }).then(response => {
       // let token = response.headers;
-      // console.log("account");
-      // console.log(token);
+      // // console.log("account");
+      // // console.log(token);
       return response.json();
     })
     .then(function(data){
@@ -88,8 +88,6 @@ const AddExpense = ({navigation, route}) => {
       OnchangeRefresh(!refresh);
       navigation.navigate("Home");
     });
-
-
   }
   
 

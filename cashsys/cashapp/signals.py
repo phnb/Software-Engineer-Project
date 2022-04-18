@@ -51,7 +51,7 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
         for plan in instance.plans.all():
             # print("sub!")
             plan.remaining -= incr
-            if plan.remaining <= 0:
+            if plan.remaining < 0:
                 plan.failed = True
             plan.save()
 
@@ -67,7 +67,7 @@ def RecordDeleteHandler(sender, instance, **kwargs):
         # update plan remaining 
         for plan in instance.plans.all():
             plan.remaining -= instance.amount
-            if plan.remaining <= 0:
+            if plan.remaining < 0:
                 plan.failed = True
             plan.save()
 

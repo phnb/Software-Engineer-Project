@@ -1,3 +1,5 @@
+from operator import mod
+from statistics import mode
 from django.db import models
 from authsys.models import *
 from datetime import datetime
@@ -18,15 +20,16 @@ class Account(models.Model):
 class Plan(models.Model):
     name = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(default=datetime.utcnow())
+    end_time = models.DateTimeField(default=datetime.utcnow())
     created_time = models.DateTimeField(auto_now_add=True)
     modified_time = models.DateTimeField(auto_now=True)
     budget = models.FloatField(default=0)
     remaining = models.FloatField(default=0) # every update of record changes remaining
     failed = models.BooleanField(default=False) # every update of record changes failed
+    is_default = models.BooleanField(default=False)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="plans") 
-    userProfile = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    userProfile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="plans")
 
 # Record
 class Record(models.Model):
