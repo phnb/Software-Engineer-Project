@@ -48,14 +48,6 @@ const OnBoarding = ({navigation}) => {
       >
         <Text style={slogen.text2}>Get Started </Text>
       </TouchableOpacity>
-      {/* <View style={group1.frame}>
-        <Button
-          title="    Get Started    "
-          color="rgba(63,135,130,255)"
-          onPress={() => navigation.navigate("Registration")}
-        />
-      </View> */}
-      {/* <Text style={group1.text}>Get Started</Text> */}
       <Text style={slogen.text1}>Spend Smarter Save More</Text>
       {/* <Text style={slogen.text2}>Already Have Account?</Text> */}
       <TouchableOpacity
@@ -115,12 +107,6 @@ const group1 = StyleSheet.create({
     lineHeight: 38,
     textAlign: 'center',
     textTransform: 'capitalize',
-
-    // display: flex;
-    // flex-direction: row;
-    // justify-content: center;
-    // align-items: center;
-    // padding: 10px 20px 10px 20px;
   },
 });
 

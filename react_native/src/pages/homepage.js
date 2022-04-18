@@ -10,6 +10,7 @@ import {
   View,
   Image,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Colors,
@@ -21,7 +22,7 @@ import {
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Profile from './profile';
 import Statistic from './statistic';
-import Wallet from './wallet';
+import Plan from './plan';
 import AddExpense from './addExpense';
 import Card from '../components/card';
 import { StackRouter } from '@react-navigation/native';
@@ -191,14 +192,15 @@ const Homescreen = ({ navigation, route }) => {
         <View style={group1.ellipse3} />
         <Text style={group1.text1}> {welcome} </Text>
         <Text style={group1.text2}> {username} </Text>
+        <TouchableOpacity
+          style={group1.refresh}
+          onPress={() => OnchangeTest(!test)}
+        >
+          <Image style={group1.refreshImg} source={require('./imgs/refresh.png')}/>
+        </TouchableOpacity>
       </View>
       <View style={group2.rectangle2} />
       <View style={group2.rectangle1}>
-      <Button
-        onPress={() => OnchangeTest(!test)}
-        color="#BCBCBC"
-        title="Forget password?"
-      />
         {/* <View style={group2.frame1}>
           <View style={group2.arrayDown1}>
             <Image
@@ -273,7 +275,7 @@ const Homescreen = ({ navigation, route }) => {
         {/* <Card navigation={navigation} isExist={records.length >= 2} name={records[1]["name"]} time={records[1]["modified_time"]} cost={records[1]["amount"]} type={records[1]["is_income"]} top={502} description={records[0]["description"]}/>
         <Card navigation={navigation} isExist={records.length >= 3} name={records[2]["name"]} time={records[2]["modified_time"]} cost={records[2]["amount"]} type={records[2]["is_income"]} top={582} description={records[0]["description"]}/>
         <Card navigation={navigation} isExist={records.length >= 4} name={records[3]["name"]} time={records[3]["modified_time"]} cost={records[3]["amount"]} type={records[3]["is_income"]} top={662} description={records[0]["description"]}/> */}
-      </View> : <View></View>}
+      </View> : <Text style={group1.noRecord}> No record yet !</Text>}
     </View>
   );
 };
@@ -294,33 +296,33 @@ const Homepage = (navigation, route) => {
           let icon;
           if (route.name === 'Home') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector1.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector1.png')} />
             ) : (
-              <Image source={require('./imgs/Vector.png')} />
+              <Image style={group1.barImg1} source={require('./imgs/Vector.png')} />
             );
           } else if (route.name === 'Statistic') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector3.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector3.png')} />
             ) : (
-              <Image source={require('./imgs/Vector2.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector2.png')} />
             );
           } else if (route.name === 'Add Expense') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector.png')} />
+              <Image style={group1.barImg2} source={require('./imgs/add.png')} />
             ) : (
-              <Image source={require('./imgs/Vector.png')} />
+              <Image style={group1.barImg2} source={require('./imgs/add1.png')} />
             );
-          } else if (route.name === 'Wallet') {
+          } else if (route.name === 'Plan') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector5.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector5.png')} />
             ) : (
-              <Image source={require('./imgs/Vector4.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector4.png')} />
             );
           } else if (route.name === 'Profile') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector7.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector7.png')} />
             ) : (
-              <Image source={require('./imgs/Vector6.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector6.png')} />
             );
           }
           return icon;
@@ -344,8 +346,8 @@ const Homepage = (navigation, route) => {
         options={{headerShown: false, showLabel: false}}
       />
       <Tab.Screen
-        name="Wallet"
-        component={Wallet}
+        name="Plan"
+        component={Plan}
         options={{headerShown: false}}
       />
       <Tab.Screen
@@ -358,6 +360,53 @@ const Homepage = (navigation, route) => {
 };
 
 const group1 = StyleSheet.create({
+  noRecord: {
+    /* Transactions history */
+    position: 'absolute',
+    width: 200,
+    height: 30,
+    top: 420,
+    left: 140,
+
+    color: 'rgb(102, 102, 102)',
+    fontFamily: 'Inter',
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 30,
+    textAlign: 'left',
+  },
+  barImg1: {
+    width: 35,
+    height: 35,
+  },
+  barImg1: {
+    width: 25,
+    height: 25,
+  },
+  barImg: {
+    width: 30,
+    height: 30,
+  },
+  refresh: {
+    /* Refersh */
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    top: 50,
+    left: 350,
+
+    color: 'rgb(255, 255, 255)',
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'left',
+
+  },
+  refreshImg: {
+    width: 20,
+    height: 20,
+  },
   rectangle1: {
     /* Rectangle 1 */
     position: 'absolute',
@@ -456,7 +505,6 @@ const group2 = StyleSheet.create({
     backgroundColor: 'rgba(27, 92, 88, 0.2)',
     opacity: 0.8,
     borderRadius: 20,
-    // filter: blur(48px),
   },
   //   frame1: {
   //     /* Frame 1 */

@@ -114,7 +114,7 @@ const LoginView = ({navigation}) => {
       <View style={styles.rectangular1}>
         <Text style={styles.name}>Username</Text>
         <TextInput
-          // placeholder={'Enter your username or email address'}
+          placeholder={'Enter your username or email address'}
           clearButtonMode={'while-editing'}
           style={[
             styles.username,
@@ -134,7 +134,7 @@ const LoginView = ({navigation}) => {
         />
         <Text style={styles.pass}>Password</Text>
         <TextInput
-          // placeholder={'Enter your password'}
+          placeholder={'Enter your password'}
           clearButtonMode={'while-editing'}
           secureTextEntry={true}
           selectionColor={'black'}
@@ -246,17 +246,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
     borderRadius: 8,
-
-    // position: 'absolute',
-    // width: 270,
-    // height: 38,
-    // top: 50,
-    // left: 25,
-
-    // backgroundColor: 'white',
-    // marginBottom: 60,
-    // paddingLeft: 10,
-    // textAlign: 'left',
   },
   pass: {
     /* passwordText */

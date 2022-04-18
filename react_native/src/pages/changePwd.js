@@ -158,7 +158,7 @@ const ChangePwd = ({navigation}) => {
             title="Change password"
           />
         </View>
-        <Text style={styles.notice}>* We will send a password change confirmation mail. Please check in your mail box.</Text>
+        <Text style={styles.notice}>* We will send a password change confirmation mail. Please check in your mailbox.</Text>
       </View>
       <Image source={require('./imgs/icon.jpeg')} style={styles.iconStyle} />
     </View>
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 400,
     height: 40,
-    top: 190,
+    top: 180,
     left: 30,
 
     color: 'rgb(0, 0, 0)',
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 400,
     height: 40,
-    top: 300,
+    top: 280,
     left: 30,
 
     color: 'rgb(0, 0, 0)',
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 290,
     height: 40,
-    top: 330,
+    top: 310,
     left: 30,
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
