@@ -18,7 +18,7 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
         incr = instance.amount
         is_income = instance.is_income
     else:
-        print("ee")
+        # print("ee")
         try:
             income_bool_dict = {True: 1, False: -1}
             if instance.is_income ^ kwargs["prev_is_income"]:
@@ -29,7 +29,7 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
         except: 
             return 0
 
-    print("now")
+    # print("now")
 
     if is_income:
         # update account balance
@@ -43,13 +43,13 @@ def RecordSaveHandler(sender, instance, created, **kwargs):
 
     else:
         # update account balance
-        print("hereeee")
+        # print("hereeee")
         instance.account.balance -= incr
         instance.account.save()
 
         # update plan remaining 
         for plan in instance.plans.all():
-            print("sub!")
+            # print("sub!")
             plan.remaining -= incr
             if plan.remaining <= 0:
                 plan.failed = True

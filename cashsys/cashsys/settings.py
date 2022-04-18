@@ -41,8 +41,11 @@ DEBUG = True
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
+# for UTC time difference (between pytz and MySQL) correction
+# NOTE: This is an MACHINE-DEPENDENT HYPER-PARAMETER, so make sure to adjust it (until all unit tests are passed) when deploying the project on a new server!
+SECOND_ERROR_PARAM = 20
 
 # Application definition
 
@@ -93,23 +96,23 @@ WSGI_APPLICATION = 'cashsys.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'monager',
-#         'USER': 'monager',
-#         'PASSWORD': '123456',
-#         'HOST': 'localhost',  
-#         'PORT': '3306',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'monager',
+        'USER': 'monager',
+        'PASSWORD': '123456',
+        'HOST': 'localhost',  
+        'PORT': '3306',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
