@@ -1,0 +1,770 @@
+{
+	"info": {
+		"_postman_id": "7de64b06-c94b-4030-8156-7a8d6b6bd649",
+		"name": "4001_white_box_tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "account_tests",
+			"item": [
+				{
+					"name": "acc_create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "oU3hNHml1haCUR4yzxQSeiIKTBWP2Q0FKZNsJmbgeGvdYKqNcbmPzosRKYdclt2K",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"shokhap\", \"description\": \"shokhap's account, the best!\", \"balance\": 122.2} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/account/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "acc_get_id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_many\":false,\r\n    \"account_id\":4\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/account/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "acc_del",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"del_id_list\": [5]}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/account/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "acc_get_usr",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_many\":true\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/account/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "acc_patch",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "C5SrYJKbDe1RoBGJwFXV7s56u0Q3QyScngw3pwaxEGDTC1x3Qp3lkPZJ6RtwaWl4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"account_id\": 1, \"name\": \"nammshooo\", \"description\": \"nammm here wowww\"}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/account/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"account",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "record_tests",
+			"item": [
+				{
+					"name": "record_with_id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_many\":true,\r\n    \"is_many_time\":true,\r\n    \"record_id\":13\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_with_time_range_normal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_many\":true,\r\n    \"is_many_time\":true,\r\n    \"start_time\": \"2022-04-16T08:20:21.560400Z\", \r\n    \"end_time\": \"2022-04-16T17:50:00.143184Z\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_with_time_range_one_null",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_many\":true,\r\n    \"is_many_time\":true,\r\n    \"start_time\": \"2022-04-16T08:20:21.560400Z\", \r\n    \"end_time\": \"2022-04-16T17:57:38.276572Z\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_with_acc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_many\":true,\r\n    \"record_max_num\": 5,\r\n    \"account_id\": 4\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"account_id\": 4, \"amount\": 50, \"name\": \"gwwwssaaaaqqqwlissssswwwwsss\", \"description\": \"ssssswasaissss, jianglilailahahahahasss\", \"is_income\": false} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_del",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"del_id_list\": [15]}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_patch_add",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"record_id\": 13, \"amount\": 1000, \"name\": \"wuwuwuw\", \"description\": \"shaoleyixielawuwuwu\", \"is_income\": true} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "record_patch_sub",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"record_id\": 13, \"amount\": 500, \"name\": \"wuwuwuw\", \"description\": \"shaoleyixielawuwuwu\", \"is_income\": true} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/record/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"record",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "plan_tests",
+			"item": [
+				{
+					"name": "plan_with_id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"is_account_many\" :false, \"is_user_many\" :false, \"plan_id\": 1}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_with_acc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"is_account_many\" :true, \"is_user_many\" :false, \"max_num\": 5, \"account_id\": 4} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_with_usr",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"is_account_many\" :false, \"is_user_many\" :true, \"max_num\": 5}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"savemoneyssswww!\", \"description\": \"aaaaasavesvesve!\", \"start_time\": \"2022-04-16T22:41:47.183248Z\", \"end_time\": \"2022-10-30T21:41:47.183248Z\", \"budget\": 50000, \"failed\":false, \"account_id\": 4} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_del",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"del_id_list\": [2]}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_patch",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"savemoneywww!\", \"description\": \"savesvesveaa!\", \"start_time\": \"2022-04-16T17:41:47.183248Z\", \"end_time\": \"2022-10-27T21:41:47.183248Z\", \"budget\": 30000, \"failed\":false, \"account_id\": 4, \"plan_id\": 3} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_patch_underflow",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"savemoneywww!\", \"description\": \"savesvesveaa!\", \"start_time\": \"2022-04-16T17:41:47.183248Z\", \"end_time\": \"2022-04-28T21:41:47.183248Z\", \"budget\": 10000, \"failed\":false, \"account_id\": 4, \"plan_id\": 1} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "plan_patch_revival",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "X-CSRFToken",
+								"value": "LshfASdM5r9poPgBf7n2pc5NPOg37H0VzWbWkoAnyHr7Polhg61ywYgowvTGawLK",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"savemoneywww!\", \"description\": \"savesvesveaa!\", \"start_time\": \"2022-04-16T17:41:47.183248Z\", \"end_time\": \"2022-04-28T21:41:47.183248Z\", \"budget\": 100000, \"failed\":false, \"account_id\": 4, \"plan_id\": 1} ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{se}}/app/plan/",
+							"host": [
+								"{{se}}"
+							],
+							"path": [
+								"app",
+								"plan",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-CSRFToken",
+						"value": "4jVDCYhAFCwSauWoA8sUiPg6oyZrDMbyk6QRSIXtN1P1iOEAtGRxbsdFyiMZ02wv",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "xnn",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/auth/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/auth/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
