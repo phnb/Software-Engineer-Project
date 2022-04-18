@@ -35,7 +35,7 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
-        mysql -e "DROP DATABASE ${{ env.DB_DATABASE }}; CREATE DATABASE ${{ env.DB_DATABASE }}; DROP USER ${{ env.DB_USER }}@'localhost'; CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }}; GRANT ALL ON *.* TO ${{ env.DB_USER }}@'localhost';" -uroot -proot
+        mysql -e "CREATE DATABASE ${{ env.DB_DATABASE }}; CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }}; GRANT ALL ON *.* TO ${{ env.DB_USER }}@'localhost';" -uroot -proot
 
     - name: Make migrations
       run: |
