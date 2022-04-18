@@ -41,7 +41,7 @@ const CardInfo = ({navigation, route}) => {
       }),
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': cookie,
+        'Cookie': global.cookie,
       }
     }).then(response => {
       return response.json();

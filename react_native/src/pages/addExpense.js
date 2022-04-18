@@ -74,7 +74,7 @@ const AddExpense = ({navigation, route}) => {
       }),
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': cookie,
+        'Cookie': global.cookie,
       }
     }).then(response => {
       // let token = response.headers;

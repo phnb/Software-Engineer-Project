@@ -107,7 +107,7 @@ const Homescreen = ({ navigation, route }) => {
     var url = 'http://10.0.2.2:8000/app/record/';
     var end_time = new Date().toISOString();
     var start_time = getBeforeDate(7);
-    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
           // console.log(data);
@@ -131,32 +131,48 @@ const Homescreen = ({ navigation, route }) => {
     )
     is_many = true;
     var record_max_num = 4;
-    fetch(`${url}?is_many=${is_many}&record_max_num=${record_max_num}&account_id=${accountId}`)
-      .then(response => response.json())
+    fetch(`${url}?is_many=${is_many}&record_max_num=${record_max_num}&account_id=${global.accountId}`)
+      .then(response => {
+        if (response.status == 201){
+          return response.json();
+        }
+        else{
+          // console.log(error);
+          const n_arr = new Array();
+          // let n_arr = new Array([{"name":""}, {"name":""}, {"name":""}, {"name":""}]);
+          for (let i = 0; i < 4; i++){
+            n_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
+          }
+          OnchangeLen(0);
+          setRecords(n_arr);
+          return null
+        }
+      })
       .then(
         data => {
-          
-          for (let i = 0; i < data.length; i++) {
-            // n_arr.push[data[i]]
-            data[i]["modified_time"] = gettime(data[i]["modified_time"]);
-          }
-          let n_arr = data;
-          let len_income = data.length > 4 ? 4 : data.length;
-          if (len_income < 4){
-            for (let i = 0; i < 4-len_income; i++){
-              n_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
+          if (data!=null){
+            for (let i = 0; i < data.length; i++) {
+              // n_arr.push[data[i]]
+              data[i]["modified_time"] = gettime(data[i]["modified_time"]);
             }
+            let n_arr = data;
+            let len_income = data.length > 4 ? 4 : data.length;
+            if (len_income < 4){
+              for (let i = 0; i < 4-len_income; i++){
+                n_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
+              }
+            }
+            OnchangeLen(len_income);
+            
+            // console.log(data)
+            setRecords(n_arr);
           }
-          OnchangeLen(len_income);
-          
-          // console.log(data)
-          setRecords(n_arr);
         }
-    )
+      )
     
     is_many = false;
     url = 'http://10.0.2.2:8000/app/account/'
-    fetch(`${url}?is_many=${is_many}&account_id=${accountId}`)
+    fetch(`${url}?is_many=${is_many}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
           var bal = data["balance"];
