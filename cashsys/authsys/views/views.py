@@ -1,3 +1,4 @@
+import imp
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http.response import JsonResponse
@@ -19,7 +20,7 @@ from authsys.form import *
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
-
+import json
 # query stuffs
 from django.db.models import Q
 
@@ -35,12 +36,13 @@ from django.db.models import Q
 def register(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        unm = request.POST["username"]
-        fnm = request.POST["firstname"]
-        lnm = request.POST["lastname"]
-        em = request.POST["email"]
-        pw = request.POST["password"]
-        pw2 = request.POST["confirmpassword"]
+        data = json.loads(request.body)
+        unm = data["username"]
+        fnm = data["firstname"]
+        lnm = data["lastname"]
+        em = data["email"]
+        pw = data["password"]
+        pw2 = data["confirmpassword"]
 
         # TODO: checks
         if User.objects.filter(username=unm):
@@ -130,8 +132,9 @@ def register(request):
 def signin(request):
     # print("hahahahah")
     if (request.method == "POST"):
-        username = request.POST["username"]
-        password = request.POST["password"]
+        data = json.loads(request.body)
+        username = data["username"]
+        password = data["password"]
 
         usr = authenticate(username=username, password=password)
         if ((usr is not None) and usr.is_active and usr.user_profile):
@@ -320,8 +323,9 @@ def profile(request):
         # print(request.POST)
         # print(request.FILES)
         usr = User.objects.get(id=request.user.id)
-        unm = request.POST["username"]
-        email = request.POST["email"]
+        data = json.loads(request.body)
+        unm = data["username"]
+        email = data["email"]
 
         # profile validity check (upper-lower case sensitive)
         if User.objects.filter(Q(email=email)&~Q(id=request.user.id)):
@@ -344,8 +348,8 @@ def profile(request):
             # print("errrrrrrrr")
             return redirect("/auth/profile/")
 
-        profForm = UserProfileForm(request.POST, instance=usr.user_profile)
-        usrForm = UserForm(request.POST, instance=usr)
+        profForm = UserProfileForm(data, instance=usr.user_profile)
+        usrForm = UserForm(data, instance=usr)
         # print("hereee!!!")
 
         if (profForm.is_valid() and usrForm.is_valid()):

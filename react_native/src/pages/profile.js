@@ -13,6 +13,7 @@ import {
   Icon,
   TouchableOpacity,
   ImageBackground,
+  TouchableHighlight,
 } from 'react-native';
 import {
   Colors,
@@ -28,11 +29,18 @@ import Animated from 'react-native-reanimated';
 import ImagePicker from 'react-native-image-crop-picker';
 
 
-
-const Profile = () => {
+const Profile = ({navigation}) => {
+  const [imageType, onChangeImageType] = useState(true);
   const [image, setImage] = useState('./imgs/images.jpg');
 
+  // bs = React.createRef();
+  const bs = React.useRef();
+  const fall = new Animated.Value(1);
+  const [count, setCount] = useState(0);
+  const onPress = () => setCount(count + 1);
+
   const choosePhotoFromLibrary = () => {
+    onChangeImageType(false);
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -40,11 +48,12 @@ const Profile = () => {
     }).then(image => {
       console.log(image);
       setImage(image.path);
-      this.bs.current.snapTo(1);
+      bs.current.snapTo(1);
     });
   }
 
   const takePhotoFromCamera = () => {
+    onChangeImageType(false);
     ImagePicker.openCamera({
       width: 300,
       height: 300,
@@ -52,12 +61,9 @@ const Profile = () => {
     }).then(image => {
       console.log(image);
       setImage(image.path);
-      this.bs.current.snapTo(1);
+      bs.current.snapTo(1);
     });
   }
-
-  bs = React.createRef();
-  fall = new Animated.Value(1);
 
   renderInner = () => (
     <View style={group1.panel}>
@@ -73,7 +79,7 @@ const Profile = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={group1.panelButton}
-        onPress={() => this.bs.current.snapTo(1)}>
+        onPress={() => bs.current.snapTo(1)}>
         <Text style={group1.panelButtonTitle}>Cancel</Text>
       </TouchableOpacity>
     </View>
@@ -87,76 +93,145 @@ const Profile = () => {
     </View>
   );
 
-  
-
   return (
     <View style = {group1.rectangle1}>
+      <Text style = {group1.profile}>PROFILE</Text>
+      {/* <View style={group1.imageBox}>
+        <Image source={require('./imgs/woman3.png')} style={group1.image} />
+      </View> */}
+      <Text style = {group1.userName}>WZD NB</Text>
+      {/* <Image souce={require('./imgs/Vector7.png')} style={group1.nameFill} /> */}
+      {/* <Image souce={require('./imgs/Vector10.png')} style={group1.emailFill} /> */}
+      <Text style = {group1.userEmail}>119010321@link.cuhk.edu.cn</Text>
+      <View style={group1.line1}></View>
+      <Text style = {group1.funnyThing}>More features are under development ... </Text>
+      <TouchableOpacity style={group1.frame} onPress={onPress}>
+        <Text style={group1.funnyText}>Can't wait </Text>
+      </TouchableOpacity>
+      {/* <View style={styles.countContainer}> */}
+      <Text style={styles.urge}>Have been urged for </Text>
+      <Text style={styles.urgeText}>times !</Text>
+      <Text style={styles.countText}>
+        {count}
+      </Text>
+      {/* </View> */}
+
+      <View style={group1.line2}></View>
+      <TouchableOpacity
+        style={group1.signout}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <Text style={group1.signoutText}>Sign Out</Text>
+      </TouchableOpacity>
+
+
       <View style = {group1.container}>
         <BottomSheet
-          ref={this.bs}
-          snapPoints={[330,0]}
-          renderContent={this.renderInner}
-          renderHeader={this.renderHeader}
+          ref={bs}
+          snapPoints={[-200, -510, 0]}
+          renderContent={renderInner}
+          renderHeader={renderHeader}
           initialSnap={1}
-          callbackNode={this.fall}
+          callbackNode={fall}
           enabledGestureInteraction={true}  // We can swipe to close the bottom sheet
           enabledContentTapInteraction={false} 
         />
-        <Animated.View style={{margin: 20,
-          opacity: Animated.add(0.1, Animated.multiply(this.fall, 1.0)),
-      }}>
-            <View style = {{alignItems: 'center'}}>
-              <TouchableOpacity onPress = {() => this.bs.current.snapTo(0)}>
-                <View style = {{
-                  height: 300,
-                  weight: 100,
-                  borderRadius: 15,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                  <ImageBackground
-                  source = {{uri: image,}}
-                  style = {group1.images}
-                  imageStyle = {borderRadius = 15}
-                  >
-                  </ImageBackground>
-                </View>
-              </TouchableOpacity>
-
-
+        <Animated.View 
+          style={{
+          opacity: Animated.add(0.1, Animated.multiply(fall, 1.0)),}}
+        >
+          {/* <View style = {{alignItems: 'center'}}> */}
+          <TouchableOpacity onPress = {() => bs.current.snapTo(0)}>
+            <View style={group1.imageBox}>
+              {imageType ? <Image source={require('./imgs/woman3.png')} style={group1.image} />
+              : <Image source = {{uri: image,}} style = {group1.image}/>}
             </View>
+            
+          </TouchableOpacity>
+          {/* </View> */}
         </Animated.View>
       </View>
-      <Text style = {group1.profile}>Profile</Text>
-      {/* <Image source={require('./imgs/images.jpg')} style={group1.images} /> */}
-      <Text style = {group1.userName}>Wang Yuhao</Text>
-
-      {/* <Image souce={require('./imgs/Vector7.png')} style={group1.nameFill} /> */}
-      <Text style = {group1.userNameEdit}>Wang Yuhao</Text>
-
-      {/* <Image souce={require('./imgs/Vector10.png')} style={group1.emailFill} /> */}
-      <Text style = {group1.userEmail}>119010321@link.cuhk.edu.cn</Text>
-
-
-      <TouchableOpacity style={group1.signOutButton}>
-        <Text style={group1.signOutButtonTitle}>Sign Out</Text>
-      </TouchableOpacity>
-
-    
-      
-  
     </View>
       
 
   );
 };
 
+const styles = StyleSheet.create({
+  urge: {
+    position: 'absolute',
+    width: 300,
+    height: 120,
+    top: 495,
+    left: 60,
+
+    color: 'rgba(66,150,144,255)',
+    fontFamily: 'Inter',
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 30,
+    textAlign: 'left',
+
+  },
+  urgeText: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    top: 490,
+    left: 260,
+
+    color: 'rgba(66,150,144,255)',
+    fontFamily: 'Inter',
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 40,
+    textAlign: 'left',
+  },
+  countText: {
+    position: 'absolute',
+    width: 50,
+    height: 120,
+    top: 490,
+    left: 225,
+
+    color: 'rgba(66,150,144,255)',
+    fontFamily: 'Inter',
+    fontSize: 26,
+    fontWeight: '700',
+    lineHeight: 40,
+    textAlign: 'left',
+  }
+});
+
 const group1 = StyleSheet.create({
-  /* Rectangle 1 */
+  image: {
+    /* Woman */
+    position: 'absolute',
+    width: 110,
+    height: 110,
+    top: 6,
+    left: 6,
+    // left: 118,
+    borderRadius: 50,
+  },
+  imageBox: {
+    /* imageBox */
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    top: 100,
+    left: 147,
+
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+    borderStyle: 'solid',
+    elevation: 3,
+    borderRadius: 120,
+  },
   rectangle1: {
+    /* Rectangle 1 */
     position: 'absolute',
     width: 414,
-    height: 247,
+    height: 220,
 
     backgroundColor: 'rgba(66,150,144,255)',
   },
@@ -164,9 +239,8 @@ const group1 = StyleSheet.create({
   container: {
     flex: 1,
   },
-
-  /* Profile */
   profile: {
+    /* Profile */
     position: 'absolute',
     width: 150,
     height: 30,
@@ -181,80 +255,132 @@ const group1 = StyleSheet.create({
     textAlign: 'center',
   },
 
-    
-  /* Images */
-  images: {
-    // position: 'absolute',
-    width: 100,
-    height: 100,
-    // marginTop: 50,
-    // marginBottom: 100,
-    // borderRadius: 100,
-    // borderWidth: 2,
-    borderColor: 'white',
-  },
-
-  /* UserName */
   userName: {
+    /* UserName */
     position: 'absolute',
     width: 167,
-    height: 24,
-    top: 300,
+    height: 34,
+    top: 280,
     left: 124,
 
     color: 'rgb(34, 34, 34)',
     fontFamily: 'Inter',
-    fontSize: 20,
-    fontWeight: '600',
-    lineHeight: 24,
-    letterSpacing: 0,
+    fontSize: 22,
+    fontWeight: '700',
+    lineHeight: 34,
     textAlign: 'center',
   },
-
-  // /* NameFill */
-  // nameFill: {
-  //   position: 'absolute',
-  //   width: 30,
-  //   height: 30,
-  //   top: 380,
-  //   left: 35,
-  // },
-
-  /* UserNameEdit */
-  userNameEdit: {
-    position: 'absolute',
-    width: 97,
-    height: 19,
-    top: 380,
-    left: 95,
-
-    color: 'rgb(0, 0, 0)',
-    fontFamily: 'Inter',
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 19,
-    letterSpacing: 0,
-    textAlign: 'left',
-  },
-  
-  /* UserEmail */
   userEmail: {
+    /* UserEmail */
     position: 'absolute',
-    width: 97,
-    height: 19,
-    top: 450,
-    left: 95,
+    width: 420,
+    height: 25,
+    top: 320,
+
+    color: 'rgb(67, 136, 131)',
+    fontFamily: 'Inter',
+    fontSize: 15,
+    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  line1: {
+    /* Line1 */
+    position: 'absolute',
+    width: 325,
+    height: 1,
+    top: 360,
+    left: 40,
+
+    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    borderRadius: 1,
+  },
+  funnyThing: {
+    /* funny thing */
+    position: 'absolute',
+    width: 420,
+    height: 40,
+    top: 410,
+    // left: 40,
 
     color: 'rgb(0, 0, 0)',
     fontFamily: 'Inter',
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 19,
-    letterSpacing: 0,
-    textAlign: 'left',
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'center',
   },
+  frame: {
+    /* Frame */
+    position: 'relative',
+    width: 320,
+    height: 40,
+    top: 440,
+    left: 40,
 
+    // backgroundColor: 'rgba(63,135,130,0.2)',
+    backgroundColor: "#DDDDDD",
+    borderRadius: 40,
+    elevation: 2,
 
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  funnyText: {
+    /* spend smarter save more */
+    position: 'absolute',
+    width: 301,
+    height: 76,
+    top: 2,
+    // left: 20,
+
+    color: "rgba(0,0,0,0.5)",
+    fontFamily: 'Inter',
+    fontSize: 20,
+    fontWeight: '600',
+    lineHeight: 38,
+    textAlign: 'center',
+    textTransform: 'capitalize',
+  },
+  line2: {
+    /* Line1 */
+    position: 'absolute',
+    width: 325,
+    height: 1,
+    top: 590,
+    left: 40,
+
+    backgroundColor: 'rgba(0, 0, 0, 0.15)',
+    borderRadius: 1,
+  },
+  signoutText: {
+    top: 4,
+    color: 'rgba(66,150,144,255)',
+    fontFamily: 'Inter',
+    fontSize: 17,
+    fontWeight: '700',
+    lineHeight: 24,
+    textAlign: 'center', 
+  },
+  signout: {
+    /* Delete Botton */
+    position: 'absolute',
+    width: 180,
+    height: 40,
+    top: 620,
+    left: 120,
+
+    borderWidth: 1,
+    borderColor: 'rgba(66,150,144,255)',
+    borderStyle: 'solid',
+    backgroundColor: 'rgb(244, 244, 244)',
+    elevation: 1,
+    borderRadius: 30,
+  },
   panel: {
     padding: 20,
     backgroundColor: '#FFFFFF',
@@ -266,7 +392,6 @@ const group1 = StyleSheet.create({
     // shadowRadius: 5,
     // shadowOpacity: 0.4,
   },
-
   header: {
     backgroundColor: '#FFFFFF',
     shadowColor: '#333333',
@@ -275,8 +400,8 @@ const group1 = StyleSheet.create({
     shadowOpacity: 0.4,
     // elevation: 5,
     paddingTop: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
   },
   
   panelHeader: {
@@ -302,29 +427,16 @@ const group1 = StyleSheet.create({
     marginBottom: 10,
   },
   panelButton: {
-    padding: 13,
-    borderRadius: 10,
-    backgroundColor: '#FF6347',
+    width: 300,
+    padding: 8,
+    left: 40,
+    borderRadius: 30,
+    backgroundColor: 'rgba(66,150,144,255)',
     alignItems: 'center',
-    marginVertical: 7,
+    elevation: 5,
+    marginVertical: 5,
   },
   panelButtonTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-
-  signOutButton: {
-    position: 'absolute',
-    top: 500,
-
-    padding: 13,
-    borderRadius: 10,
-    backgroundColor: '#FF6347',
-    alignItems: 'center',
-    marginVertical: 7,
-  },
-  signOutButtonTitle: {
     fontSize: 17,
     fontWeight: 'bold',
     color: 'white',
