@@ -28,4 +28,4 @@ jobs:
     - name: Automatically run 4001 backend Django Unit Tests
       run: |
         python cashsys/manage.py test
-    - continue-on-error: true
+      continue-on-error: true
