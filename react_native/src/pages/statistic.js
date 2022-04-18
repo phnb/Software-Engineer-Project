@@ -157,7 +157,7 @@ const Statistic = ({navigation}) => {
     for (let m = 0; m < 7; m++) {
       var start_time = getBeforeDate(7-m);
       var end_time = getBeforeDate(6-m);
-      fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+      fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
       .then(response => response.json())
         .then(function(data){
           var amount = 0;
