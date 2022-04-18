@@ -74,24 +74,18 @@ class TestAccountViews(TestCase):
     def test_GET_acc_with_usr(self):
         # set-up codes
         # user in (success)
-        response = self.client.get(reverse("accountViews"), {"is_many": "true"})
+        response = self.client.get(reverse("accountViews"), {"is_many": "true", "uid": self.user.id})
         content = response.json()
 
         self.assertEquals(response.status_code, 201)
         self.assertLessEqual(1, len(content))
         
         # user logged out (error)
-        uid = self.user.id
-        self.client.logout(self.user)
-        response = self.client.get(reverse("accountViews"), {"is_many": "true"})
+        response = self.client.get(reverse("accountViews"), {"is_many": "true", "uid": 99999})
         content = response.json()
 
-        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)
-
-        # re-in ??????
-        login = self.client.login(username='testuser', password='123456')
-        self.user = User.objects.get(pk=uid)
 
     def test_POST_acc(self):
         # set-up codes
@@ -99,7 +93,8 @@ class TestAccountViews(TestCase):
         data_dict = {
             "name" : "recnew",
             "description" : "recnew has been created",
-            "balance": 9000
+            "balance": 9000,
+            "uid": self.user.id
         }
         response = self.client.post(reverse("accountViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -114,7 +109,8 @@ class TestAccountViews(TestCase):
         data_dict = {
             "name" : "rect",
             "description" : "rect has been created",
-            "balance": -9000
+            "balance": -9000,
+            "uid": self.user.id
         }
         response = self.client.post(reverse("accountViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -128,9 +124,10 @@ class TestAccountViews(TestCase):
 
         # error case: repeated account name
         data_dict = {
-            "name" : "rect",
+            "name" : "recnew",
             "description" : "rect has been created",
-            "balance": 9000
+            "balance": 9000,
+            "uid": self.user.id
         }
         response = self.client.post(reverse("accountViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -228,5 +225,5 @@ class TestAccountViews(TestCase):
         content = response.json()
 
         # assert accounts' validity
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)

@@ -1,11 +1,10 @@
+**Run:**
 Run with the following command (in the directory) to launch the backend server:
 
         python manage.py runserver 
 
 
-Then, browse the address **127.0.0.1:8000/auth/**, click **Let's register!** if you don't have an account yet, and input your registration information. 
-
-After submitting registration information an verification email would be sent to the email you filled in. (DON'T send too many EMAILs since The sender is me!!!). Then check your email to click the verification link to verify you account. After verification you can sign in with your account with the correct password.
+After submitting registration information to the backend an verification email would be sent to the email you filled in (by default, the email backend is redirected to the terminal, and you may change that on *info.py* and *settings.py*). Then check the email to click the verification link to verify you account. After verification you can sign in with your account with the correct password.
 
 
 **Database reminders:**
@@ -28,3 +27,13 @@ After that, you may run migrations for the project:
         python manage.py migrate
 
 
+**Unit tests:**
+View-based and url-based unit tests of the app "cashapp" are provided. You may run all the unit tests one-shot with the following command:
+
+        python manage.py test cashapp.tests
+
+or, you may run tests for a particular unit:
+
+        python manage.py test cashapp.tests.test_views_record
+        python manage.py test cashapp.tests.test_views_account
+        python manage.py test cashapp.tests.test_views_plan

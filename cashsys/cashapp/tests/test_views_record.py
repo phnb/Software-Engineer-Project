@@ -8,6 +8,7 @@ from authsys.models import UserProfile
 from datetime import datetime
 from datetime import timedelta
 import json
+import pytz
 
 # Test view functions.
 class TestRecordViews(TestCase):
@@ -68,11 +69,11 @@ class TestRecordViews(TestCase):
         content = response.json()
 
         # verify simulation results
+        # print(content)
         self.assertEquals(response.status_code, 201)
         self.assertEquals(content["id"], recid)
         self.assertEquals(content["amount"], 600)
         self.assertEquals(content["is_income"], True)
-        self.assertEquals(content["account__id"], self.accountDef.id)
 
         # simulate client codes (failure)
         response = self.client.get(reverse("recordViews"), {"is_many": "false", "record_id": "1000"})
@@ -110,29 +111,30 @@ class TestRecordViews(TestCase):
 
         # test codes
         # take max=2 records
-        response = self.client.get(reverse("recordViews"), {"is_many": "true", "record_max_num": "2", "accound_id": str(self.accountDef.id)})
+        response = self.client.get(reverse("recordViews"), {"is_many": "true", "record_max_num": "2", "account_id": str(self.accountDef.id)})
         content = response.json()
 
         # assert records' validity
         self.assertEquals(response.status_code, 201)
         self.assertEquals(len(content), 2)
-        self.assertEquals(content[0].id, rec3.id) # near comes first
-        self.assertEquals(content[1].id, rec2.id)
+        self.assertEquals(content[0]["id"], rec1.id) # far(from now) comes first
+        self.assertEquals(content[1]["id"], rec2.id)
 
         # take max=5 records
-        response = self.client.get(reverse("recordViews"), {"is_many": "true", "record_max_num": "5", "accound_id": str(self.accountDef.id)})
+        response = self.client.get(reverse("recordViews"), {"is_many": "true", "record_max_num": "5", "account_id": str(self.accountDef.id)})
         content = response.json()
 
         # assert records' validity
         self.assertEquals(response.status_code, 201)
         self.assertEquals(len(content), 3)
-        self.assertEquals(content[0].id, rec3.id) # near comes first
-        self.assertEquals(content[1].id, rec2.id)
+        # start_time ranked from early to late
+        self.assertEquals(content[0]["id"], rec1.id) # far(from now) comes first
+        self.assertEquals(content[1]["id"], rec2.id)
 
     # test getting record within a given time range for a given account
     def test_GET_Record_with_time_and_account(self):
         # set-up codes
-        nowtime = datetime.utcnow()
+        nowtime = datetime.now(tz=pytz.utc).replace(tzinfo=None)
         rec1 = Record.objects.create(
             amount = 500,
             name = "rec1",
@@ -147,28 +149,33 @@ class TestRecordViews(TestCase):
             is_income = False,
             account = self.accountDef
         )
-        thentime = datetime.utcnow()
+        thentime = datetime.now(tz=pytz.utc).replace(tzinfo=None) + timedelta(days=2)
+        # print("nowtime:")
+        # print(nowtime)
 
         # test codes
         # take records within a time range
-        response = self.client.get(reverse("recordViews"), {"is_many": "true", "is_many_time": "true", "start_time": nowtime, "end_time": thentime, "account_id": str(self.accountDef.id)})
+        response = self.client.get(reverse("recordViews"), {"is_many": "true", "is_many_time": "true", "start_time": nowtime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), "end_time": thentime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), "account_id": str(self.accountDef.id)})
         content = response.json()
 
         # assert records' validity
+        # print(content)
+        # print("content here!!!!!")
         self.assertEquals(response.status_code, 201)
         self.assertEquals(len(content["income_records"]), 1)
         self.assertEquals(len(content["outcome_records"]), 1)
-        self.assertEquals(content["income_records"][0].id, rec1.id) 
-        self.assertEquals(content["outcome_records"][0].id, rec2.id) 
+        self.assertEquals(content["income_records"][0]["id"], rec1.id) 
+        self.assertEquals(content["outcome_records"][0]["id"], rec2.id) 
 
         # Null case
-        response = self.client.get(reverse("recordViews"), {"is_many": "true", "is_many_time": "true", "start_time": thentime, "end_time": datetime.utcnow(), "account_id": str(self.accountDef.id)})
+        thentime = thentime + timedelta(seconds=10)
+        finaltime = thentime + timedelta(days=2)
+        response = self.client.get(reverse("recordViews"), {"is_many": "true", "is_many_time": "true", "start_time": thentime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), "end_time": finaltime.strftime('%Y-%m-%dT%H:%M:%S.%fZ'), "account_id": str(self.accountDef.id)})
         content = response.json()
 
         # assert records' validity
         self.assertEquals(content["income_records"], [])
         self.assertEquals(content["outcome_records"], [])
-
 
     def test_POST_Record(self):
         # set-up codes
@@ -179,7 +186,8 @@ class TestRecordViews(TestCase):
             "description" : "rec2 has been created",
             "is_income" : True,
             "account_id" : self.accountDef.id,
-            "start_time": datetime.utcnow()
+            "start_time": datetime.now(tz=pytz.utc).replace(tzinfo=None),
+            "uid": self.user.id
         }
         response = self.client.post(reverse("recordViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -197,7 +205,7 @@ class TestRecordViews(TestCase):
             "description" : "rec2 has been created",
             "is_income" : False,
             "account_id" : 10000,
-            "start_time": datetime.utcnow()
+            "start_time": datetime.now(tz=pytz.utc).replace(tzinfo=None)
         }
         response = self.client.post(reverse("recordViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -225,7 +233,7 @@ class TestRecordViews(TestCase):
             "name" : "rec9",
             "description" : "rec2 has been changed",
             "is_income" : True,
-            "start_time": datetime.utcnow()
+            "start_time": datetime.now(tz=pytz.utc).replace(tzinfo=None)
         }
         response = self.client.patch(reverse("recordViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -244,7 +252,7 @@ class TestRecordViews(TestCase):
             "name" : "rec9",
             "description" : "rec2 has been changed",
             "is_income" : True,
-            "start_time": datetime.utcnow()
+            "start_time": datetime.now(tz=pytz.utc).replace(tzinfo=None)
         }
         response = self.client.patch(reverse("recordViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -295,7 +303,7 @@ class TestRecordViews(TestCase):
 
         # error case: type error
         data_dict = {
-            "del_id_list": [20000, "10000"]
+            "del_id_list": [20000, 10000]
         }
         response = self.client.delete(reverse("recordViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -308,7 +316,7 @@ class TestRecordViews(TestCase):
 
         # error case: no such record
         data_dict = {
-            "del_id_list": [20000, 10000]
+            "del_id_list": ["jjj", 10000]
         }
         response = self.client.delete(reverse("recordViews"),
                                 json.dumps(data_dict, cls=complexencoder),
@@ -316,5 +324,5 @@ class TestRecordViews(TestCase):
         content = response.json()
 
         # assert records' validity
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)

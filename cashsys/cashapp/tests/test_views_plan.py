@@ -67,7 +67,7 @@ class TestPlanViews(TestCase):
             account = self.accountDef,
             userProfile = self.userProf
         )
-        print("!!!!!!!!!www!!!!!!!!")
+        # print("!!!!!!!!!www!!!!!!!!")
 
     # verify the login state
     def test_defaultUsr_login(self):
@@ -298,9 +298,7 @@ class TestPlanViews(TestCase):
         content = response.json()
 
         # assert plans' validity
-        print("content！！！！！")
-        print(content)
-        print("csssssssssssssssssssssssssssssssssssssontent")
+        # print(content)
         self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)
 

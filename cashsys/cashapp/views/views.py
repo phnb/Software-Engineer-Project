@@ -10,6 +10,9 @@ from cashsys import settings
 from authsys.models import *
 from authsys.form import *
 from datetime import datetime 
+from datetime import timedelta 
+import pytz
+from cashsys.settings import SECOND_ERROR_PARAM
 
 # decorators
 from django.contrib.auth.decorators import login_required
@@ -56,12 +59,7 @@ class RecordModify(generics.GenericAPIView):
         # body = request.body
         data = request.query_params
         # data = request.query_params.dict()
-        # print(data)
-        # print(data["is_many"])
-        # print(type(data["is_many"]))
-        # print(is_many)
         is_many = self.bool_to_bool(data["is_many"])
-        # print(is_many)
 
 
         # is_many: controls the number of records to be searched
@@ -70,7 +68,6 @@ class RecordModify(generics.GenericAPIView):
             is_many_time = self.bool_to_bool(data["is_many_time"])
         except:
             is_many_time = False
-        # print("hee")
 
         if (is_many):  
             if (not is_many_time):
@@ -83,9 +80,6 @@ class RecordModify(generics.GenericAPIView):
 
                 # avoid null-finding case
                 try:
-                    # print(self.queryset.filter(account__id=accid))
-                    # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
-                    # print(min(maxrec, self.queryset.count()))
                     resrec = self.queryset.filter(account__id=accid).order_by("-start_time")[:min(maxrec, self.queryset.count())]
                 except:
                     resrec = None
@@ -100,13 +94,22 @@ class RecordModify(generics.GenericAPIView):
                 accid = data["account_id"]
                 stt_time = data["start_time"]
                 end_time = data["end_time"]
+                # print(stt_time)
+                # print(end_time)
                 accid = self.int_to_int(data["account_id"]) 
 
                 # filter the records within the time range
+                end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+                end_time = end_time - timedelta(seconds=SECOND_ERROR_PARAM)
+                end_time = end_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                
+                stt_time = datetime.strptime(stt_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+                stt_time = stt_time - timedelta(seconds=SECOND_ERROR_PARAM)
+                stt_time = stt_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                # print(end_time)
+                # print(stt_time)
+
                 try:
-                    # print(self.queryset.filter(account__id=accid))
-                    # print(self.queryset.filter(account__id=accid).order_by("-created_time"))
-                    # print(min(maxrec, self.queryset.count()))
                     rangeRec = self.queryset.filter(Q(account__id=accid) & Q(start_time__gte=stt_time) & Q(start_time__lte=end_time))
                 except:
                     return JsonResponse(status=400, data={"success": False})
@@ -137,12 +140,6 @@ class RecordModify(generics.GenericAPIView):
     def post(self, request):
         # NEED SIGNAL ACCOUNT.balance, PLAN.remaining
         # add new rec
-        # print(request.COOKIES)
-        # print("sdasa")
-        # print(request.user.is_authenticated)
-        # print(request.user)
-        # print(request.user.username)
-        # user = request.user
         data = request.data
         accid = data["account_id"]
 
@@ -150,9 +147,6 @@ class RecordModify(generics.GenericAPIView):
         try:
             uid = data["uid"]
             verify_usr = User.objects.get(pk=uid)
-            # print("veri hw!!!!!!!")
-            # print(verify_usr.username)
-            # print(verify_usr.is_authenticated)
             if (not verify_usr.is_authenticated):
                 # user unauthenticated
                 return JsonResponse(status=401, data={"success": False})
@@ -173,28 +167,6 @@ class RecordModify(generics.GenericAPIView):
         
         rec.account = rec_acc
         
-        # try:
-        #     # TODO: this condition needs testing!!!
-        #     # print(rec_acc)
-        #     # print(datetime.utcnow())
-        #     # print(rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow())))
-        #     validPlans = rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow()))
-        #     # for plan in validPlans:
-        #     planList = []
-        #     for plan in validPlans:
-        #         planList.append(plan.id)
-        #         print(plan.id)
-        #     print("hee")
-        #     rec.plans.add(planList)
-        # except:
-        #     print("bnnn")
-        #     pass
-
-        # validPlans = []
-        # for plan in planset:
-        #     if ((plan.start_time <= rec.created_time) and (plan.end_time >= rec.created_time)):
-        #         validPlans.append(plan)
-
         # set other normal fields
         recSeri = RecordSerializer(rec, data=data, partial=True)
         if recSeri.is_valid():
@@ -204,11 +176,7 @@ class RecordModify(generics.GenericAPIView):
             # set plan (troublesome, by finding the overlapping plans and binding)
             # avoid null plan available
             try:
-                # TODO: this condition needs testing!!!
-                # print(rec_acc)
-                # print(datetime.utcnow())
-                # print(rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow())))
-                validPlans = rec_acc.plans.all().filter(Q(start_time__lte=datetime.utcnow()) & Q(end_time__gte=datetime.utcnow()))
+                validPlans = rec_acc.plans.all().filter(Q(start_time__lte=datetime.now(tz=pytz.utc).replace(tzinfo=None)) & Q(end_time__gte=datetime.now(tz=pytz.utc).replace(tzinfo=None)))
                 # for plan in validPlans:
                 for plan in validPlans:
                     rec.plans.add(plan.id)
@@ -221,7 +189,6 @@ class RecordModify(generics.GenericAPIView):
             except:
                 pass
 
-            # print(recSeri.data)
             return JsonResponse(status=201, data=recSeri.data)
         # "wrong parameters"
         return JsonResponse(status=400, data={"success": False})
@@ -241,8 +208,6 @@ class RecordModify(generics.GenericAPIView):
         prev_is_income = rec.is_income
         recSeri = RecordSerializer(rec, data=data, partial=True)
         if recSeri.is_valid():
-            # TODO: patch update problematic!!!!!!!
-            # print("her!")
             rec = recSeri.save()
             RecordSaveHandler(Record, rec, False, prev_amount=prev_amount, prev_is_income=prev_is_income)
             return JsonResponse(status=201, data=recSeri.data)
@@ -257,16 +222,18 @@ class RecordModify(generics.GenericAPIView):
 
         # filter out the set to be deleted and delete it
         try:
-            delSet = self.queryset.filter(pk__in=delList)
+            # print(delList)
+            delSet = self.queryset.filter(id__in=delList)
         except:
+            # invalid id input
             return JsonResponse(status=401, data={"success": False})
 
-        if delSet:
+        if delSet.count() is not 0:
             delSet.delete()
             return JsonResponse(status=200, data={"success": True})
         else:
             # no such records
-            return JsonResponse(status=200, data={"success": False})
+            return JsonResponse(status=401, data={"success": False})
 
 
 
@@ -284,7 +251,7 @@ class AccountModify(generics.GenericAPIView):
 
     # input: ["true"]/["false"], output: T/F
     def bool_to_bool(self, bol):
-        if (bol[0]=='true'):
+        if (bol=='true'):
             return True
         else:
             return False
@@ -301,7 +268,7 @@ class AccountModify(generics.GenericAPIView):
 
         if (not is_many):
             # get according to account_id
-            acc_id = data["account_id"]
+            acc_id = self.int_to_int(data["account_id"]) 
             try:
                 acc = self.queryset.get(id=acc_id)
             except:
@@ -309,7 +276,6 @@ class AccountModify(generics.GenericAPIView):
 
             # acc existance
             # print(acc)
-            # print("herrr!!!")
             if (acc):  
                 accSeri = AccountSerializer(acc)
                 return JsonResponse(status=201, data=accSeri.data) # safe=False guarantees the validity of returning a list of objects
@@ -318,7 +284,19 @@ class AccountModify(generics.GenericAPIView):
                 return JsonResponse(status=400, data={"success": False})
 
         else:
-            # get according to request.user
+            # user_id re-authenticate for stronger robustness   
+            try:
+                uid = data["uid"]
+                verify_usr = User.objects.get(pk=uid)
+                if (not verify_usr.is_authenticated):
+                    # user unauthenticated
+                    return JsonResponse(status=401, data={"success": False})
+                user = verify_usr
+            except:
+                # user_id not found
+                return JsonResponse(status=401, data={"success": False})
+            
+            # get accounts according to the user
             try:
                 usrAcc = self.queryset.filter(userProfile__id=user.user_profile.id)
             except:
@@ -336,14 +314,10 @@ class AccountModify(generics.GenericAPIView):
         user = request.user
         data = request.data
 
-        # user_id re-authenticate for stronger robustness
-        
+        # user_id re-authenticate for stronger robustness   
         try:
             uid = data["uid"]
             verify_usr = User.objects.get(pk=uid)
-            # print("veri hw!!!!!!!")
-            # print(verify_usr.username)
-            # print(verify_usr.is_authenticated)
             if (not verify_usr.is_authenticated):
                 # user unauthenticated
                 return JsonResponse(status=401, data={"success": False})
@@ -352,14 +326,12 @@ class AccountModify(generics.GenericAPIView):
             # user_id not found
             return JsonResponse(status=401, data={"success": False})
 
-        # print(data)
         # data = json.loads(body)
         if (Account.objects.filter(name=data["name"])) or (data["balance"] < 0):
             # Account name already exists, and the balance should be non-negative
             return JsonResponse(status=400, data={"success": False})
 
         acc = Account()
-        # print("in!")
         # set foreign key
         acc.userProfile = user.user_profile
         # set other normal fields
@@ -399,8 +371,6 @@ class AccountModify(generics.GenericAPIView):
         delList = data["del_id_list"]
 
         # filter out the set to be deleted and delete it
-        print(delList)
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         try:
             delSet = self.queryset.filter(pk__in=delList)
         except:
@@ -410,7 +380,7 @@ class AccountModify(generics.GenericAPIView):
             delSet.delete()
             return JsonResponse(status=200, data={"success": True})
         else:
-            return JsonResponse(status=200, data={"success": False})
+            return JsonResponse(status=401, data={"success": False})
     
 
 @method_decorator(login_required, name='dispatch')
@@ -470,12 +440,11 @@ class PlanModify(generics.GenericAPIView):
                 # print(user)
                 upid = user.user_profile.id
             except:
-                # print("user anonononononono")
                 return JsonResponse(status=400, data={"success": False})
 
             try:
                 planset = self.queryset.filter(userProfile__id=upid).order_by("-created_time")
-                print("filter succ")
+                # print("filter successful")
             except:
                 return JsonResponse(status=400, data={"success": False})
                 
