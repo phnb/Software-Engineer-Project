@@ -89,7 +89,7 @@ const Statistic = ({navigation}) => {
   const X_LEVELS = 7;
   
   // const incomePoints = [Point(0, 300), Point(1, 2), Point(2, 3), Point(3, 6), Point(4, 6), Point(5, 3.4), Point(6, 10)];
-  const [expensePoints, setExpensePoints] = React.useState([Point(0, 2), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
+  const [expensePoints, setExpensePoints] = React.useState([Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
   const [incomePoints, setIncomePoints] = React.useState([Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
 
   const [len, OnchangeLen] = React.useState(0);
@@ -288,20 +288,27 @@ const Statistic = ({navigation}) => {
           {/* <Card navigation={navigation} isExist={incomeRecords.length >= 2} name={incomeRecords[incomeRecords.length > 1 ? 1 : incomeRecords.length]["name"]} time={incomeRecords[1]["modified_time"]} cost={incomeRecords[1]["amount"]} type={type} top={522} description={incomeRecords[1]["description"]} />
           <Card navigation={navigation} isExist={incomeRecords.length >= 3} name={incomeRecords[incomeRecords.length > 2 ? 2 : incomeRecords.length]["name"]} time={incomeRecords[2]["modified_time"]} cost={incomeRecords[2]["amount"]} type={type} top={602} description={incomeRecords[2]["description"]} />
           <Card navigation={navigation} isExist={incomeRecords.length >= 4} name={incomeRecords[incomeRecords.length > 3 ? 3 : incomeRecords.length]["name"]} time={incomeRecords[3]["modified_time"]} cost={incomeRecords[3]["amount"]} type={type} top={682} description={incomeRecords[3]["description"]}/> */}
-        </View>  : 
-        // <View> </View>
-        <View>
-          {/* <Card navigation={navigation} isExist={expenseLength >= 1} name={incomeRecords[0]["name"]} time={'Today'} cost={80.00} type={type} top={442} />
-          <Card navigation={navigation} isExist={expenseLength >= 2} name={'Transfer'} time={'Today'} cost={20000.00} type={type} top={522} />
-          <Card navigation={navigation} isExist={expenseLength >= 3} name={'Paypal'} time={'Today'} cost={20.00} type={type} top={602} />
-          <Card navigation={navigation} isExist={expenseLength >= 4} name={'Youtube'} time={'Today'} cost={240.00} type={type} top={682} /> */}
-        </View>
-      }
+        </View>  : <Text style={group1.noRecord}> No record yet !</Text>}
     </View>
   );
 };
 
 const group1 = StyleSheet.create({
+  noRecord: {
+    /* Transactions history */
+    position: 'absolute',
+    width: 200,
+    height: 30,
+    top: 450,
+    left: 140,
+
+    color: 'rgb(102, 102, 102)',
+    fontFamily: 'Inter',
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 30,
+    textAlign: 'left',
+  },
   refresh: {
     /* Refersh */
     position: 'absolute',

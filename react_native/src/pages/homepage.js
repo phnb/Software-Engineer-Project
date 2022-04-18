@@ -275,7 +275,7 @@ const Homescreen = ({ navigation, route }) => {
         {/* <Card navigation={navigation} isExist={records.length >= 2} name={records[1]["name"]} time={records[1]["modified_time"]} cost={records[1]["amount"]} type={records[1]["is_income"]} top={502} description={records[0]["description"]}/>
         <Card navigation={navigation} isExist={records.length >= 3} name={records[2]["name"]} time={records[2]["modified_time"]} cost={records[2]["amount"]} type={records[2]["is_income"]} top={582} description={records[0]["description"]}/>
         <Card navigation={navigation} isExist={records.length >= 4} name={records[3]["name"]} time={records[3]["modified_time"]} cost={records[3]["amount"]} type={records[3]["is_income"]} top={662} description={records[0]["description"]}/> */}
-      </View> : <View></View>}
+      </View> : <Text style={group1.noRecord}> No record yet !</Text>}
     </View>
   );
 };
@@ -360,6 +360,21 @@ const Homepage = (navigation, route) => {
 };
 
 const group1 = StyleSheet.create({
+  noRecord: {
+    /* Transactions history */
+    position: 'absolute',
+    width: 200,
+    height: 30,
+    top: 420,
+    left: 140,
+
+    color: 'rgb(102, 102, 102)',
+    fontFamily: 'Inter',
+    fontSize: 17,
+    fontWeight: '600',
+    lineHeight: 30,
+    textAlign: 'left',
+  },
   barImg1: {
     width: 35,
     height: 35,
@@ -490,7 +505,6 @@ const group2 = StyleSheet.create({
     backgroundColor: 'rgba(27, 92, 88, 0.2)',
     opacity: 0.8,
     borderRadius: 20,
-    // filter: blur(48px),
   },
   //   frame1: {
   //     /* Frame 1 */
