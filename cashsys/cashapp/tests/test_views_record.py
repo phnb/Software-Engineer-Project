@@ -10,6 +10,10 @@ from datetime import timedelta
 import json
 import pytz
 
+import warnings
+# Fxxking warnings, get away :)
+warnings.filterwarnings("ignore")
+
 # Test view functions.
 class TestRecordViews(TestCase):
     def setUp(self):

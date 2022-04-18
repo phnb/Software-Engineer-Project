@@ -34,6 +34,11 @@ from django.db.models import Q
 # signal stuffs
 from cashapp.signals import RecordSaveHandler
 
+import warnings
+# Fxxking warnings, get away :)
+warnings.filterwarnings("ignore")
+
+
 @method_decorator(login_required, name='dispatch')
 # @api_view(["GET", "POST", "PATCH", "DELETE"])
 # json provided
@@ -91,7 +96,6 @@ class RecordModify(generics.GenericAPIView):
                 else:
                     return JsonResponse(status=400, data={"success": False})
             else:
-                accid = data["account_id"]
                 stt_time = data["start_time"]
                 end_time = data["end_time"]
                 # print(stt_time)
@@ -286,7 +290,7 @@ class AccountModify(generics.GenericAPIView):
         else:
             # user_id re-authenticate for stronger robustness   
             try:
-                uid = data["uid"]
+                uid = self.int_to_int(data["uid"])
                 verify_usr = User.objects.get(pk=uid)
                 if (not verify_usr.is_authenticated):
                     # user unauthenticated
@@ -298,7 +302,7 @@ class AccountModify(generics.GenericAPIView):
             
             # get accounts according to the user
             try:
-                usrAcc = self.queryset.filter(userProfile__id=user.user_profile.id)
+                usrAcc = self.queryset.filter(userProfile__id=user.user_profile.id).order_by("-created_time")
             except:
                 return JsonResponse(status=400, data={"success": False})
 

@@ -26,6 +26,7 @@ After that, you may run migrations for the project:
         python manage.py makemigrations
         python manage.py migrate
 
+Note that the Sqlite in the directory is just used for debugging.
 
 **Unit tests:**
 View-based and url-based unit tests of the app "cashapp" are provided. You may run all the unit tests one-shot with the following command:
