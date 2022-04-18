@@ -10,6 +10,7 @@ import {
   View,
   Image,
   Button,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Colors,
@@ -21,7 +22,7 @@ import {
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Profile from './profile';
 import Statistic from './statistic';
-import Wallet from './wallet';
+import Plan from './plan';
 import AddExpense from './addExpense';
 import Card from '../components/card';
 import { StackRouter } from '@react-navigation/native';
@@ -191,14 +192,15 @@ const Homescreen = ({ navigation, route }) => {
         <View style={group1.ellipse3} />
         <Text style={group1.text1}> {welcome} </Text>
         <Text style={group1.text2}> {username} </Text>
+        <TouchableOpacity
+          style={group1.refresh}
+          onPress={() => OnchangeTest(!test)}
+        >
+          <Image style={group1.refreshImg} source={require('./imgs/refresh.png')}/>
+        </TouchableOpacity>
       </View>
       <View style={group2.rectangle2} />
       <View style={group2.rectangle1}>
-      <Button
-        onPress={() => OnchangeTest(!test)}
-        color="#BCBCBC"
-        title="Forget password?"
-      />
         {/* <View style={group2.frame1}>
           <View style={group2.arrayDown1}>
             <Image
@@ -310,7 +312,7 @@ const Homepage = (navigation, route) => {
             ) : (
               <Image source={require('./imgs/Vector.png')} />
             );
-          } else if (route.name === 'Wallet') {
+          } else if (route.name === 'Plan') {
             icon = focused ? (
               <Image source={require('./imgs/Vector5.png')} />
             ) : (
@@ -344,8 +346,8 @@ const Homepage = (navigation, route) => {
         options={{headerShown: false, showLabel: false}}
       />
       <Tab.Screen
-        name="Wallet"
-        component={Wallet}
+        name="Plan"
+        component={Plan}
         options={{headerShown: false}}
       />
       <Tab.Screen
@@ -358,6 +360,26 @@ const Homepage = (navigation, route) => {
 };
 
 const group1 = StyleSheet.create({
+  refresh: {
+    /* Refersh */
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    top: 50,
+    left: 350,
+
+    color: 'rgb(255, 255, 255)',
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'left',
+
+  },
+  refreshImg: {
+    width: 20,
+    height: 20,
+  },
   rectangle1: {
     /* Rectangle 1 */
     position: 'absolute',

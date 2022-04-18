@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect }  from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -81,6 +81,7 @@ function gettime(m_time){
 }
 
 const Statistic = ({navigation}) => {
+  const [test, OnchangeTest] = useState(true);
   const lightBlue = '#40C4FE';
   const green = '#53E69D';
   const [MAX_VALUE, OnchangeMAX_VALUE] = React.useState(10);
@@ -106,7 +107,7 @@ const Statistic = ({navigation}) => {
     var url = 'http://10.0.2.2:8000/app/record/';
     var end_time = new Date().toISOString();
     var start_time = getBeforeDate(7);
-    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${accountId}`)
+    fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
           // console.log(data);
@@ -191,6 +192,12 @@ const Statistic = ({navigation}) => {
       <View style={group1.rectangle1}>
         <Text style={group1.statistic}>STATISTIC</Text>
       </View>
+      <TouchableOpacity
+          style={group1.refresh}
+          onPress={() => OnchangeTest(!test)}
+        >
+          <Image style={group1.refreshImg} source={require('./imgs/refresh.png')}/>
+        </TouchableOpacity>
       <TouchableOpacity style={group1.wallet}>
         <Text style={group1.walletText}>Default Wallet </Text>
       </TouchableOpacity>
@@ -295,6 +302,26 @@ const Statistic = ({navigation}) => {
 };
 
 const group1 = StyleSheet.create({
+  refresh: {
+    /* Refersh */
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    top: 50,
+    left: 350,
+
+    color: 'rgb(255, 255, 255)',
+    fontFamily: 'Inter',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 20,
+    textAlign: 'left',
+
+  },
+  refreshImg: {
+    width: 20,
+    height: 20,
+  },
   records: {
     /* Transactions records */
     position: 'absolute',

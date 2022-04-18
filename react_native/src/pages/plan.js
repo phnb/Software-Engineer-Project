@@ -18,7 +18,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const Wallet = () => {
+const Plan = () => {
   return (
     <View>
       <Text>TODO: WZD save use</Text>
@@ -26,4 +26,4 @@ const Wallet = () => {
   );
 };
 
-export default Wallet;
+export default Plan;
