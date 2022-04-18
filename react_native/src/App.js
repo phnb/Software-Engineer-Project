@@ -39,8 +39,8 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator initialRouteName="OnBoarding"> */}
       <Stack.Navigator initialRouteName="Homepage">
+      {/* <Stack.Navigator initialRouteName="Homepage"> */}
         {/* <Stack.Navigator initialRouteName='Homepage'> */}
         <Stack.Screen
           name="SplashScreen"
