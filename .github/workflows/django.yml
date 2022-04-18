@@ -11,15 +11,8 @@ jobs:
     env:
       DB_DATABASE: monager
       DB_USER: monager
-      DB_PASSWORD: root
+      DB_PASSWORD: 123456
 
-    services:
-      # How to use MySQL
-      mysql:
-        image: mysql:5.7
-        ports:
-        - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     runs-on: ubuntu-latest
     
     strategy:
@@ -42,7 +35,7 @@ jobs:
     - name: Set up MySQL
       run: |
         sudo /etc/init.d/mysql start
-        mysql -e "DROP DATABASE ${{ env.DB_DATABASE }}; CREATE DATABASE ${{ env.DB_DATABASE }}; DROP USER ${{ env.DB_USER }}@'localhost'; CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }}; GRANT ALL ON *.* TO ${{ env.DB_USER }}@'localhost';" -uroot -p123456
+        mysql -e "DROP DATABASE ${{ env.DB_DATABASE }}; CREATE DATABASE ${{ env.DB_DATABASE }}; DROP USER ${{ env.DB_USER }}@'localhost'; CREATE USER ${{ env.DB_USER }}@'localhost' IDENTIFIED BY ${{ env.DB_PASSWORD }}; GRANT ALL ON *.* TO ${{ env.DB_USER }}@'localhost';" -uroot -proot
 
     - name: Make migrations
       run: |
