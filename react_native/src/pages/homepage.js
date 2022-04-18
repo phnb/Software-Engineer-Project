@@ -296,33 +296,33 @@ const Homepage = (navigation, route) => {
           let icon;
           if (route.name === 'Home') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector1.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector1.png')} />
             ) : (
-              <Image source={require('./imgs/Vector.png')} />
+              <Image style={group1.barImg1} source={require('./imgs/Vector.png')} />
             );
           } else if (route.name === 'Statistic') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector3.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector3.png')} />
             ) : (
-              <Image source={require('./imgs/Vector2.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector2.png')} />
             );
           } else if (route.name === 'Add Expense') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector.png')} />
+              <Image style={group1.barImg2} source={require('./imgs/add.png')} />
             ) : (
-              <Image source={require('./imgs/Vector.png')} />
+              <Image style={group1.barImg2} source={require('./imgs/add1.png')} />
             );
           } else if (route.name === 'Plan') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector5.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector5.png')} />
             ) : (
-              <Image source={require('./imgs/Vector4.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector4.png')} />
             );
           } else if (route.name === 'Profile') {
             icon = focused ? (
-              <Image source={require('./imgs/Vector7.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector7.png')} />
             ) : (
-              <Image source={require('./imgs/Vector6.png')} />
+              <Image style={group1.barImg} source={require('./imgs/Vector6.png')} />
             );
           }
           return icon;
@@ -360,6 +360,18 @@ const Homepage = (navigation, route) => {
 };
 
 const group1 = StyleSheet.create({
+  barImg1: {
+    width: 35,
+    height: 35,
+  },
+  barImg1: {
+    width: 25,
+    height: 25,
+  },
+  barImg: {
+    width: 30,
+    height: 30,
+  },
   refresh: {
     /* Refersh */
     position: 'absolute',
