@@ -1,29 +1,15 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
-  DeviceEventEmitter,
-  Image,
   Button,
   TextInput,
-  Icon,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
+// Add expense page implemented
 const AddExpense = ({navigation, route}) => {
   var account_id = global.accountId;
-  // // console.log(account_id);
   const dateNow = new Date();
   const currentDate = `${dateNow.getFullYear()}-${
     dateNow.getMonth() + 1
@@ -54,17 +40,11 @@ const AddExpense = ({navigation, route}) => {
     onChangeBorder4(false);
   },[refresh])
 
+  // Submit new record to backend 
   function submit(type, name, amount, note, accountId){
-    // // console.log(cookie);
     fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'post',
-      // body: JSON.stringify({
-      //   name: "wzd's psssresent",
-      //   description: "wzdssssssss's real present",
-      //   balance: 500
-      // }),
       body: JSON.stringify({
-        // is_many: true,
         is_income: type,
         name: name,
         description: note,
@@ -78,19 +58,14 @@ const AddExpense = ({navigation, route}) => {
         'Cookie': global.cookie,
       }
     }).then(response => {
-      // let token = response.headers;
-      // // console.log("account");
-      // // console.log(token);
       return response.json();
     })
     .then(function(data){
-      // DeviceEventEmitter.emit('refresh');
       OnchangeRefresh(!refresh);
       navigation.navigate("Home");
     });
   }
   
-
   return (
     <View>
       <View style={group1.rectangle1}>
@@ -102,7 +77,6 @@ const AddExpense = ({navigation, route}) => {
           selectionColor={'rgba(66,150,144,255)'}
           style={[
             group2.inputName,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border1
                 ? 'rgba(66,150,144,255)'
@@ -119,7 +93,6 @@ const AddExpense = ({navigation, route}) => {
           selectionColor={'rgba(66,150,144,255)'}
           style={[
             group2.inputAmount,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border2
                 ? 'rgba(66,150,144,255)'
@@ -144,7 +117,6 @@ const AddExpense = ({navigation, route}) => {
           selectionColor={'rgba(66,150,144,255)'}
           style={[
             group2.inputDate,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border3
                 ? 'rgba(66,150,144,255)'
@@ -156,50 +128,6 @@ const AddExpense = ({navigation, route}) => {
           onChangeText={text => onChangeDate(text)}
           value={date}
         />
-        {/* <DatePicker
-          style={[
-            group2.inputDate,
-            // eslint-disable-next-line react-native/no-inline-styles
-            {
-              borderColor: border3
-                ? 'rgba(66,150,144,255)'
-                : 'rgb(211, 211, 211)',
-            },
-          ]}
-          // eslint-disable-next-line react-native/no-inline-styles
-          //   style={{width: 300}}
-          mode="date"
-          format="YYYY-MM-DD"
-          // 选择日期后的确定取消文本按钮
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          //   iconComponent={<Icon name="angle-down" />}
-          // 默认是方框选择的样式，这个是滚轮滚动的样式
-          androidMode="spinner"
-          minDate="2000-01-01"
-          maxDate={currentDate}
-          customStyles={{
-            // dateIcon: {
-            //   // 表示不需要那个小日历图标
-            //   display: 'none',
-            // },
-            // 输入框的样式
-            dateInput: {
-              borderWidth: 0,
-              borderBottomWidth: 1.1,
-              // 里面的文字从左边开始显示
-              alignItems: 'flex-start',
-              paddingLeft: 6,
-              textAlign: 'left',
-            },
-            // 输入框里面的文字样式
-            placeholderText: {
-              fontSize: 18,
-              color: '#afafaf',
-            },
-          }}
-          //   onDateChange={date1 => onChangeDate(date1)}
-        /> */}
         <Text style={group2.remark}>REMARK</Text>
         <TextInput
           selectionColor={'rgba(66,150,144,255)'}
@@ -207,7 +135,6 @@ const AddExpense = ({navigation, route}) => {
           numberOfLines={3}
           style={[
             group2.inputNote,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border4
                 ? 'rgba(66,150,144,255)'
@@ -232,6 +159,7 @@ const AddExpense = ({navigation, route}) => {
   );
 };
 
+// Add record page UI style
 const group1 = StyleSheet.create({
   rectangle1: {
     /* Rectangle 1 */
@@ -266,7 +194,6 @@ const group1 = StyleSheet.create({
 
     backgroundColor: 'rgb(255, 255, 255)',
     elevation: 4,
-    // box-shadow: 0px 22px 35px rgba(0, 0, 0, 0.08),
     borderRadius: 20,
   },
 });
@@ -344,7 +271,6 @@ const group2 = StyleSheet.create({
     top: 130,
     left: 20,
     borderColor: 'rgb(211, 211, 211)',
-    // borderWidth: 1,
     borderRadius: 8,
   },
   inputTypeSelect: {

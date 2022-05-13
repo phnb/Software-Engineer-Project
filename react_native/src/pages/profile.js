@@ -1,45 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Image,
   Alert,
-  Button,
-  TextInput,
-  Icon,
   TouchableOpacity,
-  ImageBackground,
-  TouchableHighlight,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
 import BottomSheet from 'reanimated-bottom-sheet';
 import Animated from 'react-native-reanimated';
-
 import ImagePicker from 'react-native-image-crop-picker';
 
 
+// Profile page implemented
 const Profile = ({navigation}) => {
   const [imageType, onChangeImageType] = useState(true);
   const [image, setImage] = useState('./imgs/images.jpg');
-
-  // bs = React.createRef();
   const bs = React.useRef();
   const fall = new Animated.Value(1);
   const [count, setCount] = useState(0);
   const onPress = () => setCount(count + 1);
 
+  // Submit new avatar to the database (when uploading new photo)
   useEffect(() => {
     if (image != './imgs/images.jpg'){
       fetch('http://10.0.2.2:8000/auth/profile/', {
@@ -57,7 +39,6 @@ const Profile = ({navigation}) => {
       })
         .then(response => response.json())
         .then(function (data) {
-          // setImage(data["avatarLink"])
         }
       )
     }
@@ -66,11 +47,11 @@ const Profile = ({navigation}) => {
     }
   }, [image])
 
+  // Require personl information in the databse
   useEffect(() => {
     fetch('http://10.0.2.2:8000/auth/profile/')
       .then(response => response.json())
       .then(function (data) {
-        // console.log(data);
         if (data["avatarLink"]){
           setImage(data["avatarLink"]);
           onChangeImageType(false);
@@ -78,23 +59,20 @@ const Profile = ({navigation}) => {
         else{
           onChangeImageType(true);
         }
-        // bs.current.snapTo(1);
       })
   }, [])
 
+  // Auxiliuary function for uploading photo from library
   const choosePhotoFromLibrary = () => {
-    
     ImagePicker.openPicker({
       width: 300,
       height: 300,
       cropping: true,
     }).then(image => {
-      // console.log(image);
       setImage(image.path);
       onChangeImageType(false);
       bs.current.snapTo(1);
     }).catch(error => {
-      // console.log("error");
       if (image == './imgs/images.jpg'){
         onChangeImageType(true);
       }
@@ -102,18 +80,17 @@ const Profile = ({navigation}) => {
     });
   }
 
+  // Auxiliuary function for taking immediate photo
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
       width: 300,
       height: 300,
       cropping: true,
     }).then(image => {
-      // console.log(image);
       setImage(image.path);
       onChangeImageType(false);
       bs.current.snapTo(1);
     }).catch(error => {
-      // console.log("error");
       if (image == './imgs/images.jpg'){
         onChangeImageType(true);
       }
@@ -121,6 +98,7 @@ const Profile = ({navigation}) => {
     });
   }
 
+  // Sign out function implemented
   function signout(){
     global.username = "Guest";
     global.accountId = -1;
@@ -134,13 +112,13 @@ const Profile = ({navigation}) => {
           text: "OK",
           onPress: () => {
             navigation.navigate('Login');
-            // console.log(username);
           }
         }
       ]
     );
   }
 
+  // Render function for pop-up box
   renderInner = () => (
     <View style={group1.panel}>
       <View style={{alignItems: 'center'}}>
@@ -160,7 +138,6 @@ const Profile = ({navigation}) => {
       </TouchableOpacity>
     </View>
   );
-
   renderHeader = () => (
     <View style = {group1.header}>
       <View style = {group1.panelHeader}>
@@ -172,25 +149,18 @@ const Profile = ({navigation}) => {
   return (
     <View style = {group1.rectangle1}>
       <Text style = {group1.profile}>PROFILE</Text>
-      {/* <View style={group1.imageBox}>
-        <Image source={require('./imgs/woman3.png')} style={group1.image} />
-      </View> */}
       <Text style = {group1.userName}>{global.username}</Text>
-      {/* <Image souce={require('./imgs/Vector7.png')} style={group1.nameFill} /> */}
-      {/* <Image souce={require('./imgs/Vector10.png')} style={group1.emailFill} /> */}
       <Text style = {group1.userEmail}>{global.email}</Text>
       <View style={group1.line1}></View>
       <Text style = {group1.funnyThing}>More features are under development ... </Text>
       <TouchableOpacity style={group1.frame} onPress={onPress}>
         <Text style={group1.funnyText}>Can't wait </Text>
       </TouchableOpacity>
-      {/* <View style={styles.countContainer}> */}
       <Text style={styles.urge}>Have been urged for </Text>
       <Text style={styles.urgeText}>times !</Text>
       <Text style={styles.countText}>
         {count}
       </Text>
-      {/* </View> */}
 
       <View style={group1.line2}></View>
       <TouchableOpacity
@@ -199,7 +169,6 @@ const Profile = ({navigation}) => {
       >
         <Text style={group1.signoutText}>Sign Out</Text>
       </TouchableOpacity>
-
 
       <View style = {group1.container}>
         <BottomSheet
@@ -216,7 +185,6 @@ const Profile = ({navigation}) => {
           style={{
           opacity: Animated.add(0.1, Animated.multiply(fall, 1.0)),}}
         >
-          {/* <View style = {{alignItems: 'center'}}> */}
           <TouchableOpacity onPress = {() => bs.current.snapTo(0)}>
             <View style={group1.imageBox}>
               {imageType ? <Image source={require('./imgs/woman3.png')} style={group1.image} />
@@ -224,7 +192,6 @@ const Profile = ({navigation}) => {
             </View>
             
           </TouchableOpacity>
-          {/* </View> */}
         </Animated.View>
       </View>
     </View>
@@ -233,6 +200,7 @@ const Profile = ({navigation}) => {
   );
 };
 
+// Profile page UI style
 const styles = StyleSheet.create({
   urge: {
     position: 'absolute',
@@ -287,7 +255,6 @@ const group1 = StyleSheet.create({
     height: 110,
     top: 6,
     left: 6,
-    // left: 118,
     borderRadius: 50,
   },
   imageBox: {
@@ -377,7 +344,6 @@ const group1 = StyleSheet.create({
     width: 420,
     height: 40,
     top: 410,
-    // left: 40,
 
     color: 'rgb(0, 0, 0)',
     fontFamily: 'Inter',
@@ -394,7 +360,6 @@ const group1 = StyleSheet.create({
     top: 440,
     left: 40,
 
-    // backgroundColor: 'rgba(63,135,130,0.2)',
     backgroundColor: "#DDDDDD",
     borderRadius: 40,
     elevation: 2,
@@ -412,7 +377,6 @@ const group1 = StyleSheet.create({
     width: 301,
     height: 76,
     top: 2,
-    // left: 20,
 
     color: "rgba(0,0,0,0.5)",
     fontFamily: 'Inter',
@@ -461,12 +425,6 @@ const group1 = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FFFFFF',
     paddingTop: 20,
-    // borderTopLeftRadius: 20,
-    // borderTopRightRadius: 20,
-    // shadowColor: '#000000',
-    // shadowOffset: {width: 0, height: 0},
-    // shadowRadius: 5,
-    // shadowOpacity: 0.4,
   },
   header: {
     backgroundColor: '#FFFFFF',
@@ -474,16 +432,13 @@ const group1 = StyleSheet.create({
     shadowOffset: {width: -1, height: -3},
     shadowRadius: 2,
     shadowOpacity: 0.4,
-    // elevation: 5,
     paddingTop: 20,
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
   },
-  
   panelHeader: {
     alignItems: 'center',
   },
-  
   panelHandle: {
     width: 40,
     height: 8,
@@ -491,7 +446,6 @@ const group1 = StyleSheet.create({
     backgroundColor: '#00000040',
     marginBottom: 10,
   },
-
   panelTitle: {
     fontSize: 27,
     height: 35,

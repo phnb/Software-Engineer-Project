@@ -1,25 +1,14 @@
 import React, { useState, useEffect }  from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Image,
-  Button,
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
+// Auxiliuary function for changing date format to UTC
 function getAfterDate(n) {
   var n = n;
   var d = new Date();
@@ -27,6 +16,7 @@ function getAfterDate(n) {
   return d.toISOString();
 }
 
+// Plan page implemented
 const Plan = () => {
   var url = 'http://10.0.2.2:8000/app/plan/';
   var days = 30 - new Date().getDate();
@@ -36,29 +26,27 @@ const Plan = () => {
   const [budget, OnchangeBudget] = useState("");
   const [confirm, OnchangeConfirm] = useState(false);
 
+  // Require plan information from databse
   useEffect(() => {
     fetch(`${url}?is_account_many=false&is_user_many=false&max_num=1&plan_id=${global.planId}`)
     .then(response => response.json())
       .then(function(data){
-        // console.log(data);
         if (!data["success"]){
           onChangeRemainBudget(0);
           OnchangeBudget('');
         }
         else{
-          // global.bu = data["budget"];
           onChangeRemainBudget(data["remaining"]);
-          // OnchangeBudget(data["budget"].toString());
         }
       })
   },[])
 
+  // Submit new plan
   function submitPlan(days){
     var start_time = new Date().toISOString();
     fetch('http://10.0.2.2:8000/app/plan/', { 
       method: 'patch',
       body: JSON.stringify({
-        // is_many: true,
         name: "plan",
         description: "plan to save money",
         plan_id: global.planId,
@@ -73,19 +61,12 @@ const Plan = () => {
         'Cookie': global.cookie,
       }
     }).then(response => {
-      // let token = response.headers;
-      // console.log("account");
-      // console.log(token);
       return response.json();
     })
     .then(function(data){
-      // DeviceEventEmitter.emit('refresh');
       onChangeRemainBudget(data["remaining"]);
-      // OnchangeBudget(data["budget"].toString());
     });
   }
-
-
 
   return (
     <View>
@@ -136,6 +117,7 @@ const Plan = () => {
   );
 };
 
+// Plan page UI style
 const group1 = StyleSheet.create({
   confirm: {
     position: 'absolute',
@@ -219,7 +201,6 @@ const group1 = StyleSheet.create({
     top: 20,
 
     fontFamily: 'Inter',
-    // color: 'rgb(67, 136, 131)',
     fontSize: 22,
     fontWeight: '700',
     lineHeight: 30,
@@ -231,7 +212,6 @@ const group1 = StyleSheet.create({
     width: 360,
     height: 30,
     top: 150,
-    // left: 50,
 
     color: "rgba(0,0,0,0.5)",
     fontFamily: 'Inter',
@@ -276,7 +256,6 @@ const group1 = StyleSheet.create({
     width: 330,
     height: 30,
     top: 60,
-    // left: 50,
 
     color: "rgba(0,0,0,0.5)",
     fontFamily: 'Inter',
@@ -295,7 +274,6 @@ const group1 = StyleSheet.create({
 
     backgroundColor: 'rgb(255, 255, 255)',
     borderWidth: 2,
-    // borderColor: 'rgba(0, 0, 0, 0.01)',
     borderColor: 'rgba(37, 169, 105, 0.1)',
     borderRadius: 20,
     elevation: 1,

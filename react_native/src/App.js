@@ -1,21 +1,9 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-// import LinearGradient from "react-native-linear-gradient";
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import OnBoarding from './pages/onBoarding';
@@ -24,8 +12,8 @@ import LoginView from './pages/login';
 import Registration from './pages/registrate';
 import ChangePwd from './pages/changePwd';
 import CardInfo from './pages/cardInfo';
-// import LevelSeparator from './pages/LevelSeparator';
 
+// SplashScreen implemented
 const SplashScreen = () => {
   return (
     <View style={styles.background}>
@@ -36,6 +24,7 @@ const SplashScreen = () => {
 
 const Stack = createNativeStackNavigator();
 
+// Navigation to different page
 const App = () => {
   return (
     <NavigationContainer>
@@ -81,6 +70,7 @@ const App = () => {
   );
 };
 
+// Splashscreen UI style
 const styles = StyleSheet.create({
   background: {
     /* Rectangle */

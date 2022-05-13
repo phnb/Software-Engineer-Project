@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
+// Implemented for chart component
 export default function LevelSeparator({ label, height }) {
   return (
     <View style={[styles.container, { height }]}>
@@ -12,11 +13,7 @@ export default function LevelSeparator({ label, height }) {
   );
 }
 
-// LevelSeparator.propTypes = {
-//   label: React.PropTypes.number.isRequired,
-//   height: React.PropTypes.number.isRequired
-// };
-
+// Chart component UI style
 export const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -24,11 +21,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    // textAlign: 'right',
-    // width: 20,
-    // position: 'absolute',
-    // left: -30,
-
     color: 'rgb(102, 102, 102)',
     fontFamily: 'Inter',
     fontSize: 12,

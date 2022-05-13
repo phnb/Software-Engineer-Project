@@ -1,11 +1,7 @@
 import React, {useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Button,
   Dimensions,
@@ -14,17 +10,9 @@ import {
   Alert,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import Homepage from './homepage';
-// import TouchableButton from '../components/button';
 var {width, height, scale} = Dimensions.get('window');
 
+// Change password page implemented
 const ChangePwd = ({navigation}) => {
   const [email, onChangeEmail] = useState('');
   const [pwd, onChangePwd] = useState('');
@@ -33,6 +21,7 @@ const ChangePwd = ({navigation}) => {
   const [border2, onChangeBorder2] = React.useState(false);
   const [border3, onChangeBorder3] = React.useState(false);
 
+  // Submit new password after checking whether it's empty
   function submit(pwd, pwdConfirm) {
     if (pwd === '') {
         Alert.alert('New password cannot be empty!');
@@ -54,7 +43,6 @@ const ChangePwd = ({navigation}) => {
       }
     }).then(response=>response.json())
     .then(function(data) {
-      // // console.log(data);
       success = data["success"];
       if (success){
         uname = data["username"]
@@ -73,15 +61,12 @@ const ChangePwd = ({navigation}) => {
       }
       else{
         Alert.alert("sorry! \n Your account does not exit!");
-      }
-      // // console.log(data);
-      
+      }      
     })
   }
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.login}>Login</Text> */}
       <View style={styles.rectangular1}>
         <Text style={styles.email}>Your email</Text>
         <TextInput
@@ -92,7 +77,6 @@ const ChangePwd = ({navigation}) => {
           keyboardAppearance={'dark'}
           style={[
             styles.emailenter,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border3
                 ? 'rgba(66,150,144,255)'
@@ -100,13 +84,11 @@ const ChangePwd = ({navigation}) => {
               borderWidth: border3 ? 2 : 1,
             },
           ]}
-          // style={styles.username}
           onChangeText={text => onChangeEmail(text)}
           onFocus={() => onChangeBorder3(true)}
           onBlur={() => onChangeBorder3(false)}
           value={email}
         />
-      {/* <View style={styles.rectangular1}> */}
         <Text style={styles.name}>New Password</Text>
         <TextInput
           placeholder={'Enter your new password'}
@@ -116,7 +98,6 @@ const ChangePwd = ({navigation}) => {
           keyboardAppearance={'dark'}
           style={[
             styles.username,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border1
                 ? 'rgba(66,150,144,255)'
@@ -124,7 +105,6 @@ const ChangePwd = ({navigation}) => {
               borderWidth: border1 ? 2 : 1,
             },
           ]}
-          // style={styles.username}
           onChangeText={text => onChangePwd(text)}
           onFocus={() => onChangeBorder1(true)}
           onBlur={() => onChangeBorder1(false)}
@@ -165,6 +145,7 @@ const ChangePwd = ({navigation}) => {
   );
 };
 
+// Change password page  UI style
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
