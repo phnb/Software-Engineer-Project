@@ -32,6 +32,7 @@ class Plan(models.Model):
     userProfile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name="plans")
 
 # Record
+# create a record under a given account on a given user
 class Record(models.Model):
     amount = models.FloatField(default=0)
     name = models.CharField(max_length=200, blank=True)

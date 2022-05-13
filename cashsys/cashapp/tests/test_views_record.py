@@ -17,6 +17,9 @@ warnings.filterwarnings("ignore")
 # Test view functions.
 class TestRecordViews(TestCase):
     def setUp(self):
+        """
+        Setting up the testing environment
+        """
         self.client = Client()
         self.record_url = reverse("recordViews")
         self.plan_url = reverse("planViews")
@@ -47,16 +50,25 @@ class TestRecordViews(TestCase):
 
     # verify the login state
     def test_defaultUsr_login(self):
+        """
+        Test default user logging in functions
+        """
         self.assertEquals(self.user.is_authenticated, True)
 
     # verify the default account
     def test_defaultUsr_has_default_account(self):
+        """
+        Test default user's default account's existence
+        """
         accs = self.userProf.accounts.filter(is_default=True)
         self.assertEquals(accs.count(), 1)
         self.assertEquals(self.accountDef.id, accs[0].id)
 
     # test getting record with record_id
     def test_GET_Record_with_id(self):
+        """
+        Test record GET method with record id as input
+        """
         # set-up environment codes
         # set-up the record
         rec = Record.objects.create(
@@ -73,7 +85,6 @@ class TestRecordViews(TestCase):
         content = response.json()
 
         # verify simulation results
-        # print(content)
         self.assertEquals(response.status_code, 201)
         self.assertEquals(content["id"], recid)
         self.assertEquals(content["amount"], 600)
@@ -89,6 +100,9 @@ class TestRecordViews(TestCase):
 
     # test getting record with maximum-number of records for a given account 
     def test_GET_Record_with_num(self):
+        """
+        Test record GET method with the number of records to get as input
+        """
         # set-up codes
         # create 3 records
         rec1 = Record.objects.create(
@@ -137,6 +151,9 @@ class TestRecordViews(TestCase):
 
     # test getting record within a given time range for a given account
     def test_GET_Record_with_time_and_account(self):
+        """
+        Test record GET method with time range and the belonging account
+        """
         # set-up codes
         nowtime = datetime.now(tz=pytz.utc).replace(tzinfo=None)
         rec1 = Record.objects.create(
@@ -154,8 +171,6 @@ class TestRecordViews(TestCase):
             account = self.accountDef
         )
         thentime = datetime.now(tz=pytz.utc).replace(tzinfo=None) + timedelta(days=2)
-        # print("nowtime:")
-        # print(nowtime)
 
         # test codes
         # take records within a time range
@@ -163,8 +178,6 @@ class TestRecordViews(TestCase):
         content = response.json()
 
         # assert records' validity
-        # print(content)
-        # print("content here!!!!!")
         self.assertEquals(response.status_code, 201)
         self.assertEquals(len(content["income_records"]), 1)
         self.assertEquals(len(content["outcome_records"]), 1)
@@ -182,6 +195,9 @@ class TestRecordViews(TestCase):
         self.assertEquals(content["outcome_records"], [])
 
     def test_POST_Record(self):
+        """
+        Test record POST method with record information as input
+        """
         # set-up codes
         # normal case
         data_dict = {
@@ -221,6 +237,9 @@ class TestRecordViews(TestCase):
         self.assertEquals(content["success"], False)
     
     def test_PATCH_Record(self):
+        """
+        Test record PATCH method with new record information as input
+        """
         # set-up codes
         rec2 = Record.objects.create(
             amount = 200,
@@ -268,6 +287,9 @@ class TestRecordViews(TestCase):
         self.assertEquals(content["success"], False)
 
     def test_DELETE_Record(self):
+        """
+        Test record DELETE method with the list of record ids to be deleted as input
+        """
         # set-up codes
         # create 3 records
         rec1 = Record.objects.create(

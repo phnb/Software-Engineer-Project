@@ -7,8 +7,3 @@ class CashappConfig(AppConfig):
 
     def ready(self):
         import cashapp.signals
-    # post_save.connect(PlanSaveHandler, sender=Plan)
-    # post_delete.connect(PlanDeleteHandler, sender=Plan)
-
-    # post_save.connect(AccountSaveHandler, sender=Account)
-    # post_delete.connect(AccountDeleteHandler, sender=Account)

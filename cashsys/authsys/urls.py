@@ -6,8 +6,6 @@ urlpatterns = [
     # page requests
     path('', signin),
     path('profile/', profile),
-    # path('getregister/', get_register),
-    # path('signinpage/', signinpage),
 
     # data requests
     path('resetSend/', reset_send_mail),

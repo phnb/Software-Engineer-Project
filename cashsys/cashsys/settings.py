@@ -14,7 +14,6 @@ from pathlib import Path
 from .info import *
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,9 +29,6 @@ DEFAULT_FROM_EMAIL = DEFAULT_FROM_EMAIL
 # login url for decorator
 LOGIN_URL = "/auth/signin/"
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--ank65n*we309!hs71um+v&ps)n6*$429d=_00#fehr_3=nv=$'
 
@@ -44,11 +40,10 @@ if DEBUG:
 ALLOWED_HOSTS = ["*"]
 
 # for UTC time difference (between pytz and MySQL) correction
-# NOTE: This is an MACHINE-DEPENDENT HYPER-PARAMETER, so make sure to adjust it (until all unit tests are passed) when deploying the project on a new server!
+# This is an MACHINE-DEPENDENT HYPER-PARAMETER, so make sure to adjust it (until all unit tests are passed) when deploying the project on a new server!
 SECOND_ERROR_PARAM = 0
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth', # authentication core
@@ -66,8 +61,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware', # for user system auth
+    'django.contrib.auth.middleware.AuthenticationMiddleware', 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -92,17 +86,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cashsys.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -116,7 +99,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -137,7 +119,6 @@ AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend', 'guardia
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -147,7 +128,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -162,19 +142,15 @@ APPEND_SLASH=False
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',   # 基本认证
-        # 'rest_framework.authentication.SessionAuthentication',  # session认证
+        'rest_framework.authentication.BasicAuthentication',   
     ]
 }
 
+# filter the boring warnings
 SILENCED_SYSTEM_CHECKS = ["fields.W161"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

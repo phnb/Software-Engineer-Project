@@ -15,9 +15,12 @@ warnings.filterwarnings("ignore")
 
 
 
-# Test view functions.
+# Test Account CBV view functions.
 class TestAccountViews(TestCase):
     def setUp(self):
+        """
+        Setting up the testing environment
+        """
         self.client = Client()
         self.record_url = reverse("recordViews")
         self.plan_url = reverse("planViews")
@@ -48,18 +51,25 @@ class TestAccountViews(TestCase):
 
     # verify the login state
     def test_defaultUsr_login(self):
+        """
+        Test default user logging in functions
+        """
         self.assertEquals(self.user.is_authenticated, True)
 
     # verify the default account
     def test_defaultUsr_has_default_account(self):
+        """
+        Test default user's default account's existence
+        """
         accs = self.userProf.accounts.filter(is_default=True)
         self.assertEquals(accs.count(), 1)
         self.assertEquals(self.accountDef.id, accs[0].id)
 
     # test getting account with account_id
     def test_GET_acc_with_id(self):
-        # set-up environment codes
-        # test codes
+        """
+        Test account GET method with account id as input
+        """
         # account exists
         response = self.client.get(reverse("accountViews"), {"is_many": "false", "account_id": str(self.accountDef.id)})
         content = response.json()
@@ -75,6 +85,9 @@ class TestAccountViews(TestCase):
         self.assertEquals(content["success"], False)
 
     def test_GET_acc_with_usr(self):
+        """
+        Test account GET method with user id as input
+        """
         # set-up codes
         # user in (success)
         response = self.client.get(reverse("accountViews"), {"is_many": "true", "uid": self.user.id})
@@ -91,6 +104,9 @@ class TestAccountViews(TestCase):
         self.assertEquals(content["success"], False)
 
     def test_POST_acc(self):
+        """
+        Test account POST method with new account information as input
+        """
         # set-up codes
         # normal case
         data_dict = {
@@ -124,7 +140,6 @@ class TestAccountViews(TestCase):
         self.assertEquals(response.status_code, 400)
         self.assertEquals(content["success"], False)
 
-
         # error case: repeated account name
         data_dict = {
             "name" : "recnew",
@@ -142,6 +157,9 @@ class TestAccountViews(TestCase):
         self.assertEquals(content["success"], False)
 
     def test_PATCH_acc(self):
+        """
+        Test account PATCH method with new account information as input
+        """
         # set-up codes
         # normal case
         data_dict = {
@@ -174,6 +192,9 @@ class TestAccountViews(TestCase):
         self.assertEquals(content["success"], False)
 
     def test_DELETE_acc(self):
+        """
+        Test account DELETE method with the list of account ids to be deleted as input
+        """
         # set-up codes
         # create 3 accounts
         acc1 = Account.objects.create(
@@ -216,7 +237,6 @@ class TestAccountViews(TestCase):
         # assert accounts' validity
         self.assertEquals(response.status_code, 401)
         self.assertEquals(content["success"], False)
-
 
         # error case: no such account
         data_dict = {
