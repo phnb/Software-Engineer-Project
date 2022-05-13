@@ -1,7 +1,14 @@
-**Run:**
-Run with the following command (in the directory) to render the pages:
+# frontend
 
-        yarn install
+> A React-native project
+## Build Setup
 
-        yarn android
+``` bash
+# install dependencies
+yarn install
+# start the android device and install our app in the device
+yarn android
 
+```
+
+For setting up the react native environment, check out the [guide](https://www.react-native.cn/docs/environment-setup)

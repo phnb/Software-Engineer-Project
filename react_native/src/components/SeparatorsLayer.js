@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-
 import LevelSeparator from './LevelSeparator';
 
+
+// Implemented for chart component
 export const range = (n) => {
   return [...Array(n).keys()];
 };
@@ -28,12 +28,6 @@ function SeparatorsLayer({ topValue, separators, height, children, style }) {
     </View>
   );
 }
-
-// SeparatorsLayer.propTypes = {
-//   topValue: React.PropTypes.number.isRequired,
-//   separators: React.PropTypes.number.isRequired,
-//   height: React.PropTypes.number.isRequired
-// };
 
 const styles = StyleSheet.create({
   container: {

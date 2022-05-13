@@ -1,47 +1,29 @@
 import React, { useState, useEffect }  from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Image,
-  Button,
-  TextInput,
-  Icon,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-// import LevelSeparator from './LevelSeparator';
-
 import Card from '../components/card';
 import SeparatorsLayer from '../components/SeparatorsLayer';
 import PointsPath from '../components/PointsPath';
 import { Point } from '../components/pointUtils';
 import { startingPoint, vectorTransform } from '../components/Scaler';
 
+// Auxiliary functions
 function getBeforeDate(n) {
   var n = n;
   var d = new Date();
   d.setDate(d.getDate() - n);
   return d.toISOString();
 }
-
 function getDateInfo(n){
   const date = new Date();
   date.setDate(date.getDate()-n);
   var s_date = date.toDateString();
   var list = s_date.split(' ');
-  // var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
-  // console.log(formal_date);
   return list[2];
 }
 function getendInfo(n){
@@ -50,58 +32,48 @@ function getendInfo(n){
   var s_date = date.toDateString();
   var list = s_date.split(' ');
   var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
-  // console.log(formal_date);
   return formal_date;
 }
-
 function gettime(m_time){
   const m_date = new Date(m_time)
   const n_date = new Date();
-  // n_date.setDate(n_date.getDate()+1)
   if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
-    // console.log("Today");
     return "Today";
   }
   else{
     var t_date = new Date();
     t_date.setDate(n_date.getDate() - 1);
     if (m_date.getDate() == t_date.getDate() && m_date.getMonth() == t_date.getMonth() && t_date.getFullYear() == t_date.getFullYear()){
-      // console.log("Yesterday");
       return "Yesterday";
     }
     else{
-      // console.log(m_date.toDateString())
       var date = m_date.toDateString();
       var list = date.split(' ');
       var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
-      // console.log(formal_date);
       return formal_date;
     }
   }
 }
 
+// Statistic page implemented
 const Statistic = ({navigation}) => {
   const [test, OnchangeTest] = useState(true);
-  const lightBlue = '#40C4FE';
-  const green = '#53E69D';
   const [MAX_VALUE, OnchangeMAX_VALUE] = React.useState(10);
+
+  // Set parameters for chart component (default value set to 0)
   const Y_LEVELS = 4;
   const X_LEVELS = 7;
-  
-  // const incomePoints = [Point(0, 300), Point(1, 2), Point(2, 3), Point(3, 6), Point(4, 6), Point(5, 3.4), Point(6, 10)];
   const [expensePoints, setExpensePoints] = React.useState([Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
   const [incomePoints, setIncomePoints] = React.useState([Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)]);
 
   const [len, OnchangeLen] = React.useState(0);
-
   const [type, onChangeType] = React.useState(true);
 
   let displayType = type ? 'Income' : 'Expense';
   const [incomeRecords, setIncomeRecords] = React.useState();
-  // const [expenseRecords, setExpenseRecords] = React.useState();
 
+  // Require records information in database according to different types
   React.useEffect(() => {
-    // console.log("new");
     var is_many = true;
     var is_many_time = true;
     var url = 'http://10.0.2.2:8000/app/record/';
@@ -110,7 +82,6 @@ const Statistic = ({navigation}) => {
     fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
-          // console.log(data);
           let in_arr = new Array();
           let ele;
           if (type){
@@ -119,8 +90,6 @@ const Statistic = ({navigation}) => {
           else{
             ele = data["outcome_records"]
           }
-          // console.log(ele);
-          // let out_arr = new Array();
           let len_income = ele.length > 4 ? 4 : ele.length;
           OnchangeLen(len_income);
           for (let i = 0; i < len_income; i++) {
@@ -132,30 +101,16 @@ const Statistic = ({navigation}) => {
               in_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
             }
           }
-          // let len_outcome = data["outcome_records"].length > 4 ? 4 : data["outcome_records"].length;
-          // for (let i = 0; i < len_outcome; i++) {
-          //   data["outcome_records"][i]["modified_time"] = gettime(data["outcome_records"][i]["modified_time"]);
-          //   out_arr.push(data["outcome_records"][i]);
-          // }
-          setIncomeRecords(in_arr); //[i];
-          // console.log("test");
-          // setExpenseRecords(out_arr);
+          setIncomeRecords(in_arr);
       }
     )
-
-      // {"incomerecords", "income": [{"x": 0, "y": 500},{"x": 1, "y": 500}]}
   }, [type])
 
-  // React.useEffect(() => {
-  //   console.log(len);
-  // }, [len]);
-
+  // Require records information in database when the page refreshes
   React.useEffect(() => {
     var is_many = true;
     var is_many_time = true;
     var url = 'http://10.0.2.2:8000/app/record/';
-    // var end_time = new Date().toISOString();
-    // var start_time = getBeforeDate(7);
     const in_P = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)];
     const out_P = [Point(0, 0), Point(1, 0), Point(2, 0), Point(3, 0), Point(4, 0), Point(5, 0), Point(6, 0)];
 
@@ -165,7 +120,6 @@ const Statistic = ({navigation}) => {
       fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
       .then(response => response.json())
         .then(function(data){
-          // console.log(data);
           var amount = 0;
           for (let i = 0; i < data["income_records"].length; i++) {
             const element = data["income_records"][i]["amount"];
@@ -175,7 +129,6 @@ const Statistic = ({navigation}) => {
             OnchangeMAX_VALUE(amount);
           }
           in_P[m] = Point(m, amount);
-          // console.log(in_P);
           setIncomePoints(in_P);
           amount = 0;
           for (let i = 0; i < data["outcome_records"].length; i++) {
@@ -186,7 +139,6 @@ const Statistic = ({navigation}) => {
             OnchangeMAX_VALUE(amount);
           }
           out_P[m] = Point(m, amount);
-          // console.log(in_P);
           setExpensePoints(out_P);
         }
       )
@@ -291,14 +243,12 @@ const Statistic = ({navigation}) => {
             top={682} 
             description={incomeRecords[3]["description"]} 
             id={incomeRecords[3]["id"]}/>
-          {/* <Card navigation={navigation} isExist={incomeRecords.length >= 2} name={incomeRecords[incomeRecords.length > 1 ? 1 : incomeRecords.length]["name"]} time={incomeRecords[1]["modified_time"]} cost={incomeRecords[1]["amount"]} type={type} top={522} description={incomeRecords[1]["description"]} />
-          <Card navigation={navigation} isExist={incomeRecords.length >= 3} name={incomeRecords[incomeRecords.length > 2 ? 2 : incomeRecords.length]["name"]} time={incomeRecords[2]["modified_time"]} cost={incomeRecords[2]["amount"]} type={type} top={602} description={incomeRecords[2]["description"]} />
-          <Card navigation={navigation} isExist={incomeRecords.length >= 4} name={incomeRecords[incomeRecords.length > 3 ? 3 : incomeRecords.length]["name"]} time={incomeRecords[3]["modified_time"]} cost={incomeRecords[3]["amount"]} type={type} top={682} description={incomeRecords[3]["description"]}/> */}
         </View>  : <Text style={group1.noRecord}> No record yet !</Text>}
     </View>
   );
 };
 
+// Statistic page UI style
 const group1 = StyleSheet.create({
   noRecord: {
     /* Transactions history */
@@ -357,8 +307,6 @@ const group1 = StyleSheet.create({
     height: 20,
     top: 410,
     left: 310,
-
-    // backgroundColor: 'rgb(0, 0, 0)',
   },
   displayText: {
     left: 20,
@@ -374,7 +322,6 @@ const group1 = StyleSheet.create({
     height: 10,
     left: 5,
     top: 5,
-    // backgroundColor: 'rgba(37, 169, 105, 0.7)',
     position: 'absolute',
     borderRadius: 50,
   },
@@ -386,7 +333,6 @@ const group1 = StyleSheet.create({
     left: 145,
 
     backgroundColor: 'rgb(238, 248, 247)',
-    // elevation: 2,
     borderRadius: 10,
   },
   walletText: {
@@ -437,8 +383,6 @@ const group1 = StyleSheet.create({
 
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     opacity: 20,
-    // borderBottomColor: 'red',
-    // color: 'rgb(0, 0, 0)',
   },
   rectangle1: {
     /* Rectangle 1 */
@@ -465,8 +409,6 @@ const group1 = StyleSheet.create({
   },
 });
 
-
-
 const styles = StyleSheet.create({
   rectangular: {
     position: 'absolute',
@@ -477,7 +419,6 @@ const styles = StyleSheet.create({
 
     backgroundColor: 'rgb(255, 255, 255)',
     elevation: 4,
-    // box-shadow: 0px 22px 35px rgba(0, 0, 0, 0.08),
     borderRadius: 10,
   },
   date: {
@@ -490,7 +431,6 @@ const styles = StyleSheet.create({
   },
   container: {
     top: -20,
-    // height: 100,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,28 +1,12 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
   View,
-  Image,
-  Button,
-  TextInput,
-  Icon,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
 import { dist, angle, pointPropTypes, add } from './pointUtils';
 import { keyGen } from './keyUtils';
 
+
+// Implemented for chart component
 function toLine(pointA, pointB, color, opacity) {
   return (
     <View
@@ -69,13 +53,6 @@ function PointsPath({ color, pointList, opacity, startingPoint }) {
     </View>
   );
 }
-
-// PointsPath.propTypes = {
-//   pointList: React.PropTypes.arrayOf(React.PropTypes.shape(pointPropTypes)),
-//   color: React.PropTypes.string.isRequired,
-//   opacity: React.PropTypes.number.isRequired,
-//   startingPoint: React.PropTypes.shape(pointPropTypes)
-// };
 
 export const createLine = (dist, angle, color, opacity, startingPoint) => {
   return {

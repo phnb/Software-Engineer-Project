@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Image,
-  Button,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
 
+// Record card component
 function Card({navigation, isExist, name, time, cost, type, top, description, id}) {
   let str = type ? '+' : '-';
   return (
@@ -38,7 +27,7 @@ function Card({navigation, isExist, name, time, cost, type, top, description, id
   );
 };
 
-
+// Record card style
 const group1 = StyleSheet.create({
   img: {
     width: 40,

@@ -1,25 +1,14 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Alert,
   Image,
-  Button,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
+// Record detail page implementation (show record details)
 const CardInfo = ({navigation, route}) => {
   const {type} = route.params;
   const {useage} = route.params;
@@ -30,12 +19,11 @@ const CardInfo = ({navigation, route}) => {
   let str = type ? '+' : '-';
   let displayType = type ? 'Income' : 'Expense';
 
+  // Delete the record
   function deleteRecords(){
-    // console.log(id);
     fetch('http://10.0.2.2:8000/app/record/', { 
       method: 'delete',
       body: JSON.stringify({
-        // is_many: true,
         del_id_list:[id],
         uid: global.uid
       }),
@@ -59,7 +47,6 @@ const CardInfo = ({navigation, route}) => {
           }
         ]
       );
-      // navigation.navigate('Homepage')
     });
     
   }
@@ -100,6 +87,7 @@ const CardInfo = ({navigation, route}) => {
   );
 };
 
+// Record detail page UI style
 const group1 = StyleSheet.create({
   deleteText: {
     top: 3,
@@ -261,7 +249,6 @@ const group1 = StyleSheet.create({
     height: 20,
     top: 250,
     left: 340,
-    // backgroundColor: 'rgb(66, 66, 66',
   },
   details: {
     /* Transaction details */
@@ -321,8 +308,6 @@ const group1 = StyleSheet.create({
   img: {
     width: 70,
     height: 70,
-    // top: 40,
-    // left: 170,
   },
   imageBorder: {
     width: 70,
@@ -331,7 +316,6 @@ const group1 = StyleSheet.create({
     left: 170,
 
     elevation: 10,
-    // box-shadow: 0px 22px 35px rgba(0, 0, 0, 0.08),
     borderRadius: 70,
   },
   rectangle1: {

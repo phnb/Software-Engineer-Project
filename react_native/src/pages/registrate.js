@@ -1,30 +1,15 @@
 import React, {useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Button,
-  Dimensions,
   Image,
   TextInput,
   Alert,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import Homepage from './homepage';
-// import TouchableButton from '../components/button';
-// var {width, height, scale} = Dimensions.get('window');
-
+// Registrate page implemented
 const Registration = ({navigation}) => {
   const [username, onChangeUsername] = useState('');
   const [email, onChangEmail] = useState('');
@@ -35,6 +20,7 @@ const Registration = ({navigation}) => {
   const [border3, onChangeBorder3] = React.useState(false);
   const [border4, onChangeBorder4] = React.useState(false);
 
+  // Submit the registration information after some examinations (user name empty, email valid check)
   function submit(username, email, pwd, pwdConfirm) {
     if (username === '') {
       Alert.alert('Username cannot be empty!');
@@ -79,7 +65,6 @@ const Registration = ({navigation}) => {
             text: "OK",
             onPress: () => {
               navigation.navigate('Login');
-              // console.log(username);
             }
           }
         ]
@@ -89,7 +74,6 @@ const Registration = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.login}>Login</Text> */}
       <View style={styles.rectangular1}>
         <Text style={styles.name}>Username</Text>
         <TextInput
@@ -97,7 +81,6 @@ const Registration = ({navigation}) => {
           clearButtonMode={'while-editing'}
           style={[
             styles.username,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border1
                 ? 'rgba(66,150,144,255)'
@@ -105,7 +88,6 @@ const Registration = ({navigation}) => {
               borderWidth: border1 ? 2 : 1,
             },
           ]}
-          // style={styles.username}
           onChangeText={text => onChangeUsername(text)}
           onFocus={() => onChangeBorder1(true)}
           onBlur={() => onChangeBorder1(false)}
@@ -117,7 +99,6 @@ const Registration = ({navigation}) => {
           clearButtonMode={'while-editing'}
           style={[
             styles.email,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border2
                 ? 'rgba(66,150,144,255)'
@@ -139,7 +120,6 @@ const Registration = ({navigation}) => {
           keyboardAppearance={'dark'}
           style={[
             styles.password,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border3
                 ? 'rgba(66,150,144,255)'
@@ -161,7 +141,6 @@ const Registration = ({navigation}) => {
           keyboardAppearance={'dark'}
           style={[
             styles.passwordConfirm,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border4
                 ? 'rgba(66,150,144,255)'
@@ -187,6 +166,7 @@ const Registration = ({navigation}) => {
   );
 };
 
+// Registration page UI style
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -220,7 +200,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(255, 255, 255)',
     borderRadius: 40,
     elevation: 8,
-    // box-shadow: 0px 22px 35px rgba(0, 0, 0, 0.08),
   },
   iconStyle: {
     width: 120,
@@ -256,17 +235,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
     borderRadius: 8,
-
-    // position: 'absolute',
-    // width: 270,
-    // height: 38,
-    // top: 50,
-    // left: 25,
-
-    // backgroundColor: 'white',
-    // marginBottom: 60,
-    // paddingLeft: 10,
-    // textAlign: 'left',
   },
   emailAddress: {
     /* email */
@@ -357,9 +325,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(62, 124, 120, 0.1)',
     borderRadius: 40,
   },
-  // submitButton: {
-  //   borderRadius: 40,
-  // },
 });
 
 export default Registration;

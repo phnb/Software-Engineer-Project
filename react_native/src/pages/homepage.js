@@ -1,34 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
-  DeviceEventEmitter,
   View,
   Image,
-  Button,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Profile from './profile';
 import Statistic from './statistic';
 import Plan from './plan';
 import AddExpense from './addExpense';
 import Card from '../components/card';
-import { StackRouter } from '@react-navigation/native';
+
 
 const Tab = createBottomTabNavigator();
 
+// Auxiliary function to change date format to UTC
 function getBeforeDate(n) {
   var n = n;
   var d = new Date();
@@ -36,51 +24,42 @@ function getBeforeDate(n) {
   return d.toISOString();
 }
 
+// Change date to user-friendly expression
 function gettime(m_time){
   const m_date = new Date(m_time)
   const n_date = new Date();
-  // n_date.setDate(n_date.getDate()+1)
   if (m_date.getDate() == n_date.getDate() && m_date.getMonth() == n_date.getMonth() && m_date.getFullYear() == n_date.getFullYear()){
-    // // console.log("Today");
     return "Today";
   }
   else{
     var t_date = new Date();
     t_date.setDate(n_date.getDate() - 1);
     if (m_date.getDate() == t_date.getDate() && m_date.getMonth() == t_date.getMonth() && t_date.getFullYear() == t_date.getFullYear()){
-      // // console.log("Yesterday");
       return "Yesterday";
     }
     else{
-      // // console.log(m_date.toDateString())
       var date = m_date.toDateString();
       var list = date.split(' ');
       var formal_date = list[1] + ' ' + list[2] + ', ' + list[3];
-      // // console.log(formal_date);
       return formal_date;
     }
   }
 }
 
+// Home page implemented (the first page)
 const Homescreen = ({ navigation, route }) => {
-  // const { accountId } = route.params;
-  // const { username } = route.params;
+  var date = new Date();
   var accountId = global.accountId;
   var username = global.username;
   const [records, setRecords] = useState();
-
   const [expense, OnchangeExpense] = useState(0);
   const [test, OnchangeTest] = useState(true);
   const [income, OnchangeIncome] = useState(0);
   const [balance, OnchangeBalance] = useState(0);
-  // const [username, OnchangeUsername] = useState('');
   const [welcome, OnchangeWelcome] = useState('');
   const [len, OnchangeLen] = useState(0);
 
-  // const recrodsName = ['Transfer', 'Transfer', 'Paypal'];
-  // let recrodsLen = recrodsName .length;
-
-  var date = new Date();
+  // welcome language changes according to the day time
   useEffect(() => {
     if (date.getHours() < 12){
       OnchangeWelcome('Good morning, ');
@@ -90,19 +69,11 @@ const Homescreen = ({ navigation, route }) => {
     } else {
       OnchangeWelcome('Good evening, ');
     }
-    // // console.log("start");
-    // // console.log(welcome);
     date = new Date();
   },[test])
   
-
-  // // console.log(cookie);
-  // wzdnb 123
-  
-  // url += accountId;
-  // // console.log(start_time);
+  // Get account information and record details from database
   useEffect(() => {
-    // console.log("second");
     var is_many = true;
     var is_many_time = true;
     var url = 'http://10.0.2.2:8000/app/record/';
@@ -111,7 +82,6 @@ const Homescreen = ({ navigation, route }) => {
     fetch(`${url}?is_many=${is_many}&is_many_time=${is_many_time}&start_time=${start_time}&end_time=${end_time}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
-          // // console.log(data);
           const income_records = data["income_records"]; //[i];
           const outcome_records = data["outcome_records"];
           var amount = 0;
@@ -126,8 +96,6 @@ const Homescreen = ({ navigation, route }) => {
             amount += element["amount"];
           }
           OnchangeExpense(amount);
-            // // console.log("come in");
-          // }
       }
     )
     is_many = true;
@@ -138,9 +106,7 @@ const Homescreen = ({ navigation, route }) => {
           return response.json();
         }
         else{
-          // // console.log(error);
           const n_arr = new Array();
-          // let n_arr = new Array([{"name":""}, {"name":""}, {"name":""}, {"name":""}]);
           for (let i = 0; i < 4; i++){
             n_arr.push({"account": -1, "amount": 0, "created_time": "", "description": "", "id":-1, "is_income": true, "modified_time": "", "name": "", "plans": []});
           }
@@ -153,7 +119,6 @@ const Homescreen = ({ navigation, route }) => {
         data => {
           if (data!=null){
             for (let i = 0; i < data.length; i++) {
-              // n_arr.push[data[i]]
               data[i]["modified_time"] = gettime(data[i]["modified_time"]);
             }
             let n_arr = data;
@@ -164,22 +129,17 @@ const Homescreen = ({ navigation, route }) => {
               }
             }
             OnchangeLen(len_income);
-            
-            // // console.log(data)
             setRecords(n_arr);
           }
         }
       )
-    
     is_many = false;
     url = 'http://10.0.2.2:8000/app/account/'
     fetch(`${url}?is_many=${is_many}&account_id=${global.accountId}`)
     .then(response => response.json())
       .then(function(data){
           var bal = data["balance"];
-          // // console.log(bal);
           OnchangeBalance(bal);
-        // }
       }
     )
   },[test])
@@ -201,30 +161,6 @@ const Homescreen = ({ navigation, route }) => {
       </View>
       <View style={group2.rectangle2} />
       <View style={group2.rectangle1}>
-        {/* <View style={group2.frame1}>
-          <View style={group2.arrayDown1}>
-            <Image
-              style={group2.Vector1}
-              source={require('./imgs/Vector8.png')}
-            />
-            <Image
-              style={group2.Vector2}
-              source={require('./imgs/Vector9.png')}
-            />
-          </View>
-        </View>
-        <View style={group2.frame1}>
-          <View style={group2.arrayDown2}>
-            <Image
-              style={group2.Vector3}
-              source={require('./imgs/Vector8.png')}
-            />
-            <Image
-              style={group2.Vector4}
-              source={require('./imgs/Vector9.png')}
-            />
-          </View>
-        </View> */}
       </View>
       <Text style={group2.total}>Total Balance</Text>
       <Text style={group2.totalBalance}>$ {balance} </Text>
@@ -272,23 +208,13 @@ const Homescreen = ({ navigation, route }) => {
           top={662} 
           description={records[3]["description"]}
           id={records[3]["id"]}/>
-        {/* <Card navigation={navigation} isExist={records.length >= 2} name={records[1]["name"]} time={records[1]["modified_time"]} cost={records[1]["amount"]} type={records[1]["is_income"]} top={502} description={records[0]["description"]}/>
-        <Card navigation={navigation} isExist={records.length >= 3} name={records[2]["name"]} time={records[2]["modified_time"]} cost={records[2]["amount"]} type={records[2]["is_income"]} top={582} description={records[0]["description"]}/>
-        <Card navigation={navigation} isExist={records.length >= 4} name={records[3]["name"]} time={records[3]["modified_time"]} cost={records[3]["amount"]} type={records[3]["is_income"]} top={662} description={records[0]["description"]}/> */}
       </View> : <Text style={group1.noRecord}> No record yet !</Text>}
     </View>
   );
 };
 
+// Tab navigation inplemented
 const Homepage = (navigation, route) => {
-  // navigation.navigate('Homepage', {
-  //   screen: 'Home',
-  //   params: { accountId: 1 },
-  // });
-  // const accountId = route.params;
-  // // const [acc, OnchangeAcc] = useState(0);
-  // // OnchangeAcc(accountId);
-  // const username = route.params;
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
@@ -333,7 +259,6 @@ const Homepage = (navigation, route) => {
         component={Homescreen}
         options={{headerShown: false}}
         initialParams={{accountId:1}}
-        // initialParams={{accountId:1}}
       />
       <Tab.Screen
         name="Statistic"
@@ -359,6 +284,7 @@ const Homepage = (navigation, route) => {
   );
 };
 
+// Homepage UI style
 const group1 = StyleSheet.create({
   noRecord: {
     /* Transactions history */
@@ -436,7 +362,6 @@ const group1 = StyleSheet.create({
 
     backgroundColot: 'rgba(255,255,255,22)',
     opacity: 0.1,
-    // transform: -180.00,
   },
   ellipse3: {
     /* Ellipse 1 */
@@ -506,50 +431,6 @@ const group2 = StyleSheet.create({
     opacity: 0.8,
     borderRadius: 20,
   },
-  //   frame1: {
-  //     /* Frame 1 */
-  //     position: 'absolute',
-  //     width: 24,
-  //     height: 24,
-  //     top: 236,
-  //     left: 280,
-
-  //     backgroundColor: 'rgba(255, 255, 255, 0.15)',
-  //     borderRadius: 40,
-
-  //     // /* 自动布局 */
-  //     // display: 'flex',
-  //     // flexDirection: 'row',
-  //     // justifyContent: 'center',
-  //     // alignItems: 'center',
-  //   },
-  //   arrayDown1: {
-  //     /* arrow-down 1 */
-  //     position: 'relative',
-  //     width: 18,
-  //     height: 18,
-
-  //     // /* Inside Auto Layout */
-  //     // order: 0,
-  //     // flex-grow: 0,
-  //     // margin: 0px 10px,
-  //   },
-  //   Vector1: {
-  //     /* Vector */
-  //     position: 'absolute',
-  //     width: 7.88,
-  //     height: 4.5,
-  //     top: 7.31,
-  //     left: 5.06,
-  //   },
-  //   Vector2: {
-  //     /* Vector */
-  //     position: 'absolute',
-  //     width: 1.13,
-  //     height: 11.25,
-  //     top: 15.19,
-  //     left: 8.44,
-  //   },
   expense: {
     /* Expenses */
     position: 'absolute',
@@ -672,86 +553,6 @@ const group3 = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 17,
     textAlign: 'left',
-  },
-});
-
-const group4 = StyleSheet.create({
-  img: {
-    width: 40,
-    height: 36,
-    top: 16,
-    left: 16,
-  },
-  item1: {
-    /* item1 */
-    position: 'absolute',
-    width: 374,
-    height: 70,
-    top: 422,
-    left: 20,
-
-    backgroundColor: 'rgba(27, 92, 88, 0.1)',
-    borderRadius: 12,
-  },
-  itemName: {
-    /* item1 name*/
-    position: 'absolute',
-    width: 88,
-    height: 19,
-    top: 10,
-    left: 78,
-
-    color: 'rgb(0, 0, 0)',
-    fontFamily: 'Inter',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 22,
-    textAlign: 'left',
-  },
-  itemDate: {
-    /* Today */
-    position: 'absolute',
-    width: 120,
-    height: 16,
-    top: 35,
-    left: 78,
-
-    color: 'rgb(102, 102, 102)',
-    fontFamily: 'Inter',
-    fontSize: 13,
-    fontWeight: '400',
-    lineHeight: 16,
-    textAlign: 'left',
-  },
-  itemMoney: {
-    /* Today */
-    position: 'absolute',
-    width: 120,
-    height: 24,
-    top: 25,
-    right: 15,
-
-    color: 'rgb(249, 91, 81)',
-    fontFamily: 'Inter',
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 22,
-    textAlign: 'right',
-  },
-  itemMoney1: {
-    /* Today */
-    position: 'absolute',
-    width: 120,
-    height: 24,
-    top: 25,
-    right: 15,
-
-    color: 'rgb(37, 169, 105)',
-    fontFamily: 'Inter',
-    fontSize: 16,
-    fontWeight: '700',
-    lineHeight: 22,
-    textAlign: 'right',
   },
 });
 

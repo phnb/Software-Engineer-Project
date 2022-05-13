@@ -1,59 +1,40 @@
 import React, {useState} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Button,
-  Dimensions,
   Image,
   TextInput,
   Alert,
 } from 'react-native';
 import store from 'react-native-simple-store'
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import Homepage from './homepage';
-// import TouchableButton from '../components/button';
-var {width, height, scale} = Dimensions.get('window');
-
+// Set cookie
 function setCookie(map){
-
   let cookie = map['set-cookie']
-  // // console.log("here");
-
   if(cookie.includes('Path=/;')){
       let strArr = cookie.split('Path=/;')
       cookie = strArr.join('')
       cookie += '; Path=/'
-      // cookie = 'uid=1; ' + cookie;
-      // // console.log(cookie)
   }
-
   store.save('cookie',cookie)
   global.cookie = cookie
 }
 
-
+// Login page implemented 
 const LoginView = ({navigation}) => {
   const [username, OnchangeUsername] = useState('');
   const [pwd, OnchangePwd] = useState('');
   const [border1, onChangeBorder1] = React.useState(false);
   const [border2, onChangeBorder2] = React.useState(false);
 
+  // Navigate to change password page
   function forgetpasssword(username) {
     navigation.navigate('ChangePwd');
   }
 
+  // Submit person information to login the application
   function submit(username, pwd) {
     fetch('http://10.0.2.2:8000/auth/signin/', {
       method: 'post',
@@ -66,11 +47,8 @@ const LoginView = ({navigation}) => {
       },
     })
       .then(response =>{
-        // let token = response.headers;
         let map = response.headers.map;
-        // // console.log(map);
         setCookie(map);
-        
         return response.json();
       })
       .then(function (data) {
@@ -90,8 +68,6 @@ const LoginView = ({navigation}) => {
         }
         else{
           let account_id = data["default_account_id"];
-          // OnchangeAccountId(account_id)
-          // navigation.setParams(accountId);
           global.accountId = account_id;
           global.username = username;
           global.uid = data["uid"];
@@ -102,16 +78,10 @@ const LoginView = ({navigation}) => {
           navigation.navigate('Homepage', {screen:'Home', params:{accountId:account_id, username:username}});
         }
       });
-    // .then(function(data) {
-    //   // console.log(data.json);
-    //   // navigation.navigate('Homepage');
-    //   // // console.log(username);
-    // })
   }
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.login}>Login</Text> */}
       <View style={styles.rectangular1}>
         <Text style={styles.name}>Username</Text>
         <TextInput
@@ -119,7 +89,6 @@ const LoginView = ({navigation}) => {
           clearButtonMode={'while-editing'}
           style={[
             styles.username,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border1
                 ? 'rgba(66,150,144,255)'
@@ -127,7 +96,6 @@ const LoginView = ({navigation}) => {
               borderWidth: border1 ? 2 : 1,
             },
           ]}
-          // style={styles.username}
           onChangeText={text => OnchangeUsername(text)}
           onFocus={() => onChangeBorder1(true)}
           onBlur={() => onChangeBorder1(false)}
@@ -142,7 +110,6 @@ const LoginView = ({navigation}) => {
           keyboardAppearance={'dark'}
           style={[
             styles.password,
-            // eslint-disable-next-line react-native/no-inline-styles
             {
               borderColor: border2
                 ? 'rgba(66,150,144,255)'
@@ -155,9 +122,6 @@ const LoginView = ({navigation}) => {
           onBlur={() => onChangeBorder2(false)}
           value={pwd}
         />
-        {/* <View style={styles.loginBtnStyle}> */}
-        {/* <Text style={{color: 'white'}}>sign in</Text> */}
-        {/* </View> */}
         <View style={styles.button}>
           <Button
             onPress={() => submit(username, pwd)}
@@ -178,6 +142,7 @@ const LoginView = ({navigation}) => {
   );
 };
 
+// Login page UI style
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -211,7 +176,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(255, 255, 255)',
     borderRadius: 40,
     elevation: 8,
-    // box-shadow: 0px 22px 35px rgba(0, 0, 0, 0.08),
   },
   iconStyle: {
     width: 120,
@@ -273,15 +237,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgb(211, 211, 211)',
     borderWidth: 1,
     borderRadius: 8,
-    // height: 35,
-    // width: width * 0.9,
-    // backgroundColor: 'blue',
-    // marginTop: 30,
-    // marginBottom: 20,
-    // paddingLeft: 10,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // borderRadius: 8,
   },
   button: {
     /* Submit */
@@ -294,9 +249,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(62, 124, 120, 0.1)',
     borderRadius: 40,
   },
-  // submitButton: {
-  //   borderRadius: 40,
-  // },
   forgetButton: {
     /* Submit */
     position: 'absolute',

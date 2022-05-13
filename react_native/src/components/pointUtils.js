@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Implemented for chart component
 export const Point = (x, y) => {
   return { x, y };
 };
@@ -29,8 +30,3 @@ export const angle = (pointA, pointB) => {
 
   return Math.asin((pointB.y - pointA.y) / euclideanDistance);
 };
-
-// export const pointPropTypes = {
-//   x: React.PropTypes.number.isRequired,
-//   y: React.PropTypes.number.isRequired,
-// };

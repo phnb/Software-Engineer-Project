@@ -1,24 +1,13 @@
 import React from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   Image,
-  Button,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
+// OnBoarding page implemented (can direct users to login page or registration page)
 const OnBoarding = ({navigation}) => {
   return (
     <View>
@@ -41,7 +30,6 @@ const OnBoarding = ({navigation}) => {
           <View style={group2.ellipse3} />
         </View>
       </View>
-      {/* <View style={group1.rectangular1} /> */}
       <TouchableOpacity
         style={group1.frame}
         onPress={() => navigation.navigate('Registration')}
@@ -49,7 +37,6 @@ const OnBoarding = ({navigation}) => {
         <Text style={slogen.text2}>Get Started </Text>
       </TouchableOpacity>
       <Text style={slogen.text1}>Spend Smarter Save More</Text>
-      {/* <Text style={slogen.text2}>Already Have Account?</Text> */}
       <TouchableOpacity
         style={slogen.text3}
         onPress={() => navigation.navigate('Login')}
@@ -60,6 +47,7 @@ const OnBoarding = ({navigation}) => {
   );
 };
 
+// OnBoarding page UI style
 const group1 = StyleSheet.create({
   frame: {
     /* Frame */
@@ -90,7 +78,6 @@ const group1 = StyleSheet.create({
 
     backgroundColor: 'rgba(62, 124, 120, 0.1)',
     borderRadius: 40,
-    // filter: blur(48),
   },
   text: {
     /* Get Started */
@@ -176,8 +163,6 @@ const image = StyleSheet.create({
     height: 450.71,
     top: 34,
     left: 18,
-
-    // background: url();
   },
   image194: {
     /* image 194 */
@@ -186,8 +171,6 @@ const image = StyleSheet.create({
     height: 98.05,
     top: 54,
     left: 45,
-
-    // background: url();
   },
   image195: {
     /* image 195 */
@@ -196,8 +179,6 @@ const image = StyleSheet.create({
     height: 97.12,
     top: 88,
     left: 271,
-
-    // background: url();
   },
 });
 
